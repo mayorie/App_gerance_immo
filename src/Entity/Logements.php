@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\LogementsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: LogementsRepository::class)]
 class Logements
@@ -41,11 +43,16 @@ class Logements
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $num_chambre = null;
 
-    #[ORM\OneToOne(mappedBy: 'LogementsID', cascade: ['persist', 'remove'])]
-    private ?Locataires $LocatairesID = null;
+    #[ORM\OneToMany(mappedBy: 'LogementsID', targetEntity: Locataires::class)]
+    private Collection $LocatairesID;
 
     #[ORM\OneToOne(mappedBy: 'LogementsID', cascade: ['persist', 'remove'])]
     private ?Commentaires $commentaires = null;
+
+    public function __construct()
+    {
+        $this->LocatairesID = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -160,19 +167,27 @@ class Logements
         return $this;
     }
 
-    public function getLocatairesID(): ?Locataires
+    public function getLocatairesID(): Collection
     {
         return $this->LocatairesID;
     }
 
-    public function setLocatairesID(Locataires $LocatairesID): static
+    public function addLocatairesID(Locataires $locataire): static
     {
-        // set the owning side of the relation if necessary
-        if ($LocatairesID->getLogementsID() !== $this) {
-            $LocatairesID->setLogementsID($this);
+        if (!$this->LocatairesID->contains($locataire)) {
+            $this->LocatairesID[] = $locataire;
+            $locataire->setLogement($this); // lien inverse
         }
+        return $this;
+    }
 
-        $this->LocatairesID = $LocatairesID;
+    public function removeLocataire(Locataires $locataire): static
+    {
+        if ($this->LocatairesID->removeElement($locataire)) {
+            if ($locataire->getLogement() === $this) {
+                $locataire->setLogement(null);
+            }
+        }
 
         return $this;
     }

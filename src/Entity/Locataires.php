@@ -34,7 +34,7 @@ class Locataires
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $lieu_de_naissance = null;
 
-    #[ORM\OneToOne(inversedBy: 'LocatairesID', cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(inversedBy: 'LocatairesID')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Logements $LogementsID = null;
 

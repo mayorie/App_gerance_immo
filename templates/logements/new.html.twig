@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello LogementsController!{% endblock %}
+
+{% block body %}
+
+<h1>Ajouter un logement</h1>
+
+{{ form_start(form) }}
+
+    {{ form_row(form.id_appart) }}
+    {{ form_row(form.residence) }}
+    {{ form_row(form.batiment) }}
+    {{ form_row(form.appt) }}
+    {{ form_row(form.adresse) }}
+    {{ form_row(form.code_postal) }}
+    {{ form_row(form.ville) }}
+    {{ form_row(form.SIRET) }}
+    {{ form_row(form.num_chambre) }}
+
+    {{ form_row(form.commentaire) }}
+
+    <button type="submit">Créer</button>
+
+{{ form_end(form) }}
+{% endblock %}

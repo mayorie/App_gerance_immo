@@ -1,0 +1,12 @@
+.btn-create {
+    background-color: #2ecc71;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-create:hover {
+    background-color: #27ae60;
+}

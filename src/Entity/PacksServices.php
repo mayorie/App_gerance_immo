@@ -20,9 +20,6 @@ class PacksServices
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $date_MES = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $montant_regularisation = null;
-
     #[ORM\ManyToOne(inversedBy: 'Packs_services')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Locataires $LocatairesID = null;
@@ -52,18 +49,6 @@ class PacksServices
     public function setDateMES(?\DateTime $date_MES): static
     {
         $this->date_MES = $date_MES;
-
-        return $this;
-    }
-
-    public function getMontantRegularisation(): ?float
-    {
-        return $this->montant_regularisation;
-    }
-
-    public function setMontantRegularisation(?float $montant_regularisation): static
-    {
-        $this->montant_regularisation = $montant_regularisation;
 
         return $this;
     }

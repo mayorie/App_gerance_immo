@@ -25,26 +25,52 @@ final class LogementsController extends AbstractController
     }
 
     #[Route('/logements/new', name: 'logement_new')]
-    public function new(Request $request, EntityManagerInterface $em): Response
+    #[Route('/logements/edit/{id}', name: 'logement_edit')]
+    public function form(Request $request, EntityManagerInterface $em, LogementsRepository $repo, ?int $id = null): Response
     {
-        $logement = new Logements();
+        $editMode = $id !== null;
+        if ($id) {
 
-        $form = $this->createForm(LogementType::class, $logement);
+            $logement = $repo->find($id);
+            if (!$logement) {
+                throw $this->createNotFoundException('Logement introuvable');
+            }
+
+            $commentaire = $logement->getCommentaires();
+            if ($commentaire) {
+                $commentaireTexte = $commentaire->getTexte();
+            }
+            else {
+                $commentaireTexte = null;
+            }
+        
+        } 
+        else {
+            $logement = new Logements();
+            $commentaireTexte = null;
+
+        }
+
+        $form = $this->createForm(LogementType::class, $logement, [
+            'commentaire_data' => $commentaireTexte
+        ]);        
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
             $em->persist($logement);
 
-            // 🔥 récupération du champ commentaire (mapped => false)
+            // commentaire (optionnel)
             $commentaireTexte = $form->get('commentaire')->getData();
 
             if ($commentaireTexte) {
-                $commentaire = new Commentaires();
-                $commentaire->setTexte($commentaireTexte);
+                $commentaire = $logement->getCommentaires();
+                if (!$commentaire) {
+                    $commentaire = new Commentaires();
+                    $commentaire->setLogementsID($logement);
 
-                // si relation existe
-                $commentaire->setLogementsID($logement);
+                }
+                $commentaire->setTexte($commentaireTexte);
 
                 $em->persist($commentaire);
             }
@@ -56,16 +82,11 @@ final class LogementsController extends AbstractController
 
         return $this->render('logements/new.html.twig', [
             'form' => $form->createView(),
+            'editMode' => $id !== null,
         ]);
     }
 
-    #[Route('/logements/edit/{id}', name: 'logement_edit')]
-    public function edit(int $id): Response
-    {
-        return $this->render('logements/edit.html.twig', [
-            'id' => $id
-        ]);
-    }
+
 
     #[Route('/logements/delete/{id}', name: 'logement_delete', methods: ['POST'])]
     public function delete(int $id, LogementsRepository $repo, EntityManagerInterface $em, Request $request): Response

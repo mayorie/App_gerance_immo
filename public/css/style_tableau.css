@@ -42,3 +42,20 @@ td:nth-last-child(2) {
     text-align: center;
     width: 50px;
 }
+
+/*styling des cases*/
+
+.status {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.status-green {
+    background-color: #4CAF50;
+}
+
+.status-red {
+    background-color: #e74c3c;
+}

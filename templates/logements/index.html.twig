@@ -5,7 +5,6 @@
 {% block body %}
 
 
-<div class="example-wrapper">
     <div style="display:flex; justify-content: space-between; align-items: center;">
         <h1>Index des logements :</h1>
         <a href="{{ path('logement_new') }}" class="btn-create">
@@ -38,21 +37,20 @@
                 <td>{{ logement.CodePostal }}</td>
                 <td>{{ logement.ville }}</td>
                 <td>
-                    <a href="{{ path('logement_edit', {id: logement.id}) }}" class="btn-create">
+                    <a href="{{ path('logement_edit', {id: logement.id}) }}" >
                     ✏️
                     </a>
                 </td>
                 <td>
-                    <form method="post" action="{{ path('logement_delete', {'id': logement.id}) }}" onsubmit="return confirm('Supprimer ce logement ?');" class="btn-create">
+                    <form method="post" action="{{ path('logement_delete', {'id': logement.id}) }}" onsubmit="return confirm('Supprimer ce logement ?');" >
                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ logement.id) }}">
-                        <button type="submit">🗑️</button>
+                        🗑️
                     </form>
                 </td>
             </tr>
         {% endfor %}
     </tbody>
 
-</div>
 <link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
 <link rel="stylesheet" href="{{ asset('css/btn.css') }}">
 {% endblock %}

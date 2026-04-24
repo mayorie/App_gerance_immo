@@ -33,7 +33,7 @@ class ProvisionsPourCharges
     {
         return $this->montant;
     }
-
+    
     public function setMontant(?float $montant): static
     {
         $this->montant = $montant;

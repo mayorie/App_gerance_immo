@@ -116,6 +116,9 @@ class Locataires
     #[ORM\OneToMany(targetEntity: PaiementsMensuels::class, mappedBy: 'LocatairesID', orphanRemoval: true)]
     private Collection $Paiements_mensuels;
 
+    #[ORM\Column(length: 32, nullable: true)]
+    private ?string $statut = null;
+
     public function __construct()
     {
         $this->Provisions_pour_charges = new ArrayCollection();
@@ -424,6 +427,23 @@ class Locataires
         return $this->Provisions_pour_charges;
     }
 
+    public function getLatestCharge()
+    {
+        $charges = $this->getProvisionsPourCharges();
+
+        if ($charges->isEmpty()) {
+            return null;
+        }
+
+        $charges = $charges->toArray();
+
+        usort($charges, fn($a, $b) =>
+            $b->getDateMES() <=> $a->getDateMES()
+        );
+
+        return $charges[0];
+    }
+
     public function addProvisionsPourCharge(ProvisionsPourCharges $provisionsPourCharge): static
     {
         if (!$this->Provisions_pour_charges->contains($provisionsPourCharge)) {
@@ -476,12 +496,46 @@ class Locataires
         return $this;
     }
 
+    public function getLatestLoyer()
+    {
+        $loyers = $this->getLoyersHC();
+
+        if ($loyers->isEmpty()) {
+            return null;
+        }
+
+        $loyers = $loyers->toArray();
+
+        usort($loyers, fn($a, $b) =>
+            $b->getDateMES() <=> $a->getDateMES()
+        );
+
+        return $loyers[0];
+    }
+
     /**
      * @return Collection<int, PacksServices>
      */
     public function getPacksServices(): Collection
     {
         return $this->Packs_services;
+    }
+
+    public function getLatestPackServices()
+    {
+        $packsservices = $this->getPacksServices();
+
+        if ($packsservices->isEmpty()) {
+            return null;
+        }
+
+        $packsservices = $packsservices->toArray();
+
+        usort($packsservices, fn($a, $b) =>
+            $b->getDateMES() <=> $a->getDateMES()
+        );
+
+        return $packsservices[0];
     }
 
     public function addPacksService(PacksServices $packsService): static
@@ -562,6 +616,18 @@ class Locataires
                 $paiementsMensuel->setLocatairesID(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(?string $statut): static
+    {
+        $this->statut = $statut;
 
         return $this;
     }

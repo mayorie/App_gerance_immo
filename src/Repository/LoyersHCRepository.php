@@ -15,7 +15,7 @@ class LoyersHCRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, LoyersHC::class);
     }
-
+    
     //    /**
     //     * @return LoyersHC[] Returns an array of LoyersHC objects
     //     */

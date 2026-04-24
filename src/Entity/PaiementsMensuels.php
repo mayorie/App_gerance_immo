@@ -42,6 +42,12 @@ class PaiementsMensuels
     #[ORM\JoinColumn(nullable: false)]
     private ?Locataires $LocatairesID = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $RegulPacksServices = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $RegulProvisionsPourCharges = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -151,6 +157,30 @@ class PaiementsMensuels
     public function setLocatairesID(?Locataires $LocatairesID): static
     {
         $this->LocatairesID = $LocatairesID;
+
+        return $this;
+    }
+
+    public function getRegulPacksServices(): ?float
+    {
+        return $this->RegulPacksServices;
+    }
+
+    public function setRegulPacksServices(?float $RegulPacksServices): static
+    {
+        $this->RegulPacksServices = $RegulPacksServices;
+
+        return $this;
+    }
+
+    public function getRegulProvisionsPourCharges(): ?float
+    {
+        return $this->RegulProvisionsPourCharges;
+    }
+
+    public function setRegulProvisionsPourCharges(?float $RegulProvisionsPourCharges): static
+    {
+        $this->RegulProvisionsPourCharges = $RegulProvisionsPourCharges;
 
         return $this;
     }

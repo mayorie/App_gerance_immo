@@ -47,6 +47,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'marcel.buche-gatignol@example.com',
                 'date_de_naissance' => new \DateTime('1990-05-14'),
                 'lieu_de_naissance' => 'Paris',
+                'Statut'=>'chomage',
                 'LogementsID' =>  $lune,
                 'debut_bail' => new \DateTime('2024-09-01'),
                 'montant_caution' => 850,
@@ -79,6 +80,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'jean.martin@example.com',
                 'date_de_naissance' => new \DateTime('1997-05-15'),
                 'lieu_de_naissance' => 'Brest',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $lune,
                 'debut_bail' => new \DateTime('2022-10-15'),
                 'montant_caution' => 850,
@@ -105,6 +107,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'camille.durand@example.com',
                 'date_de_naissance' => new \DateTime('1999-11-23'),
                 'lieu_de_naissance' => 'Lyon',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $lune,
                 'debut_bail' => new \DateTime('2022-03-15'),
                 'montant_caution' => 920,
@@ -131,6 +134,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'nina.leroy@example.com',
                 'date_de_naissance' => new \DateTime('2001-02-08'),
                 'lieu_de_naissance' => 'Tours',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $etoile,
                 'debut_bail' => new \DateTime('2025-01-10'),
                 'montant_caution' => 900,
@@ -157,6 +161,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'hugo.moreau@example.com',
                 'date_de_naissance' => new \DateTime('1996-09-30'),
                 'lieu_de_naissance' => 'Rouen',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $etoile,
                 'debut_bail' => new \DateTime('2023-06-01'),
                 'montant_caution' => 880,
@@ -183,6 +188,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'sarah.garnier@example.com',
                 'date_de_naissance' => new \DateTime('1998-04-12'),
                 'lieu_de_naissance' => 'Montpellier',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $etoile,
                 'debut_bail' => new \DateTime('2021-06-01'),
                 'montant_caution' => 910,
@@ -208,6 +214,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'amina.petit@example.com',
                 'date_de_naissance' => new \DateTime('2000-07-19'),
                 'lieu_de_naissance' => 'Reims',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $soleil_ch1,
                 'debut_bail' => new \DateTime('2024-09-15'),
                 'montant_caution' => 940,
@@ -234,6 +241,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'lucas.rousseau@example.com',
                 'date_de_naissance' => new \DateTime('1995-12-03'),
                 'lieu_de_naissance' => 'Dijon',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $soleil_ch1,
                 'debut_bail' => new \DateTime('2022-06-01'),
                 'montant_caution' => 870,
@@ -260,6 +268,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'chloe.bernard@example.com',
                 'date_de_naissance' => new \DateTime('1999-03-27'),
                 'lieu_de_naissance' => 'Angers',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $soleil_ch1,
                 'debut_bail' => new \DateTime('2021-01-15'),
                 'montant_caution' => 860,
@@ -285,6 +294,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'emma.legrand@example.com',
                 'date_de_naissance' => new \DateTime('1998-08-22'),
                 'lieu_de_naissance' => 'Limoges',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $soleil_ch2,
                 'debut_bail' => new \DateTime('2021-10-01'),
                 'montant_caution' => 875,
@@ -311,6 +321,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'yanis.marchand@example.com',
                 'date_de_naissance' => new \DateTime('1997-02-14'),
                 'lieu_de_naissance' => 'Clermont-Ferrand',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $soleil_ch2,
                 'debut_bail' => new \DateTime('2022-10-10'),
                 'montant_caution' => 910,
@@ -337,6 +348,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'noah.garcias@example.com',
                 'date_de_naissance' => new \DateTime('2001-11-09'),
                 'lieu_de_naissance' => 'Nice',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $soleil_ch2,
                 'debut_bail' => new \DateTime('2024-04-15'),
                 'montant_caution' => 960,
@@ -362,6 +374,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'ines.caron@example.com',
                 'date_de_naissance' => new \DateTime('2002-05-26'),
                 'lieu_de_naissance' => 'Strasbourg',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $soleil_ch3,
                 'debut_bail' => new \DateTime('2025-03-01'),
                 'montant_caution' => 970,
@@ -383,11 +396,12 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
             #Locataire ayant quitté la COLOC ronsard_60_ch1
             [
                 'nom' => 'MOREAU',
-                'prenom' => 'Hugo',
+                'prenom' => 'Hugos',
                 'tel' => '0655667788',
-                'mail' => 'hugo.moreau@example.com',
+                'mail' => 'hugos.moreau@example.com',
                 'date_de_naissance' => new \DateTime('1996-09-30'),
                 'lieu_de_naissance' => 'Rouen',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $ronsard_60_ch1,
                 'debut_bail' => new \DateTime('2023-06-01'),
                 'montant_caution' => 880,
@@ -413,6 +427,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'alexandre.picard@example.com',
                 'date_de_naissance' => new \DateTime('1993-12-07'),
                 'lieu_de_naissance' => 'Le Mans',
+                'Statut'=>'travailleur',
                 'LogementsID' =>  $ronsard_60_ch2,
                 'debut_bail' => new \DateTime('2021-09-01'),
                 'montant_caution' => 880,
@@ -439,6 +454,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'mail' => 'sophie.lambert@example.com',
                 'date_de_naissance' => new \DateTime('1994-03-18'),
                 'lieu_de_naissance' => 'Metz',
+                'Statut'=>'etudiant',
                 'LogementsID' =>  $ronsard_60_ch2,
                 'debut_bail' => new \DateTime('2022-05-01'),
                 'montant_caution' => 900,
@@ -468,6 +484,8 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
             $locataire->setMail($data['mail']);
             $locataire->setDateDeNaissance($data['date_de_naissance']);
             $locataire->setLieuDeNaissance($data['lieu_de_naissance']);
+            $locataire->setStatut($data['Statut']);
+
             $locataire->setDebutBail($data['debut_bail']);
             $locataire->setMontantCaution($data['montant_caution']);
             $locataire->setRestantDuTropPercu($data['restant_du_trop_percu']);
@@ -487,7 +505,12 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
             $locataire->setLogementsID($data['LogementsID']);
 
             $manager->persist($locataire);
+
+            $key = 'locataire_' . strtolower(str_replace(' ', '_', $data['mail']));
+            print($key . ',     '); ##locataire_marcel.buche-gatignol@example.com,     locataire_jean.martin@example.com,     locataire_camille.durand@example.com,     locataire_nina.leroy@example.com,     locataire_hugo.moreau@example.com,     locataire_sarah.garnier@example.com,     locataire_amina.petit@example.com,     locataire_lucas.rousseau@example.com,     locataire_chloe.bernard@example.com,     locataire_emma.legrand@example.com,     locataire_yanis.marchand@example.com,     locataire_noah.garcias@example.com,     locataire_ines.caron@example.com,     locataire_hugos.moreau@example.com,     locataire_alexandre.picard@example.com,     locataire_sophie.lambert@example.com, 
+            $this->addReference($key, $locataire);
         }
+        print("\n");
 
         $manager->flush();
     }

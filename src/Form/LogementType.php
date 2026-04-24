@@ -26,6 +26,7 @@ class LogementType extends AbstractType
             ->add('commentaire', TextareaType::class, [
                 'mapped' => false,
                 'required' => false,
+                'data' => $options['commentaire_data'],
             ])
         ;
     }
@@ -34,6 +35,7 @@ class LogementType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Logements::class,
+            'commentaire_data' => null,
         ]);
     }
 }

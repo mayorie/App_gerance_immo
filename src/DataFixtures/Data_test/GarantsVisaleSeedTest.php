@@ -48,16 +48,57 @@ class GarantsVisaleSeedTest extends Fixture implements FixtureGroupInterface, De
 
         $datas = [
             [
-            'texte' => 'Dupont',
-            'date_anniversaire' => new \DateTime('1990-05-14'),
             'locataire' => $BucheGatignol,
+            'texte' => 'A10122003134',
+            'date_anniversaire' => new \DateTime('2024-09-01'),
             ],
             [
-            'texte' => 'Dupont',
-            'date_anniversaire' => new \DateTime('1990-05-14'),
-            'locataire' => $BucheGatignol,
+            'locataire' => $Martin,
+            'texte' => 'A10122003133',
+            'date_anniversaire' => new \DateTime('2022-10-15'),
+            ],
+            [
+            'locataire' => $Durand,
+            'texte' => 'A10122003132',
+            'date_anniversaire' => new \DateTime('2022-03-15'),
+            ],
+            [
+            'locataire' => $Leroy,
+            'texte' => 'A10122003135',
+            'date_anniversaire' => new \DateTime('2025-01-10'),
+            ],
+            [
+            'locataire' => $Moreau,
+            'texte' => 'A10122003136',
+            'date_anniversaire' => new \DateTime('2023-06-01'),
+            ],
+            [
+            'locataire' => $Garnier,
+            'texte' => 'A10122003137',
+            'date_anniversaire' => new \DateTime('2021-06-01'),
+            ],
+            [
+            'locataire' => $Petit,
+            'texte' => 'A10122003138',
+            'date_anniversaire' => new \DateTime('2024-09-15'),
+            ],
+            [
+            'locataire' => $Rousseau,
+            'texte' => 'A10122003139',
+            'date_anniversaire' => new \DateTime('2022-06-01'),
+            ],
+            [
+            'locataire' => $Bernard,
+            'texte' => 'A10122003140',
+            'date_anniversaire' => new \DateTime('2021-01-15'),
+            ],
+            [
+            'locataire' => $Legrand,
+            'texte' => 'A10122003141',
+            'date_anniversaire' => new \DateTime('2021-10-01'),
             ],
         ];
+
 
         foreach ($datas as $donnee) {
 

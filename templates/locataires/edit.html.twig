@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}modif locataires{% endblock %}
+
+{% block body %}
+
+<h1>Modifier locataire</h1>
+
+{{ form_start(form) }}
+    {{ form_row(form.nom) }}
+    {{ form_row(form.prenom) }}
+    {{ form_row(form.tel) }}
+    {{ form_row(form.mail) }}
+    {{ form_row(form.date_de_naissance) }}
+    {{ form_row(form.lieu_de_naissance) }}
+    {{ form_row(form.statut) }}
+    {{ form_row(form.num_comptable) }}
+    {{ form_row(form.debut_bail) }}
+    {{ form_row(form.montant_caution) }}
+
+    <div class="section-box">
+        <h2>Loyer HC</h2>
+        {{ form_row(form.loyer_montant) }}
+        {{ form_row(form.loyer_date) }}<p>date vide = date de début de bail</p>
+    </div>
+
+    <div class="section-box">
+        <h2>Pack Services</h2>
+        {{ form_row(form.PS_montant) }}
+        {{ form_row(form.PS_date) }}<p>date vide = date de début de bail</p>
+    </div>
+
+    <div class="section-box">
+        <h2>Charges</h2>
+        {{ form_row(form.charge_montant) }}
+        {{ form_row(form.charge_date) }}<p>date vide = date de début de bail</p>
+    </div>
+
+{% if form.garantsPhysiques|length > 0 %}
+    <div class="section-box">
+        <h3>Garants physiques</h3>
+
+        {% for garant in form.garantsPhysiques %}
+            <div class="section-innerbox">
+                <div class="garant-item">
+                    {{ form_row(garant.nom) }}
+                    {{ form_row(garant.prenom) }}
+                    {{ form_row(garant.tel) }}
+                    {{ form_row(garant.mail) }}
+                    {{ form_row(garant.adresse) }}
+                    {{ form_row(garant.code_postal) }}
+                    {{ form_row(garant.ville) }}
+                    {{ form_row(garant.date_de_naissance) }}
+                    {{ form_row(garant.lieu_de_naissance) }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if form.garantsVisale|length > 0 %}
+    <div class="section-box">
+        <h3>Garants Visale</h3>
+
+        {% for garant in form.garantsVisale %}
+            <div class="section-box">
+                <div class="garant-item">
+                    {{ form_row(garant.texte) }}
+                    {{ form_row(garant.date_anniversaire) }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+    {{ form_row(form.loyer_TCC) }}
+    {{ form_row(form.restant_du_trop_percu) }}
+    {{ form_row(form.date_EDL_entree) }}
+    {{ form_row(form.preavis_recu_le) }}
+    {{ form_row(form.debut_du_preavis) }}
+    {{ form_row(form.date_EDL_sortie) }}
+    {{ form_row(form.date_de_sortie) }}
+    {{ form_row(form.montant_solde_de_tout_compte) }}
+    {{ form_row(form.date_solde_de_tout_compte) }}
+    {{ form_row(form.mode_paiement_solde_de_tout_compte) }}
+    {{ form_row(form.banque_solde_de_tout_compte) }}
+    {{ form_row(form.cloture_contrat_visale) }}
+    {{ form_row(form.a_quitte_le_logement) }}
+    {{ form_row(form.LogementsID) }}
+    {{ form_row(form.commentaire) }}
+
+    <button type="submit">💾 Enregistrer</button>
+
+{{ form_end(form) }}
+<link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
+
+{% endblock %}

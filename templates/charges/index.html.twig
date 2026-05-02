@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}index charges{% endblock %}
+
+{% block body %}
+
+
+<div style="display:flex; justify-content: space-between; align-items: center;">
+        <h1>Liste des charges</h1>
+        <a href="{{ path('charges_batch') }}" class="btn-create">
+            ➕ Créer des charges
+        </a>
+</div>
+
+<form method="get" action="{{ path('charges_index') }}">
+    <label for="locataire">Filtrer par locataire :</label>
+
+    <select name="locataireId" id="locataire">
+        <option value="">-- Tous les locataires --</option>
+
+        {% for l in locataires %}
+            <option value="{{ l.id }}"
+                {% if locataire and locataire.id == l.id %}selected{% endif %}>
+                {{ l.nom }} {{ l.prenom }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Filtrer</button>
+</form>
+
+<hr>
+
+{% if locataire %}
+    <h2>Charges de {{ locataire.nom }} {{ locataire.prenom }}</h2>
+{% else %}
+    <h2>Toutes les charges</h2>
+{% endif %}
+
+{% if charges is empty %}
+    <p>Aucune charge trouvée. (c'est pas normal)</p>
+{% else %}
+
+<table style="border-collapse: separate; border-spacing: 10px; width: 100%;">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Montant</th>
+            <th>Date</th>
+            <th>Locataire</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for charge in charges %}
+            <tr>
+                <td>{{ charge.id }}</td>
+                <td>{{ charge.montant }} €</td>
+                <td>{{ charge.dateMES ? charge.dateMES|date('d/m/Y') : '-' }}</td>
+                <td>{{ charge.LocatairesID.nom }} {{ charge.LocatairesID.prenom }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endif %}
+
+<link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
+<link rel="stylesheet" href="{{ asset('css/btn.css') }}">
+{% endblock %}

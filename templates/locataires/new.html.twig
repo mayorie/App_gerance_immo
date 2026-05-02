@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello LogementsController!{% endblock %}
+{% block title %}ajout locataires{% endblock %}
 
 {% block body %}
 
@@ -16,6 +16,7 @@
     {{ form_row(form.lieu_de_naissance) }}
     {{ form_row(form.statut) }}
     {{ form_row(form.LogementsID) }}
+    {{ form_row(form.num_comptable) }}
     {{ form_row(form.debut_bail) }}
     {{ form_row(form.montant_caution) }}
 
@@ -25,14 +26,12 @@
 
     <h2>Charge</h2>
     {{ form_row(form.charge_montant) }}
-    {{ form_row(form.charge_date) }}
+    {{ form_row(form.charge_date) }}<p>date vide = date de début de bail</p>
 
     <h2>Packs Services</h2>
     {{ form_row(form.PS_montant) }}
-    {{ form_row(form.PS_date) }}
+    {{ form_row(form.PS_date) }}<p>date vide = date de début de bail</p>
 
-    {{ form_row(form.loyer_TCC) }}
-    {{ form_row(form.restant_du_trop_percu) }}
     {{ form_row(form.date_EDL_entree) }}
     {{ form_row(form.preavis_recu_le) }}
     {{ form_row(form.debut_du_preavis) }}
@@ -41,9 +40,76 @@
     {{ form_row(form.date_solde_de_tout_compte) }}
     {{ form_row(form.mode_paiement_solde_de_tout_compte) }}
     {{ form_row(form.banque_solde_de_tout_compte) }}
+
+    <div class="section-header">
+    <h2>Garant :</h2>
+
+    <button type="button" onclick="addGarantPhysique()">
+        ➕ Physique
+    </button>
+
+    <button type="button" onclick="addGarantVisale()">
+        ➕ Visale
+    </button>
+    </div>
+
+    <div id="garants-physiques-container"
+        data-prototype="{{ form_widget(form.garantsPhysiques.vars.prototype)|e('html_attr') }}">
+    </div>
+    <div id="garants-visale-container"
+        data-prototype="{{ form_widget(form.garantsVisale.vars.prototype)|e('html_attr') }}">
+    </div>
+
+
+
     {{ form_row(form.commentaire) }}
 
     <button type="submit">créer</button>
-{{ form_end(form) }}
+{{ form_end(form, { render_rest: false }) }}
 <link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
+
+<script>
+function addGarantPhysique() {
+    const visaleContainer = document.getElementById('garants-visale-container');
+    const physiqueContainer = document.getElementById('garants-physiques-container');
+    visaleContainer.innerHTML = '';
+
+    const prototype = physiqueContainer.dataset.prototype;
+
+    const index = physiqueContainer.children.length;
+
+    const newForm = prototype.replace(/__name__/g, index);
+
+    const div = document.createElement('div');
+    div.classList.add('garant-item');
+    div.innerHTML = newForm;
+
+    // bouton suppression (ce que tu as demandé)
+    div.innerHTML += '<button type="button" onclick="this.parentNode.remove()">❌</button>';
+
+
+    physiqueContainer.appendChild(div);
+}
+
+function addGarantVisale() {
+    const visaleContainer = document.getElementById('garants-visale-container');
+    const physiqueContainer = document.getElementById('garants-physiques-container');
+
+    physiqueContainer.innerHTML = '';
+    if (visaleContainer.children.length > 0) return;
+
+    const prototype = visaleContainer.dataset.prototype;
+    const index = visaleContainer.children.length;
+
+    const newForm = prototype.replace(/__name__/g, index);
+
+    const div = document.createElement('div');
+    div.classList.add('garant-item');
+    div.innerHTML = newForm;
+
+    div.innerHTML += '<button type="button" onclick="this.parentNode.remove()">❌</button>';
+
+    visaleContainer.appendChild(div);
+}
+</script>
 {% endblock %}

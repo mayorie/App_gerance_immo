@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello LocatairesController!{% endblock %}
+{% block title %}index locataires{% endblock %}
 
 {% block body %}
 
@@ -16,7 +16,7 @@
     <table style="border-collapse: separate; border-spacing: 10px; width: 100%;">
     <thead>
         <tr>
-            <th>PRESENT<th>
+            <th>PRESENT</th>
             <th>NOM</th>
             <th>PRENOM</th>
             <th>TEL</th>
@@ -29,6 +29,7 @@
             <th>PACK S.</th>
             <th>RESTANT DU</th>
             <th>FIN BAIL</th>
+            <th>NUM COMPTA</th>
             <th>MODIF</th>
             <th>SUPPR</th>
         </tr>
@@ -45,6 +46,7 @@
                 <td>{{ locataire.tel }}</td>
                 <td>{{ locataire.mail }}</td>
                 <td>{{ locataire.LogementsID.idAppart }}</td>
+                
                 <td>{{ locataire.debutBail|date('d/m/Y') }}</td>
                 <td>{{ locataire.montantCaution }}</td>
                 <td>{{ locataire.getLatestLoyer.montant }}</td>
@@ -52,8 +54,9 @@
                 <td>{{ locataire.getLatestPackServices.montant }}</td>
                 <td>{{ locataire.restantDuTropPercu }}</td>
                 <td>{{ locataire.dateDeSortie|date('d/m/Y') }}</td>
+                <td>{{ locataire.numComptable }}</td>
                 <td>
-                    <a href="{{ path('logement_edit', {id: locataire.id}) }}" >
+                    <a href="{{ path('locataires_edit', {id: locataire.id}) }}" >
                     ✏️
                     </a>
                 </td>

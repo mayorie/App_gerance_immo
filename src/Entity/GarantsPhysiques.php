@@ -21,7 +21,7 @@ class GarantsPhysiques
     private ?string $prenom = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $tel = null;
+    private ?string $tel = null;
 
     #[ORM\Column(length: 128, nullable: true)]
     private ?string $mail = null;
@@ -30,7 +30,7 @@ class GarantsPhysiques
     private ?string $adresse = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $code_postal = null;
+    private ?string $code_postal = null;
 
     #[ORM\Column(length: 32, nullable: true)]
     private ?string $ville = null;
@@ -74,12 +74,12 @@ class GarantsPhysiques
         return $this;
     }
 
-    public function getTel(): ?int
+    public function getTel(): ?string
     {
         return $this->tel;
     }
 
-    public function setTel(?int $tel): static
+    public function setTel(?string $tel): static
     {
         $this->tel = $tel;
 
@@ -110,12 +110,12 @@ class GarantsPhysiques
         return $this;
     }
 
-    public function getCodePostal(): ?int
+    public function getCodePostal(): ?string
     {
         return $this->code_postal;
     }
 
-    public function setCodePostal(?int $code_postal): static
+    public function setCodePostal(?string $code_postal): static
     {
         $this->code_postal = $code_postal;
 

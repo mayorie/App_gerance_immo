@@ -48,7 +48,7 @@ class Locataires
     private ?float $loyer_TCC = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $restant_du_trop_percu = null;
+    private ?float $restant_du_trop_percu = 0;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $date_EDL_entree = null;
@@ -118,6 +118,9 @@ class Locataires
 
     #[ORM\Column(length: 32, nullable: true)]
     private ?string $statut = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $num_comptable = null;
 
     public function __construct()
     {
@@ -628,6 +631,18 @@ class Locataires
     public function setStatut(?string $statut): static
     {
         $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getNumComptable(): ?int
+    {
+        return $this->num_comptable;
+    }
+
+    public function setNumComptable(?int $num_comptable): static
+    {
+        $this->num_comptable = $num_comptable;
 
         return $this;
     }

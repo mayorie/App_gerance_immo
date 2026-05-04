@@ -61,9 +61,9 @@
                     </a>
                 </td>
                 <td>
-                    <form method="post" action="{{ path('logement_delete', {'id': locataire.id}) }}" onsubmit="return confirm('Supprimer ce locataire ?');" >
+                    <form method="post" action="{{ path('locataire_delete', {'id': locataire.id}) }}" onsubmit="return confirm('Supprimer ce locataire ?');" >
                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ locataire.id) }}">
-                        🗑️
+                        <button type="submit">🗑️</button>
                     </form>
                 </td>
             </tr>

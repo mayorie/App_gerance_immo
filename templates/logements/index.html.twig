@@ -44,7 +44,7 @@
                 <td>
                     <form method="post" action="{{ path('logement_delete', {'id': logement.id}) }}" onsubmit="return confirm('Supprimer ce logement ?');" >
                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ logement.id) }}">
-                        🗑️
+                        <button type="submit">🗑️</button>
                     </form>
                 </td>
             </tr>

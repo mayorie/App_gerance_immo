@@ -36,6 +36,19 @@ td a:hover {
     background-color: rgba(0, 0, 0, 0.08);
 }
 
+td button {
+    background: none;
+    border: none;
+    padding: 4px 6px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+td button:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
 /* Optionnel : colonnes actions centrées */
 td:last-child,
 td:nth-last-child(2) {

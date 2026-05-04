@@ -227,4 +227,25 @@ final class LocatairesController extends AbstractController
             'locataire' => $locataire
         ]);
     }
+
+    #[Route('/locataires/delete/{id}', name: 'locataire_delete', methods: ['POST'])]
+    public function delete(
+        Request $request,
+        Locataires $locataire,
+        EntityManagerInterface $em
+    ): Response {
+        // 🔐 Vérification du token CSRF
+        if ($this->isCsrfTokenValid('delete' . $locataire->getId(), $request->request->get('_token'))) {
+
+            // 🧹 Suppression du locataire
+            $em->remove($locataire);
+            $em->flush();
+
+            $this->addFlash('success', 'Locataire supprimé avec succès');
+        } else {
+            $this->addFlash('error', 'Token CSRF invalide');
+        }
+
+        return $this->redirectToRoute('app_locataires');
+    }
 }

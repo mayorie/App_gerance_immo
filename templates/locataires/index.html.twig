@@ -53,7 +53,13 @@
                 <td>{{ locataire.getLatestCharge.montant }}</td>
                 <td>{{ locataire.getLatestPackServices.montant }}</td>
                 <td>{{ locataire.restantDuTropPercu }}</td>
-                <td>{{ locataire.dateDeSortie|date('d/m/Y') }}</td>
+                <td>
+                    {% if locataire.dateDeSortie %}
+                        {{ locataire.dateDeSortie|date('d/m/Y') }}
+                    {% else %}
+                        __/__/____
+                    {% endif %}
+                </td>
                 <td>{{ locataire.numComptable }}</td>
                 <td>
                     <a href="{{ path('locataires_edit', {id: locataire.id}) }}" >

@@ -37,6 +37,8 @@ final class LocatairesController extends AbstractController
 
         $form = $this->createForm(LocataireType::class, $locataire);
         $form->handleRequest($request);
+
+        $debutBail = $form->get('debut_bail')->getData();
     
         if ($form->isSubmitted() && $form->isValid()) {
 

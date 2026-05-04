@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class LocataireEditType extends AbstractType
 {
@@ -25,7 +26,15 @@ class LocataireEditType extends AbstractType
             ->add('mail')
             ->add('date_de_naissance')
             ->add('lieu_de_naissance')
-            ->add('statut')
+            ->add('statut', ChoiceType::class, [
+                'choices' => [
+                    'Étudiant' => 'Etudiant',
+                    'Salarié' => 'Salarie',
+                    'Chômeur' => 'Chomeur',
+                    'Autre' => 'Autre',
+                ],
+                'placeholder' => 'Choisir un statut',
+            ])            
             ->add('num_comptable')
             ->add('debut_bail')
             ->add('montant_caution')

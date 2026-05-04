@@ -105,11 +105,19 @@ final class LocatairesController extends AbstractController
             foreach ($garantsVisaleData as $garantVisale) {
 
                 $garant = new Garants();
-                $garant->setType('VIS'); // 🔥 VISALE
+                $garant->setType('VIS');
                 $garant->setLocatairesID($locataire);
-
                 $garant->setGarantsVisale($garantVisale);
+
                 $garantVisale->setGarantsID($garant);
+
+                $dateVisale = $garantVisale->getDateAnniversaire(); 
+
+                if (!$dateVisale) {
+                    $dateVisale = $debutBail;
+                }
+
+                $garantVisale->setDateAnniversaire($dateVisale); // adapte le nom du setter si besoin
 
                 $em->persist($garant);
                 $em->persist($garantVisale);
@@ -178,9 +186,6 @@ final class LocatairesController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            dd($form->isValid(), $form->getErrors(true));
-        }
         if ($form->isSubmitted() && $form->isValid()) {
 
             // COMMENTAIRE

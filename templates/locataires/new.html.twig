@@ -8,6 +8,8 @@
 
 {{ form_start(form) }}
 
+{{ form_errors(form) }}
+
     {{ form_row(form.nom) }}
     {{ form_row(form.prenom) }}
     {{ form_row(form.tel) }}
@@ -33,29 +35,23 @@
     {{ form_row(form.PS_date) }}<p>date vide = date de début de bail</p>
 
     {{ form_row(form.date_EDL_entree) }}
-    {{ form_row(form.preavis_recu_le) }}
-    {{ form_row(form.debut_du_preavis) }}
-    {{ form_row(form.date_EDL_sortie) }}
-    {{ form_row(form.montant_solde_de_tout_compte) }}
-    {{ form_row(form.date_solde_de_tout_compte) }}
-    {{ form_row(form.mode_paiement_solde_de_tout_compte) }}
-    {{ form_row(form.banque_solde_de_tout_compte) }}
 
     <div class="section-header">
-    <h2>Garant :</h2>
+        <h2>Garant :</h2>
 
-    <button type="button" onclick="addGarantPhysique()">
-        ➕ Physique
-    </button>
+        <button type="button" onclick="addGarantPhysique()">
+            ➕ Physique
+        </button>
 
-    <button type="button" onclick="addGarantVisale()">
-        ➕ Visale
-    </button>
+        <button type="button" onclick="addGarantVisale()">
+            ➕ Visale
+        </button>
     </div>
 
     <div id="garants-physiques-container"
         data-prototype="{{ form_widget(form.garantsPhysiques.vars.prototype)|e('html_attr') }}">
     </div>
+    
     <div id="garants-visale-container"
         data-prototype="{{ form_widget(form.garantsVisale.vars.prototype)|e('html_attr') }}">
     </div>
@@ -64,7 +60,10 @@
 
     {{ form_row(form.commentaire) }}
 
-    <button type="submit">créer</button>
+    {{ form_row(form._token) }}
+    <button type="submit">Créer</button>
+    </form>
+    
 {{ form_end(form, { render_rest: false }) }}
 <link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
 

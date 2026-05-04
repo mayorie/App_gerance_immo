@@ -5,10 +5,10 @@
 {% block body %}
 
 
-<div style="display:flex; justify-content: space-between; align-items: center;">
+<div class="div-titre">
         <h1>Liste des charges</h1>
         <a href="{{ path('charges_batch') }}" class="btn-create">
-            ➕ Créer des charges
+            ➕ Créer révisions des charges
         </a>
 </div>
 
@@ -34,7 +34,7 @@
 {% if locataire %}
     <h2>Charges de {{ locataire.nom }} {{ locataire.prenom }}</h2>
 {% else %}
-    <h2>Toutes les charges</h2>
+    <h2>Charges & Révisions des charges</h2>
 {% endif %}
 
 {% if charges is empty %}
@@ -65,5 +65,4 @@
 {% endif %}
 
 <link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
-<link rel="stylesheet" href="{{ asset('css/btn.css') }}">
 {% endblock %}

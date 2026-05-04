@@ -32,14 +32,7 @@ class LocataireType extends AbstractType
             ->add('debut_bail')
             ->add('montant_caution')
             ->add('date_EDL_entree')
-            ->add('preavis_recu_le')
-            ->add('debut_du_preavis')
-            ->add('date_EDL_sortie')
             ->add('num_comptable')
-            ->add('montant_solde_de_tout_compte')
-            ->add('date_solde_de_tout_compte')
-            ->add('mode_paiement_solde_de_tout_compte')
-            ->add('banque_solde_de_tout_compte')
             ->add('LogementsID', EntityType::class, [
                 'class' => Logements::class,
                 'choice_label' => 'idAppart',

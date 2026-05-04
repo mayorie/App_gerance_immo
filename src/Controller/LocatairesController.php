@@ -176,6 +176,9 @@ final class LocatairesController extends AbstractController
 
         $form->handleRequest($request);
 
+        if ($form->isSubmitted()) {
+            dd($form->isValid(), $form->getErrors(true));
+        }
         if ($form->isSubmitted() && $form->isValid()) {
 
             // COMMENTAIRE

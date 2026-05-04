@@ -5,7 +5,7 @@
 {% block body %}
 
 
-    <div style="display:flex; justify-content: space-between; align-items: center;">
+    <div class="div-titre">
         <h1>Index des logements :</h1>
         <a href="{{ path('logement_new') }}" class="btn-create">
             ➕ Créer un logement
@@ -42,7 +42,7 @@
                     </a>
                 </td>
                 <td>
-                    <form method="post" action="{{ path('logement_delete', {'id': logement.id}) }}" onsubmit="return confirm('Supprimer ce logement ?');" >
+                    <form method="post" action="{{ path('logement_delete', {'id': logement.id}) }}" onsubmit="return confirm('Supprimer ce logement ?\n(Cela supprimera tout les locataires et ce qui leur est affilié.)');" >
                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ logement.id) }}">
                         <button type="submit">🗑️</button>
                     </form>
@@ -52,5 +52,4 @@
     </tbody>
 
 <link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
-<link rel="stylesheet" href="{{ asset('css/btn.css') }}">
 {% endblock %}

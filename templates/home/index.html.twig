@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+
+<a href="{{ path('app_locataires') }}">
+    📝 index des locataires
+</a>
+</br>
+<a href="{{ path('app_logements') }}">
+    📝 index des logements
+</a>
+</br>
+<a href="{{ path('app_charges') }}">
+    📝 index des charges
+</a>
+</br>
+{% endblock %}

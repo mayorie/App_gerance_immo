@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class ChargesController extends AbstractController
 {
-    #[Route('/charges', name: 'charges_index')]
+    #[Route('/charges', name: 'app_charges')]
     public function index(
         Request $request,
         ProvisionsPourChargesRepository $repo,
@@ -74,7 +74,7 @@ final class ChargesController extends AbstractController
 
             $em->flush();
 
-            return $this->redirectToRoute('charges_index');
+            return $this->redirectToRoute('app_charges');
         }
 
         return $this->render('charges/batch.html.twig', [

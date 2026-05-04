@@ -87,6 +87,19 @@ td:nth-last-child(2) {
     padding-left: 50px;
 }
 
+.btn-retour {
+    background-color: #ff3333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-retour:hover {
+    background-color: #b32323;
+}
+
 /* Bouton créer */
 .btn-create {
     background-color: #2ecc71;
@@ -100,3 +113,4 @@ td:nth-last-child(2) {
 .btn-create:hover {
     background-color: #27ae60;
 }
+

@@ -6,13 +6,12 @@
 
 
 <div class="div-titre">
+        <a href="{{ path('app_home') }}" class="btn-retour">retour</a>
         <h1>Liste des charges</h1>
-        <a href="{{ path('charges_batch') }}" class="btn-create">
-            ➕ Créer révisions des charges
-        </a>
+        <a href="{{ path('charges_batch') }}" class="btn-create">➕ Créer révisions des charges</a>
 </div>
 
-<form method="get" action="{{ path('charges_index') }}">
+<form method="get" action="{{ path('app_charges') }}">
     <label for="locataire">Filtrer par locataire :</label>
 
     <select name="locataireId" id="locataire">

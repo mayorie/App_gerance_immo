@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<div class="div-titre">
+        <a href="{{ path('app_packs_services') }}" class="btn-retour">retour</a>
+        <h1>Modifier un pack service</h1>
+</div>
+
+<form method="post">
+
+    <div>
+        <label>Montant</label>
+        <input type="number" name="montant" value="{{ pack.montant }}">
+    </div>
+
+    <div>
+        <label>Date</label>
+        <input type="date" name="date" value="{{ pack.dateMES ? pack.dateMES|date('Y-m-d') : '' }}">
+    </div>
+
+    <button type="submit">Enregistrer</button>
+
+</form>
+
+<link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+
+{% endblock %}

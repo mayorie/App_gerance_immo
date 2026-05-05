@@ -7,11 +7,11 @@
 
 <div class="div-titre">
         <a href="{{ path('app_home') }}" class="btn-retour">retour</a>
-        <h1>Liste des charges</h1>
-        <a href="{{ path('charges_batch') }}" class="btn-create">➕ Créer révisions des charges</a>
+        <h1>Liste des packs services</h1>
+        <a href="{{ path('packs_services_batch') }}" class="btn-create">➕ Créer révisions des packs services</a>
 </div>
 
-<form method="get" action="{{ path('app_charges') }}">
+<form method="get" action="{{ path('app_packs_services') }}">
     <label for="locataire">Filtrer par locataire :</label>
 
     <select name="locataireId" id="locataire">
@@ -32,13 +32,13 @@
 <hr>
 
 {% if locataire %}
-    <h2>Charges de {{ locataire.nom }} {{ locataire.prenom }}</h2>
+    <h2>Packs services du locataire : {{ locataire.nom }} {{ locataire.prenom }}</h2>
 {% else %}
-    <h2>Charges & Révisions des charges</h2>
+    <h2>Packs services & Révisions des Packs services</h2>
 {% endif %}
 
-{% if charges is empty %}
-    <p>Aucune charge trouvée. (c'est pas normal)</p>
+{% if packsServices is empty %}
+    <p>Aucun packs services trouvée. (c'est pas normal)</p>
 {% else %}
 
 <table style="border-collapse: separate; border-spacing: 10px; width: 100%;">
@@ -53,20 +53,20 @@
         </tr>
     </thead>
     <tbody>
-        {% for charge in charges %}
+        {% for packService in packsServices %}
             <tr>
-                <td>{{ charge.LocatairesID.nom }} {{ charge.LocatairesID.prenom }}</td>
-                <td>{{ charge.LocatairesID.LogementsID.idAppart }}</td>
-                <td>{{ charge.montant }} €</td>
-                <td>{{ charge.dateMES ? charge.dateMES|date('d/m/Y') : '-' }}</td>
+                <td>{{ packService.LocatairesID.nom }} {{ packService.LocatairesID.prenom }}</td>
+                <td>{{ packService.LocatairesID.LogementsID.idAppart }}</td>
+                <td>{{ packService.montant }} €</td>
+                <td>{{ packService.dateMES ? packService.dateMES|date('d/m/Y') : '-' }}</td>
                 <td>
-                    <a href="{{ path('charges_edit', {'id': charge.id}) }}" >
+                    <a href="{{ path('packs_services_edit', {'id': packService.id}) }}" >
                     ✏️
                     </a>
                 </td>
                 <td>
-                    <form method="post" action="{{ path('charges_delete', {'id': charge.id}) }}" onsubmit="return confirm('Supprimer cette charge ?');" >
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ charge.id) }}">
+                    <form method="post" action="{{ path('packs_services_delete', {'id': packService.id}) }}" onsubmit="return confirm('Supprimer cette packService ?');" >
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ packService.id) }}">
                         <button type="submit">🗑️</button>
                     </form>
                 </td>

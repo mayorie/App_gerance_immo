@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajout des packs services{% endblock %}
+
+{% block body %}
+
+<div class="div-titre">
+    <a href="{{ path('app_packs_services') }}" class="btn-retour">retour</a>
+    <h1>Ajouter les packs services</h1>
+</div>
+
+<form method="post">
+
+<table class="table-locataires">
+    <thead>
+        <tr>
+            <th>Locataire</th>
+            <th>Logement</th>
+            <th>Montant (€)</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for locataire in locataires %}
+            <tr>
+                <td>{{ locataire.nom }} {{ locataire.prenom }}</td>
+
+                <td>
+                    {{ locataire.LogementsID 
+                        ? locataire.LogementsID.idAppart 
+                        : '-' 
+                    }}
+                </td>
+
+                <td>
+                    <input type="number"
+                           name="montant[{{ locataire.id }}]"
+                           step="0.01"
+                           class="input">
+                </td>
+
+                <td>
+                    <input type="date"
+                           name="date[{{ locataire.id }}]"
+                           class="input">
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<button type="submit" class="btn-create">
+    💾 Enregistrer tous les packs services
+</button>
+
+</form>
+
+<link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+{% endblock %}

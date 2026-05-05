@@ -110,16 +110,29 @@ final class ChargesController extends AbstractController
     }
 
     #[Route('/charges/delete/{id}', name: 'charges_delete', methods: ['POST'])]
-    public function delete(
-        Request $request,
-        ProvisionsPourCharges $charge,
-        EntityManagerInterface $em
-    ): Response {
+    public function delete(Request $request, ProvisionsPourCharges $charge, EntityManagerInterface $em): Response {
 
-        if ($this->isCsrfTokenValid('delete'.$charge->getId(), $request->request->get('_token'))) {
-            $em->remove($charge);
-            $em->flush();
+        if (!$this->isCsrfTokenValid('delete'.$charge->getId(), $request->request->get('_token'))) {
+            return $this->redirectToRoute('app_charges');
         }
+
+        $locataire = $charge->getLocatairesID();
+
+        // compter les loyers du locataire
+        $nbCharges = $em->getRepository(ProvisionsPourCharges::class)->count([
+            'LocatairesID' => $locataire
+        ]);
+
+        // si c'est le dernier → on bloque
+        if ($nbCharges <= 1) {
+            $this->addFlash('error', 'Impossible de supprimer : ce locataire doit avoir au moins une charge.');
+            return $this->redirectToRoute('app_loyers');
+        }
+
+        $em->remove($charge);
+        $em->flush();
+
+        $this->addFlash('success', 'Charge supprimé avec succès.');
 
         return $this->redirectToRoute('app_charges');
     }

@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Index loyers{% endblock %}
+
+{% block body %}
+
+<div class="div-titre">
+    <a href="{{ path('app_home') }}" class="btn-retour">retour</a>
+    <h1>Liste des loyers</h1>
+    <a href="{{ path('loyers_batch') }}" class="btn-create">➕ Créer révisions de loyers</a>
+</div>
+
+<form method="get" action="{{ path('app_loyers') }}">
+    <label for="locataire">Filtrer par locataire :</label>
+
+    <select name="locataireId" id="locataire">
+        <option value="">-- Tous les locataires --</option>
+
+        {% for l in locataires %}
+            <option value="{{ l.id }}"
+                {% if locataire and locataire.id == l.id %}selected{% endif %}>
+                {{ l.nom }} {{ l.prenom }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Filtrer</button>
+</form>
+
+<hr>
+
+{% if locataire %}
+    <h2>Loyers de {{ locataire.nom }} {{ locataire.prenom }}</h2>
+{% else %}
+    <h2>Tous les loyers</h2>
+{% endif %}
+
+{% if loyers is empty %}
+    <p>Aucun loyer trouvé.</p>
+{% else %}
+
+<table style="border-collapse: separate; border-spacing: 10px; width: 100%;">
+    <thead>
+        <tr>
+            <th>Locataire</th>
+            <th>Logement</th>
+            <th>Montant</th>
+            <th>Date</th>
+            <th>MODIF</th>
+            <th>SUPPR</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for loyer in loyers %}
+            <tr>
+                <td>
+                    {{ loyer.LocatairesID.nom }} 
+                    {{ loyer.LocatairesID.prenom }}
+                </td>
+                <td>{{ loyer.LocatairesID.LogementsID.idAppart }}</td>
+                <td>{{ loyer.montant }} €</td>
+                <td>{{ loyer.dateMES ? loyer.dateMES|date('d/m/Y') : '-' }}</td>
+                <td>
+                    <a href="{{ path('loyers_edit', {'id': loyer.id}) }}" >
+                    ✏️
+                    </a>
+                </td>
+                <td>
+                    <form method="post" action="{{ path('loyers_delete', {'id': loyer.id}) }}" onsubmit="return confirm('Supprimer ce loyer ?');" >
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ loyer.id) }}">
+                        <button type="submit">🗑️</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <script>
+                alert("{{ message }}");
+            </script>
+        {% endfor %}
+
+        {% for message in app.flashes('success') %}
+            <script>
+                alert("{{ message }}");
+            </script>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endif %}
+
+<link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+{% endblock %}

@@ -1,0 +1,26 @@
+.div-titre {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.div-titre h1 {
+    margin: 0;
+    font-size: 22px;
+    color: #222;
+    
+}
+
+.btn-retour {
+    background-color: #ff3333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-retour:hover {
+    background-color: #b32323;
+}

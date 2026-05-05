@@ -3,7 +3,7 @@
 {% block body %}
 
 <div class="div-titre">
-        <a href="{{ path('app_charges') }}" class="btn-retour">retour</a>
+        <a href="{{ path('app_loyers') }}" class="btn-retour">retour</a>
         <h1>Modifier une charge</h1>
 </div>
 
@@ -11,12 +11,12 @@
 
     <div>
         <label>Montant</label>
-        <input type="number" name="montant" value="{{ charge.montant }}">
+        <input type="number" name="montant" value="{{ loyer.montant }}">
     </div>
 
     <div>
         <label>Date</label>
-        <input type="date" name="date" value="{{ charge.dateMES ? charge.dateMES|date('Y-m-d') : '' }}">
+        <input type="date" name="date" value="{{ loyer.dateMES ? loyer.dateMES|date('Y-m-d') : '' }}">
     </div>
 
     <button type="submit">Enregistrer</button>
@@ -25,6 +25,5 @@
 
 <link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
 <link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
-
 
 {% endblock %}

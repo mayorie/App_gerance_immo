@@ -1,0 +1,99 @@
+/* Style pour la page d'accueil */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.home-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 20px;
+}
+
+.home-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 2.2rem;
+}
+
+.home-container h2 {
+    text-align: center;
+    color: #555;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.home-container h2 {
+    margin-top: 50px;
+}
+
+.home-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.home-nav-row {
+    margin-top: 10px;
+}
+
+.home-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 15px 25px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: fit-content;
+}
+
+.home-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.home-link-emoji {
+    font-size: 1.5rem;
+    margin-right: 15px;
+}
+
+/* Variante de couleurs pour les différents liens */
+.home-link-1 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.home-link-2 {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.home-link-3 {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.home-link-4 {
+    background: linear-gradient(135deg, #08ab0b 0%, #23e311 100%);
+}
+
+.home-link-5 {
+    background: linear-gradient(135deg, #f75a11 0%, #febb40 100%);
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    .home-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 1000px;
+    }
+}

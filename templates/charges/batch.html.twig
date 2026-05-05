@@ -12,6 +12,7 @@
     <thead>
         <tr>
             <th>Locataire</th>
+            <th>Logement</th>
             <th>Montant (€)</th>
             <th>Date</th>
         </tr>
@@ -20,10 +21,8 @@
     <tbody>
         {% for locataire in locataires %}
             <tr>
-                <td>
-                    {{ locataire.nom }} {{ locataire.prenom }}
-                </td>
-
+                <td>{{ locataire.nom }} {{ locataire.prenom }}</td>
+                <td>{{ locataire.LogementsID.idAppart }}</td>
                 <td>
                     <input type="number"
                            name="montant[{{ locataire.id }}]"

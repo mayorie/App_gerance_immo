@@ -81,4 +81,46 @@ final class ChargesController extends AbstractController
             'locataires' => $locataires
         ]);
     }
+
+    #[Route('/charges/edit/{id}', name: 'charges_edit')]
+    public function edit(ProvisionsPourCharges $charge,Request $request,EntityManagerInterface $em): 
+    Response {
+
+        if ($request->isMethod('POST')) {
+
+            $montant = $request->request->get('montant');
+            $date = $request->request->get('date');
+
+            if ($montant) {
+                $charge->setMontant($montant);
+            }
+
+            if ($date) {
+                $charge->setDateMES(new \DateTime($date));
+            }
+
+            $em->flush();
+
+            return $this->redirectToRoute('app_charges');
+        }
+
+        return $this->render('charges/edit.html.twig', [
+            'charge' => $charge
+        ]);
+    }
+
+    #[Route('/charges/delete/{id}', name: 'charges_delete', methods: ['POST'])]
+    public function delete(
+        Request $request,
+        ProvisionsPourCharges $charge,
+        EntityManagerInterface $em
+    ): Response {
+
+        if ($this->isCsrfTokenValid('delete'.$charge->getId(), $request->request->get('_token'))) {
+            $em->remove($charge);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('app_charges');
+    }
 }

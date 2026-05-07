@@ -4,7 +4,10 @@
 
 {% block body %}
 
-<h1>Modifier locataire</h1>
+<div class="div-titre">
+    <a href="{{ path('app_locataires') }}" class="btn-retour">retour</a>
+    <h1>Modifier un locataire</h1>
+</div>
 
 {{ form_start(form) }}
     {{ form_row(form.nom) }}
@@ -98,6 +101,7 @@
 
 
 <link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
 
 
 

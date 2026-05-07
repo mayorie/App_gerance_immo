@@ -23,7 +23,7 @@ class PaiementsMensuels
     #[ORM\Column(length: 3, nullable: true)]
     private ?string $part_recue_du_locataire_mode = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?float $part_recue_du_locataire_montant = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
@@ -94,7 +94,7 @@ class PaiementsMensuels
         return $this->part_recue_du_locataire_montant;
     }
 
-    public function setPartRecueDuLocataireMontant(float $part_recue_du_locataire_montant): static
+    public function setPartRecueDuLocataireMontant(?float $part_recue_du_locataire_montant): self
     {
         $this->part_recue_du_locataire_montant = $part_recue_du_locataire_montant;
 

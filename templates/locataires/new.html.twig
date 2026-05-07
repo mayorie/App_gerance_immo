@@ -4,7 +4,10 @@
 
 {% block body %}
 
-<h1>Ajouter un locataire</h1>
+<div class="div-titre">
+    <a href="{{ path('app_locataires') }}" class="btn-retour">retour</a>
+    <h1>Ajouter un locataire</h1>
+</div>
 
 {{ form_start(form) }}
 
@@ -55,6 +58,7 @@
     <div id="garants-visale-container"
         data-prototype="{{ form_widget(form.garantsVisale.vars.prototype)|e('html_attr') }}">
     </div>
+    <p>si c'est un garant visale alors si la date est vide = date de début de bail</p>
 
 
 
@@ -69,6 +73,7 @@
 
 
 <link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
 
 
 

@@ -4,7 +4,10 @@
 
 {% block body %}
 
-<h1>Ajouter un logement</h1>
+<div class="div-titre">
+    <a href="{{ path('app_logements') }}" class="btn-retour">retour</a>
+    <h1>Ajouter un logement</h1>
+</div>
 
 {{ form_start(form) }}
 
@@ -25,4 +28,5 @@
     </button>
 {{ form_end(form) }}
 <link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
 {% endblock %}

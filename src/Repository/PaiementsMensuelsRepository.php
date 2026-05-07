@@ -40,4 +40,62 @@ class PaiementsMensuelsRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findFirstPaiementsIds(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('MIN(p.id) as id')
+            ->groupBy('p.LocatairesID')
+            ->getQuery()
+            ->getScalarResult();
+    }
+
+    public function findLoyerHC(PaiementsMensuels $paiement): ?float
+    {
+        $loyer = $this->getEntityManager()
+            ->getRepository(\App\Entity\LoyersHC::class)
+            ->createQueryBuilder('l')
+
+            ->andWhere('l.LocatairesID = :locataire')
+            ->andWhere('l.date_MES <= :datePaiement')
+
+            ->setParameter('locataire', $paiement->getLocatairesID())
+            ->setParameter('datePaiement', $paiement->getDate())
+
+            ->orderBy('l.date_MES', 'DESC')
+
+            ->setMaxResults(1)
+
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $loyer ? $loyer->getMontant() : null;
+    }
+
+    public function findAllWithLoyerHC(): array
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $qb
+            ->select('p', 'l')
+
+            ->leftJoin(
+                \App\Entity\LoyersHC::class,
+                'l',
+                'WITH',
+                '
+                    l.LocatairesID = p.LocatairesID
+                    AND l.date_MES = (
+                        SELECT MAX(l2.date_MES)
+                        FROM App\Entity\LoyersHC l2
+                        WHERE l2.LocatairesID = p.LocatairesID
+                        AND l2.date_MES <= p.date
+                    )
+                '
+            )
+
+            ->orderBy('p.date', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
 }

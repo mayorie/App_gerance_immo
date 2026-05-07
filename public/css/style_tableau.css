@@ -87,3 +87,16 @@ td:nth-last-child(2) {
     background-color: #27ae60;
 }
 
+th {
+    background: linear-gradient(90deg, #90b3b1, #779492);
+    color: #fff;
+    padding: 14px 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #90b3b1;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}

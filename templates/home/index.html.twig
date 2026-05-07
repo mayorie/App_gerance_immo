@@ -2,30 +2,58 @@
 
 {% block title %}Home{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/style_home.css') }}">
+{% endblock %}
 
-<a href="{{ path('app_locataires') }}">
-    📝 index des locataires
-</a>
-</br>
-<a href="{{ path('app_logements') }}">
-    📝 index des logements
-</a>
-</br>
-<a href="{{ path('app_charges') }}">
-    📝 index des charges
-</a>
-</br>
-<a href="{{ path('app_loyers') }}">
-    📝 index des loyers
-</a>
-</br>
-<a href="{{ path('app_packs_services') }}">
-    📝 index des packs services
-</a>
-</br>
-<a href="{{ path('app_paiements_mensuels') }}">
-    📝 index des paiements mensuels
-</a>
-</br>
+{% block body %}
+<div class="home-container">
+    <h1 class="home-title">Ma gestion immobilière</h1>
+        <h2>SAISIE D'UN NOUVEAU :</h2>
+    <nav class="home-nav">
+        <a href="{{ path('locataires_new') }}" class="home-link">
+            <span class="home-link-emoji">🙋</span>
+            Locataire
+        </a>
+        <a href="{{ path('loyers_batch') }}" class="home-link home-link-4">
+            <span class="home-link-emoji">💶</span>
+            Révision de loyers
+        </a>
+        <a href="{{ path('logement_new') }}" class="home-link home-link-2">
+            <span class="home-link-emoji">🏠</span>
+            Logement
+        </a>
+    </nav>
+
+        <h2>CONSULTATION / MODIFICATION / SUPPRESSION DE :</h2>
+
+    <nav class="home-nav">
+        <a href="{{ path('app_locataires') }}" class="home-link home-link-1">
+            <span class="home-link-emoji">🧑‍🧑‍🧒</span>
+            Locataires
+        </a>
+        <a href="{{ path('app_logements') }}" class="home-link home-link-2">
+            <span class="home-link-emoji">🏠</span>
+            Logements
+        </a>
+    </nav>
+
+    <nav class="home-nav home-nav-row">
+        <a href="{{ path('app_charges') }}" class="home-link home-link-3">
+            <span class="home-link-emoji">🪙</span>
+            Charges
+        </a>
+        <a href="{{ path('app_loyers') }}" class="home-link home-link-4">
+            <span class="home-link-emoji">💶</span>
+            Loyers HC
+        </a>
+        <a href="{{ path('app_packs_services') }}" class="home-link home-link-5">
+            <span class="home-link-emoji">🔌</span>
+            Packs Services
+        </a>
+    </nav>
+
+            <h2>ETATS :</h2>
+
+</div>
 {% endblock %}

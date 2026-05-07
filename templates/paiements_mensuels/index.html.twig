@@ -83,11 +83,14 @@
     </thead>
 
     <tbody>
-        {% for p in paiements %}
+        {% for item in paiements %}
+            {% set p = item.paiement %}
+            {% set loyer = item.loyerHC %}
+
             <tr>
                 <td>{{ p.LocatairesID.nom }} {{ p.LocatairesID.prenom }}</td>
                 <td>{{ p.LocatairesID.LogementsID.idAppart }}</td>
-                
+
                 <td>
                     {% if p.id in firstPaiementsIds %}
                         {{ p.LocatairesID.montantCaution }}
@@ -97,8 +100,7 @@
                 </td>
                 <td>{{ p.RegulPacksServices }}</td>
                 <td>{{ p.RegulProvisionsPourCharges }}</td>
-                <td>{{ p.loyer_montant }}</td>
-
+                <td>{{ loyer }} €</td>
             </tr>
         {% endfor %}
     </tbody>

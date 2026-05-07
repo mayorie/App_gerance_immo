@@ -71,31 +71,4 @@ class PaiementsMensuelsRepository extends ServiceEntityRepository
 
         return $loyer ? $loyer->getMontant() : null;
     }
-
-    public function findAllWithLoyerHC(): array
-    {
-        $qb = $this->createQueryBuilder('p');
-
-        $qb
-            ->select('p', 'l')
-
-            ->leftJoin(
-                \App\Entity\LoyersHC::class,
-                'l',
-                'WITH',
-                '
-                    l.LocatairesID = p.LocatairesID
-                    AND l.date_MES = (
-                        SELECT MAX(l2.date_MES)
-                        FROM App\Entity\LoyersHC l2
-                        WHERE l2.LocatairesID = p.LocatairesID
-                        AND l2.date_MES <= p.date
-                    )
-                '
-            )
-
-            ->orderBy('p.date', 'DESC');
-
-        return $qb->getQuery()->getResult();
-    }
 }

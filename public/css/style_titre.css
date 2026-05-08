@@ -13,7 +13,7 @@
 }
 
 .btn-retour {
-    background-color: #ff3333;
+    background: linear-gradient(135deg, #f72c11 0%, #fe9f40 100%);
     color: white;
     padding: 8px 12px;
     border-radius: 6px;
@@ -22,5 +22,5 @@
 }
 
 .btn-retour:hover {
-    background-color: #b32323;
+    background: linear-gradient(135deg, #ff5c46 0%, #f9a149 100%);
 }

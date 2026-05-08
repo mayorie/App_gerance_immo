@@ -24,19 +24,19 @@
     <div class="section-box">
         <h2>Loyer HC</h2>
         {{ form_row(form.loyer_montant) }}
-        {{ form_row(form.loyer_date) }}<p>date vide = date de début de bail</p>
+        {{ form_row(form.loyer_date) }}<p><i>date vide = date de début de bail</i></p>
     </div>
 
     <div class="section-box">
         <h2>Pack Services</h2>
         {{ form_row(form.PS_montant) }}
-        {{ form_row(form.PS_date) }}<p>date vide = date de début de bail</p>
+        {{ form_row(form.PS_date) }}<p><i>date vide = date de début de bail</i></p>
     </div>
 
     <div class="section-box">
         <h2>Charges</h2>
         {{ form_row(form.charge_montant) }}
-        {{ form_row(form.charge_date) }}<p>date vide = date de début de bail</p>
+        {{ form_row(form.charge_date) }}<p><i>date vide = date de début de bail</i></p>
     </div>
 
 {% if form.garantsPhysiques|length > 0 %}

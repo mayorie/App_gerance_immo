@@ -2,11 +2,11 @@ table {
     width: 100%;
     border-collapse: collapse;
     font-family: Arial, sans-serif;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 td {
-    padding: 12px 16px;
+    padding: 7px 9px;
     border-bottom: 1px solid #e0e0e0;
     color: #222;
     background-color: #fff;
@@ -75,7 +75,7 @@ td:nth-last-child(2) {
 
 /* Bouton créer */
 .btn-create {
-    background-color: #2ecc71;
+    background: linear-gradient(135deg, #23e311 0%, #08ab0b 100%);
     color: white;
     padding: 8px 12px;
     border-radius: 6px;
@@ -84,7 +84,7 @@ td:nth-last-child(2) {
 }
 
 .btn-create:hover {
-    background-color: #27ae60;
+    background: linear-gradient(135deg, #23e311 0%, #047406 100%);
 }
 
 th {
@@ -95,6 +95,7 @@ th {
     text-transform: uppercase;
     font-size: 13px;
     letter-spacing: 0.5px;
+    border-radius: 4px;
     border-bottom: 2px solid #90b3b1;
     position: sticky;
     top: 0;

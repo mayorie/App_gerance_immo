@@ -1,5 +1,5 @@
 .btn-create {
-    background-color: #2ecc71;
+    background: linear-gradient(135deg, #029805 0%, #23e311 100%);
     color: white;
     padding: 8px 12px;
     border-radius: 6px;
@@ -8,6 +8,6 @@
 }
 
 .btn-create:hover {
-    background-color: #27ae60;
+    background: linear-gradient(135deg, #047c06 0%, #23e311 100%);
 }
 

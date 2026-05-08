@@ -27,15 +27,15 @@
 
     <h2>Loyer HC</h2>
     {{ form_row(form.loyer_montant) }}
-    {{ form_row(form.loyer_date) }}<p>date vide = date de début de bail</p>
+    {{ form_row(form.loyer_date) }}<p><i>date vide = date de début de bail</i></p>
 
     <h2>Charge</h2>
     {{ form_row(form.charge_montant) }}
-    {{ form_row(form.charge_date) }}<p>date vide = date de début de bail</p>
+    {{ form_row(form.charge_date) }}<p><i>date vide = date de début de bail</i></p>
 
     <h2>Packs Services</h2>
     {{ form_row(form.PS_montant) }}
-    {{ form_row(form.PS_date) }}<p>date vide = date de début de bail</p>
+    {{ form_row(form.PS_date) }}<p><i>date vide = date de début de bail</i></p>
 
     {{ form_row(form.date_EDL_entree) }}
 
@@ -58,7 +58,7 @@
     <div id="garants-visale-container"
         data-prototype="{{ form_widget(form.garantsVisale.vars.prototype)|e('html_attr') }}">
     </div>
-    <p>si c'est un garant visale alors si la date est vide = date de début de bail</p>
+    <p><i>si c'est un garant visale, alors date vide = date de début de bail</i></p>
 
 
 

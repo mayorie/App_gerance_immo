@@ -2,11 +2,11 @@ table {
     width: 100%;
     border-collapse: collapse;
     font-family: Arial, sans-serif;
-    font-size: 13px;
+    font-size: 10px;
 }
 
 td {
-    padding: 7px 9px;
+    padding: 5px 5px;
     border-bottom: 1px solid #e0e0e0;
     color: #222;
     background-color: #fff;
@@ -15,12 +15,12 @@ td {
 
 /* Alternance de lignes pour la lisibilité */
 tr:nth-child(even) td {
-    background-color: #f7f9fc;
+    background-color: #e8f0fc;
 }
 
 /* Effet au survol */
 tr:hover td {
-    background-color: #eaf3ff;
+    background-color: #dfecfe;
 }
 
 /* Améliore la visibilité des liens (éditer/supprimer) */
@@ -29,7 +29,7 @@ td a {
     font-size: 16px;
     padding: 4px 6px;
     border-radius: 6px;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.s ease;
 }
 
 td a:hover {
@@ -40,7 +40,7 @@ td button {
     background: none;
     border: none;
     padding: 4px 6px;
-    font-size: 16px;
+    font-size: 13px;
     border-radius: 6px;
     cursor: pointer;
 }
@@ -87,17 +87,34 @@ td:nth-last-child(2) {
     background: linear-gradient(135deg, #23e311 0%, #047406 100%);
 }
 
-th {
+/* Première ligne d'en-têtes */
+thead tr:first-child th {
     background: linear-gradient(90deg, #90b3b1, #779492);
     color: #fff;
-    padding: 14px 16px;
+    padding: 7px 7px;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 13px;
+    font-size: 11px;
     letter-spacing: 0.5px;
     border-radius: 4px;
     border-bottom: 2px solid #90b3b1;
     position: sticky;
     top: 0;
+    z-index: 2;
+}
+
+/* Deuxième ligne d'en-têtes */
+thead tr:nth-child(2) th {
+    background: linear-gradient(90deg, #90b3b1, #779492);
+    color: #fff;
+    padding: 7px 7px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    border-bottom: 2px solid #90b3b1;
+    position: sticky;
+    top: 45px;
     z-index: 2;
 }

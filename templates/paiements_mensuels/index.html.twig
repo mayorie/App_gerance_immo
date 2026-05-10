@@ -101,10 +101,10 @@
                 <td></td>
                 <td>{{ p.partRecueDuLocataireDate ? p.partRecueDuLocataireDate|date('d/m/Y') : '-' }}</td>
                 <td>{{ p.partRecueDuLocataireMode }}</td>
-                <td>{{ p.partRecueDuLocataireMontant }}</td>
+                <td>{{ p.partRecueDuLocataireMontant ? p.partRecueDuLocataireMontant ~ ' €' : '-' }}</td>
                 <td>{{ p.partRecueDeLaCafDate ? p.partRecueDeLaCafDate|date('d/m/Y') : '-' }}</td>
                 <td>{{ p.PartRecueDeLaCafMode }}</td>
-                <td>{{ p.PartRecueDeLaCafMontant }}</td>
+                <td>{{ p.PartRecueDeLaCafMontant ? p.PartRecueDeLaCafMontant ~ ' €' : '-' }}</td>
             </tr>
         {% endfor %}
     </tbody>

@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau paiement{% endblock %}
+
+{% block body %}
+
+<div class="div-titre">
+    <a href="{{ path('app_paiements_mensuels') }}" class="btn-retour">
+        Retour
+    </a>
+
+    <h1>Ajouter un paiement</h1>
+</div>
+
+{{ form_start(form) }}
+
+    {{ form_widget(form) }}
+
+    <button type="submit" class="btn-create">
+        💾 Enregistrer
+    </button>
+
+{{ form_end(form) }}
+
+<link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+{% endblock %}

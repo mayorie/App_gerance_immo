@@ -71,4 +71,48 @@ class PaiementsMensuelsRepository extends ServiceEntityRepository
 
         return $loyer ? $loyer->getMontant() : null;
     }
+
+    public function findProvisionPourCharges(PaiementsMensuels $paiement): ?float
+    {
+        $charge = $this->getEntityManager()
+            ->getRepository(\App\Entity\ProvisionsPourCharges::class)
+            ->createQueryBuilder('c')
+
+            ->andWhere('c.LocatairesID = :locataire')
+            ->andWhere('c.date_MES <= :datePaiement')
+
+            ->setParameter('locataire', $paiement->getLocatairesID())
+            ->setParameter('datePaiement', $paiement->getDate())
+
+            ->orderBy('c.date_MES', 'DESC')
+
+            ->setMaxResults(1)
+
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $charge ? $charge->getMontant() : null;
+    }
+
+    public function findPackService(PaiementsMensuels $paiement): ?float
+    {
+        $pack = $this->getEntityManager()
+            ->getRepository(\App\Entity\PacksServices::class)
+            ->createQueryBuilder('p')
+
+            ->andWhere('p.LocatairesID = :locataire')
+            ->andWhere('p.date_MES <= :datePaiement')
+
+            ->setParameter('locataire', $paiement->getLocatairesID())
+            ->setParameter('datePaiement', $paiement->getDate())
+
+            ->orderBy('p.date_MES', 'DESC')
+
+            ->setMaxResults(1)
+
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $pack ? $pack->getMontant() : null;
+    }
 }

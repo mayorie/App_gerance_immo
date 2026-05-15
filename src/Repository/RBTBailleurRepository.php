@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\RBTBailleur;
+use App\Entity\PaiementsMensuels;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,4 +41,18 @@ class RBTBailleurRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findByPaiement(PaiementsMensuels $paiement): ?RBTBailleur
+    {
+        return $this->createQueryBuilder('r')
+
+            ->andWhere('r.Paiements_mensuelID = :paiement')
+
+            ->setParameter('paiement', $paiement)
+
+            ->setMaxResults(1)
+
+            ->getQuery()
+
+            ->getOneOrNullResult();
+    }
 }

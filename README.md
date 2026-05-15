@@ -16,3 +16,10 @@ php bin/console doctrine:fixtures:load --no-interaction
 php bin/console doctrine:fixtures:load --append 
 
 php bin/console doctrine:fixtures:load --group=test     
+
+
+reset Base de bonnées : 
+
+supprimer : data.db du dossier var
+puis faire ces commandes une après l'autre : 
+php bin/console doctrine:migrations:migrate

@@ -7,6 +7,8 @@
 <div class="div-titre">
     <a href="{{ path('app_home') }}" class="btn-retour">Retour</a>
     <h1>Paiements mensuels</h1>
+    <a href="{{ path('paiements_new') }}" class="btn-create">➕ Créer un paiement</a>
+    <a href="{{ path('paiements_batch') }}" class="btn-create">➕ Créer des paiements</a>
 </div>
 
 <form method="get" action="{{ path('app_paiements_mensuels') }}">
@@ -39,6 +41,7 @@
     <thead>
         <tr>
             <th colspan="2">Info locataire</th>
+            <th colspan="1">Saisie du</th>
             <th colspan="7">Total du</th>
             <th colspan="3">Part reçue du locataire</th>
             <th colspan="3">Part reçue de la CAF</th>
@@ -49,6 +52,8 @@
         <tr>
             <th>Locataire</th>
             <th>appart</th>
+
+            <th>date</th>
 
             <th>caution</th>
             <th>regul. Pack S</th>
@@ -81,30 +86,64 @@
         {% for item in paiements %}
             {% set p = item.paiement %}
             {% set loyer = item.loyerHC %}
+            {% set charge = item.charge %}
+            {% set PS = item.PS %}
+            {% set total =
+                (p.id in firstPaiementsIds ? p.LocatairesID.montantCaution : 0)
+                + (p.RegulPacksServices ?? 0)
+                + (p.RegulProvisionsPourCharges ?? 0)
+                + (loyer ?? 0)
+                + (charge ?? 0)
+                + (PS ?? 0)
+            %}
+            {% set RBT = item.RBT %}
 
             <tr>
                 <td>{{ p.LocatairesID.nom }} {{ p.LocatairesID.prenom }}</td>
                 <td>{{ p.LocatairesID.LogementsID.idAppart }}</td>
 
+
+                <td>{{ p.Date ? p.Date|date('d/m/Y') : '-'  }}</td>
+
+
                 <td>
                     {% if p.id in firstPaiementsIds %}
-                        {{ p.LocatairesID.montantCaution }}
+                        {{ p.LocatairesID.montantCaution }} €
                     {% else %}
                         -
                     {% endif %}
                 </td>
-                <td>{{ p.RegulPacksServices }}</td>
-                <td>{{ p.RegulProvisionsPourCharges }}</td>
+                <td>{{ p.RegulPacksServices }} €</td>
+                <td>{{ p.RegulProvisionsPourCharges }} €</td>
                 <td>{{ loyer }} €</td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>{{ charge }} €</td>
+                <td>{{ PS }} €</td>
+                <td>{{ total }} €</td>
+
+
                 <td>{{ p.partRecueDuLocataireDate ? p.partRecueDuLocataireDate|date('d/m/Y') : '-' }}</td>
                 <td>{{ p.partRecueDuLocataireMode }}</td>
                 <td>{{ p.partRecueDuLocataireMontant ? p.partRecueDuLocataireMontant ~ ' €' : '-' }}</td>
+
+
                 <td>{{ p.partRecueDeLaCafDate ? p.partRecueDeLaCafDate|date('d/m/Y') : '-' }}</td>
                 <td>{{ p.PartRecueDeLaCafMode }}</td>
                 <td>{{ p.PartRecueDeLaCafMontant ? p.PartRecueDeLaCafMontant ~ ' €' : '-' }}</td>
+
+                <td>
+                    {% if RBT and RBT.montant is not null %}
+                        {{ RBT.montant }} €
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>{{ RBT ? RBT.mode : '-' }}</td>
+                <td>{{ RBT and RBT.date ? RBT.date|date('d/m/Y') : '-' }}</td>
+
+
+                <td>{{ p.RestantDuTropPercuFinDeMois }} €</td>
+
+
             </tr>
         {% endfor %}
     </tbody>

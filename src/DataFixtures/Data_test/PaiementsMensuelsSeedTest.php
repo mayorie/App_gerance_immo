@@ -46,6 +46,118 @@ class PaiementsMensuelsSeedTest extends Fixture implements FixtureGroupInterface
 
         $datas = [
             [
+                'locataire' => $Picard,
+                'date' => new \DateTime('2021-09-01'),
+                'locataire_paiement_date' => new \DateTime('2021-09-01'),
+                'locataire_paiement_mode' => 'VIR',
+                'locataire_paiement_montant' => 1325,
+                'caf_paiement_date' => null,
+                'caf_paiement_mode' => null,
+                'caf_paiement_montant' => null,
+                'regul_pack' => 0,
+                'regul_charges' => 0,
+                'restant_du' => 0,
+                'rbt' => null
+            ],
+            [
+                'locataire' => $Picard,
+                'date' => new \DateTime('2021-10-01'),
+                'locataire_paiement_date' => new \DateTime('2021-10-03'),
+                'locataire_paiement_mode' => 'VIR',
+                'locataire_paiement_montant' => 445,
+                'caf_paiement_date' => null,
+                'caf_paiement_mode' => null,
+                'caf_paiement_montant' => null,
+                'regul_pack' => 0,
+                'regul_charges' => 0,
+                'restant_du' => 0,
+                'rbt' => null
+            ],
+            [
+                'locataire' => $Picard,
+                'date' => new \DateTime('2021-11-01'),
+                'locataire_paiement_date' => new \DateTime('2021-11-05'),
+                'locataire_paiement_mode' => 'VIR',
+                'locataire_paiement_montant' => 343,
+                'caf_paiement_date' => new \DateTime('2021-11-05'),
+                'caf_paiement_mode' => 'VIR',
+                'caf_paiement_montant' => 102,
+                'regul_pack' => 0,
+                'regul_charges' => 0,
+                'restant_du' => 0,
+                'rbt' => null
+            ],
+            [
+                'locataire' => $Picard,
+                'date' => new \DateTime('2021-12-01'),
+                'locataire_paiement_date' => new \DateTime('2021-12-08'),
+                'locataire_paiement_mode' => 'VIR',
+                'locataire_paiement_montant' => 343,
+                'caf_paiement_date' => new \DateTime('2021-12-06'),
+                'caf_paiement_mode' => 'VIR',
+                'caf_paiement_montant' => 102,
+                'regul_pack' => 0,
+                'regul_charges' => 0,
+                'restant_du' => 0,
+                'rbt' => null
+            ],
+            [
+                'locataire' => $Picard,
+                'date' => new \DateTime('2022-01-01'),
+                'locataire_paiement_date' => new \DateTime('2022-01-03'),
+                'locataire_paiement_mode' => 'VIR',
+                'locataire_paiement_montant' => 343,
+                'caf_paiement_date' => new \DateTime('2022-01-05'),
+                'caf_paiement_mode' => 'VIR',
+                'caf_paiement_montant' => 103,
+                'regul_pack' => 0,
+                'regul_charges' => 0,
+                'restant_du' => -1,
+                'rbt' => null
+            ],
+            [
+                'locataire' => $Martin,
+                'date' => new \DateTime('2022-02-01'),
+                'locataire_paiement_date' => new \DateTime('2022-02-04'),
+                'locataire_paiement_mode' => 'VIR',
+                'locataire_paiement_montant' => 343,
+                'caf_paiement_date' => new \DateTime('2022-02-05'),
+                'caf_paiement_mode' => 'VIR',
+                'caf_paiement_montant' => 103,
+                'regul_pack' => 0,
+                'regul_charges' => 0,
+                'restant_du' => -2,
+                'rbt' => null
+            ],
+            [
+                'locataire' => $Martin,
+                'date' => new \DateTime('2022-03-01'),
+                'locataire_paiement_date' => new \DateTime('2022-03-07'),
+                'locataire_paiement_mode' => 'VIR',
+                'locataire_paiement_montant' => 340,
+                'caf_paiement_date' => new \DateTime('2022-03-05'),
+                'caf_paiement_mode' => 'VIR',
+                'caf_paiement_montant' => 103,
+                'regul_pack' => 0,
+                'regul_charges' => 0,
+                'restant_du' => 0,
+                'rbt' => null
+            ],
+            [
+                'locataire' => $Martin,
+                'date' => new \DateTime('2022-04-01'),
+                'locataire_paiement_date' => new \DateTime('2022-04-11'),
+                'locataire_paiement_mode' => 'VIR',
+                'locataire_paiement_montant' => 342,
+                'caf_paiement_date' => new \DateTime('2022-04-05'),
+                'caf_paiement_mode' => 'VIR',
+                'caf_paiement_montant' => 103,
+                'regul_pack' => 46,
+                'regul_charges' => 183.54,
+                'restant_du' => -1,
+                'rbt' => null
+            ],
+	    [
                 'locataire' => $Martin,
                 'date' => new \DateTime('2024-03-01'),
                 'locataire_paiement_date' => new \DateTime('2024-03-05'),
@@ -121,6 +233,20 @@ class PaiementsMensuelsSeedTest extends Fixture implements FixtureGroupInterface
                 'rbt' => null
             ],
             [
+                'locataire' => $Moreau,
+                'date' => new \DateTime('2024-04-01'),
+                'locataire_paiement_date' => new \DateTime('2024-04-09'),
+                'locataire_paiement_mode' => 'VIR',
+                'locataire_paiement_montant' => 300,
+                'caf_paiement_date' => new \DateTime('2024-04-05'),
+                'caf_paiement_mode' => 'VIR',
+                'caf_paiement_montant' => 150,
+                'regul_pack' => 0,
+                'regul_charges' => 8,30,
+                'restant_du' => 0,
+                'rbt' => null
+            ],
+[
                 'locataire' => $Martin,
                 'date' => new \DateTime('2024-04-01'),
                 'locataire_paiement_date' => new \DateTime('2024-04-05'),
@@ -138,20 +264,6 @@ class PaiementsMensuelsSeedTest extends Fixture implements FixtureGroupInterface
                 'locataire' => $Petit,
                 'date' => new \DateTime('2024-04-01'),
                 'locataire_paiement_date' => new \DateTime('2024-04-08'),
-                'locataire_paiement_mode' => 'VIR',
-                'locataire_paiement_montant' => 300,
-                'caf_paiement_date' => new \DateTime('2024-04-05'),
-                'caf_paiement_mode' => 'VIR',
-                'caf_paiement_montant' => 150,
-                'regul_pack' => 0,
-                'regul_charges' => 0,
-                'restant_du' => 0,
-                'rbt' => null
-            ],
-            [
-                'locataire' => $Moreau,
-                'date' => new \DateTime('2024-04-01'),
-                'locataire_paiement_date' => new \DateTime('2024-04-09'),
                 'locataire_paiement_mode' => 'VIR',
                 'locataire_paiement_montant' => 300,
                 'caf_paiement_date' => new \DateTime('2024-04-05'),
@@ -359,7 +471,7 @@ class PaiementsMensuelsSeedTest extends Fixture implements FixtureGroupInterface
                 'caf_paiement_mode' => null,
                 'caf_paiement_montant' => null,
                 'regul_pack' => 0,
-                'regul_charges' => 0,
+                'regul_charges' => 183.12,
                 'restant_du' => 0,
                 'rbt' => null
             ],
@@ -404,11 +516,11 @@ class PaiementsMensuelsSeedTest extends Fixture implements FixtureGroupInterface
                 'regul_charges' => 0,
                 'restant_du' => 0,
                 'rbt' => [
-                    'motif' => 'Double paiement de loyer',
-                    'date' => new \DateTime('2025-09-18'),
-                    'montant' => 550,
-                    'mode' => 'VIR',
-                ]
+                                'motif' => 'Double paiement de loyer',
+                                'date' => new \DateTime('2025-09-18'),
+                                'montant' => 550,
+                                'mode' => 'VIR',
+                            ]
             ],
 
             [
@@ -510,7 +622,6 @@ class PaiementsMensuelsSeedTest extends Fixture implements FixtureGroupInterface
                 'rbt' => null
             ]
         ];
-
 
         foreach ($datas as $donnee) {
             $paiement = new PaiementsMensuels();

@@ -52,7 +52,7 @@ class LocatairesSeedTest extends Fixture implements FixtureGroupInterface, Depen
                 'debut_bail' => new \DateTime('2024-09-01'),
                 'montant_caution' => 850,
                 # loyer_TCC
-                'restant_du_trop_percu' => 0,
+                'restant_du_trop_percu' => 100,
                 'date_EDL_entree' => new \DateTime('2024-09-01'),
                 'preavis_recu_le' => null,
                 'debut_du_preavis' => null,

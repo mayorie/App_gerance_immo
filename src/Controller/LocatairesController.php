@@ -54,33 +54,48 @@ final class LocatairesController extends AbstractController
                 $loyer->setDateMES($loyerDate);
                 $loyer->setLocatairesID($locataire);
 
+                $locataire->addLoyersHC($loyer);
+
                 $em->persist($loyer);
+            }
+            else {
+                dd("Montant du loyer NULL, faites flèche arrière pour récupérer vos données");
             }
 
             // CHarges
             $chargeMontant = $form->get('charge_montant')->getData();
             $chargeDate = $form->get('charge_date')->getData() ?? $debutBail;
 
-            if ($chargeMontant) {
+            if ($chargeMontant !== null) {
                 $charge = new ProvisionsPourCharges();
                 $charge->setMontant($chargeMontant);
                 $charge->setDateMES($chargeDate);
                 $charge->setLocatairesID($locataire);
 
+                $locataire->addProvisionsPourCharge($charge);
+
                 $em->persist($charge);
+            }
+            else {
+                dd("Montant des charges NULL, faites flèche arrière pour récupérer vos données");
             }
 
             // Packs Services (PS)
             $PSMontant = $form->get('PS_montant')->getData();
             $PSDate = $form->get('PS_date')->getData() ?? $debutBail;
 
-            if ($PSMontant) {
+            if ($PSMontant !== null) {
                 $PS = new PacksServices();
                 $PS->setMontant($PSMontant);
                 $PS->setDateMES($PSDate);
                 $PS->setLocatairesID($locataire);
 
+                $locataire->addPacksService($PS);
+
                 $em->persist($PS);
+            }
+            else {
+                dd("Montant du pack service NULL, faites flèche arrière pour récupérer vos données");
             }
 
             $garantsData = $form->get('garantsPhysiques')->getData();

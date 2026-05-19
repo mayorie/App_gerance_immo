@@ -81,7 +81,7 @@ class Locataires
     private ?bool $cloture_contrat_visale = null;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $a_quitte_le_logement = null;
+    private ?bool $a_quitte_le_logement = false;
 
     #[ORM\OneToOne(mappedBy: 'LocatairesID', cascade: ['persist', 'remove'])]
     private ?Commentaires $commentaires = null;

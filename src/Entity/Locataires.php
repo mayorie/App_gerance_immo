@@ -66,7 +66,7 @@ class Locataires
     private ?\DateTime $date_de_sortie = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $montant_solde_de_tout_compte = null;
+    private ?float $montant_solde_de_tout_compte = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $date_solde_de_tout_compte = null;
@@ -328,12 +328,12 @@ class Locataires
         return $this;
     }
 
-    public function getMontantSoldeDeToutCompte(): ?int
+    public function getMontantSoldeDeToutCompte(): ?float
     {
         return $this->montant_solde_de_tout_compte;
     }
 
-    public function setMontantSoldeDeToutCompte(?int $montant_solde_de_tout_compte): static
+    public function setMontantSoldeDeToutCompte(?float $montant_solde_de_tout_compte): static
     {
         $this->montant_solde_de_tout_compte = $montant_solde_de_tout_compte;
 

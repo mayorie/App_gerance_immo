@@ -20,6 +20,7 @@ class PaiementMensuelType extends AbstractType
         $builder
             ->add('LocatairesID', EntityType::class, [
                 'class' => Locataires::class,
+                
 
                 'choice_label' => function (Locataires $locataire) {
                     return $locataire->getPrenom() . ' ' . $locataire->getNom();
@@ -40,6 +41,9 @@ class PaiementMensuelType extends AbstractType
                         'data-restantm' => $locataire->getRestantDuTropPercu()//restant du M-1
                     ];
                 },
+                'attr' => [
+                    'class' => 'input-medium'
+                ],
 
                 'query_builder' => function (LocatairesRepository $repo) {
                     return $repo->createQueryBuilder('l')
@@ -48,31 +52,71 @@ class PaiementMensuelType extends AbstractType
                         ->orderBy('l.nom', 'ASC');
                 }
             ])
-            ->add('date')
+            ->add('date', null, [
+                'attr' => [
+                    'class' => 'input-medium'
+                ]
+            ])
 
-            ->add('part_recue_du_locataire_date')
-            ->add('part_recue_du_locataire_mode')
-            ->add('part_recue_du_locataire_montant')
+            ->add('part_recue_du_locataire_date', null, [
+                'attr' => [
+                    'class' => 'input-medium'
+                ]
+            ])
+            ->add('part_recue_du_locataire_mode', null, [
+                'attr' => [
+                    'class' => 'input-small'
+                ]
+            ])
+            ->add('part_recue_du_locataire_montant', null, [
+                'attr' => [
+                    'class' => 'input-small'
+                ]
+            ])
 
-            ->add('part_recue_de_la_CAF_date')
-            ->add('part_recue_de_la_CAF_mode')
-            ->add('part_recue_de_la_CAF_montant')
+            ->add('part_recue_de_la_CAF_date', null, [
+                'attr' => [
+                    'class' => 'input-medium'
+                ]
+            ])
+            ->add('part_recue_de_la_CAF_mode', null, [
+                'attr' => [
+                    'class' => 'input-small'
+                ]
+            ])
+            ->add('part_recue_de_la_CAF_montant', null, [
+                'attr' => [
+                    'class' => 'input-small'
+                ]
+            ])
 
             ->add('RBT_motif', null, [
                 'mapped' => false,
                 'required' => false,
+                'attr' => [
+                    'class' => 'input-medium'
+                ]
             ])
             ->add('RBT_date', null, [
                 'mapped' => false,
                 'required' => false,
+                'attr' => [
+                    'class' => 'input-medium'
+                ]
             ])
             ->add('RBT_mode', null, [
                 'mapped' => false,
                 'required' => false,
+                'attr' => [
+                    'class' => 'input-small'
+                ]
             ])
             ->add('RBT_montant', null, [
                 'mapped' => false,
                 'required' => false,
+                'attr' => [
+                    'class' => 'input-small'
+                ]
             ])
 
             ->add('restant_du_trop_percu_fin_de_mois', null, [

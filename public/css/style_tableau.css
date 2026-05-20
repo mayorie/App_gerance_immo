@@ -1,5 +1,5 @@
 table {
-    width: 100%;
+    width: fit-content;
     border-collapse: collapse;
     font-family: Arial, sans-serif;
     font-size: 10px;
@@ -11,6 +11,7 @@ td {
     color: #222;
     background-color: #fff;
     vertical-align: middle;
+    width: fit-content;
 }
 
 /* Alternance de lignes pour la lisibilité */
@@ -117,4 +118,12 @@ thead tr:nth-child(2) th {
     position: sticky;
     top: 45px;
     z-index: 2;
+}
+
+/*celine*/
+.input-small {
+    width: 50px;
+}
+.input-medium {
+    width: 80px;
 }

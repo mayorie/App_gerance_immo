@@ -321,6 +321,27 @@ document.addEventListener('input', function (e) {
     }
 });
 
+document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('btn-delete-row')) {
+
+        const row = e.target.closest('tr');
+
+        if (!row) return;
+
+        const rows = [...document.querySelectorAll('.paiement-item')];
+        const index = rows.indexOf(row);
+
+        row.remove();
+
+        // recalcul toutes les lignes après suppression
+        const remainingRows = document.querySelectorAll('.paiement-item');
+
+        remainingRows.forEach(r => {
+            updateTotal(r);
+            updateRestantDu(r);
+        });
+    }
+});
 
 </script>
 

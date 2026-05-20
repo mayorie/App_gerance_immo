@@ -33,7 +33,7 @@ class PaiementMensuelType extends AbstractType
                         'data-appart' => $locataire->getLogementsID()?->getIdAppart(),
                         'data-loyer' => $locataire->getLatestLoyer()?->getMontant(),
                         'data-charge' => $locataire->getLatestCharge()?->getMontant(),
-                        'data-packs' => $locataire->getLatestCharge()?->getMontant(),
+                        'data-packs' => $locataire->getLatestPackServices()?->getMontant(),
                         'data-caution' => $locataire->getPaiementsMensuels()->isEmpty()
                             ? $locataire->getMontantCaution()
                             : 0,

@@ -11,6 +11,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PaiementMensuelType extends AbstractType
@@ -51,24 +53,56 @@ class PaiementMensuelType extends AbstractType
             ->add('date')
 
             ->add('part_recue_du_locataire_date')
-            ->add('part_recue_du_locataire_mode')
+            ->add('part_recue_du_locataire_mode', ChoiceType::class, [
+                'choices' => [
+                    'VIR' => 'VIR',
+                    'ESP' => 'ESP',
+                    'CB' => 'CB',
+                    'CHQ' => 'CHQ',
+                    'Autres' => 'Autres',
+                ],
+                'data' => 'VIR',
+                'required' => false,
+                'placeholder' => false,
+            ])
             ->add('part_recue_du_locataire_montant')
 
             ->add('part_recue_de_la_CAF_date')
-            ->add('part_recue_de_la_CAF_mode')
+            ->add('part_recue_de_la_CAF_mode', ChoiceType::class, [
+                'choices' => [
+                    'VIR' => 'VIR',
+                    'ESP' => 'ESP',
+                    'CB' => 'CB',
+                    'CHQ' => 'CHQ',
+                    'Autres' => 'Autres',
+                ],
+                'data' => 'VIR',
+                'required' => false,
+                'placeholder' => false,
+            ])
             ->add('part_recue_de_la_CAF_montant')
 
             ->add('RBT_motif', null, [
                 'mapped' => false,
                 'required' => false,
             ])
-            ->add('RBT_date', null, [
+            ->add('RBT_date', DateType::class, [
                 'mapped' => false,
                 'required' => false,
+                'widget' => 'single_text',
             ])
-            ->add('RBT_mode', null, [
-                'mapped' => false,
+            ->add('RBT_mode', ChoiceType::class, [
+                'choices' => [
+                    'VIR' => 'VIR',
+                    'ESP' => 'ESP',
+                    'CB' => 'CB',
+                    'CHQ' => 'CHQ',
+                    'Autres' => 'Autres',
+                ],
+                'data' => 'VIR',
                 'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
             ])
             ->add('RBT_montant', null, [
                 'mapped' => false,

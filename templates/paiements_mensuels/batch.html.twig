@@ -108,11 +108,55 @@ let index = 0;
 function addPaiement() {
 
     const newForm = prototype.replace(/__name__/g, index);
-
     container.insertAdjacentHTML('beforeend', newForm);
+
+    const rows = container.querySelectorAll('.paiement-item');
+    const row = rows[rows.length - 1];
+
+    let year;
+    let month;
+
+    if (rows.length > 1) {
+
+        const previousRow = rows[rows.length - 2];
+
+        const previousDate =
+            previousRow.querySelector('[name*="[date]"]')?.value;
+
+        if (previousDate) {
+
+            const previous = new Date(previousDate);
+
+            year = previous.getFullYear();
+            month = String(previous.getMonth() + 1).padStart(2, '0');
+
+        } else {
+
+            const today = new Date();
+
+            year = today.getFullYear();
+            month = String(today.getMonth() + 1).padStart(2, '0');
+        }
+
+    } else {
+
+        const today = new Date();
+
+        year = today.getFullYear();
+        month = String(today.getMonth() + 1).padStart(2, '0');
+    }
+
+    const firstDay = `${year}-${month}-01`;
+    const fifthDay = `${year}-${month}-05`;
+
+    row.querySelector('[name*="[date]"]').value = firstDay;
+    row.querySelector('[name*="[part_recue_de_la_CAF_date]"]').value = fifthDay;
 
     index++;
 }
+
+
+
 
 document
     .getElementById('add-paiement')

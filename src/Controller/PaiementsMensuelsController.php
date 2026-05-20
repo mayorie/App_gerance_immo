@@ -95,9 +95,36 @@ final class PaiementsMensuelsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            foreach ($form->getData()['paiements'] as $paiement) {
+            foreach ($form->get('paiements') as $paiementForm) {
+
+                $paiement = $paiementForm->getData();
 
                 $em->persist($paiement);
+
+                $RBTMontant = $paiementForm->get('RBT_montant')->getData();
+
+                if ($RBTMontant !== null) {
+
+                    $rbt = new RBTBailleur();
+
+                    $rbt->setMotif(
+                        $paiementForm->get('RBT_motif')->getData()
+                    );
+
+                    $rbt->setDate(
+                        $paiementForm->get('RBT_date')->getData()
+                    );
+
+                    $rbt->setMode(
+                        $paiementForm->get('RBT_mode')->getData()
+                    );
+
+                    $rbt->setMontant($RBTMontant);
+
+                    $rbt->setPaiementsMensuelID($paiement);
+
+                    $em->persist($rbt);
+                }
             }
 
             $em->flush();

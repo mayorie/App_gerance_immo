@@ -29,12 +29,12 @@
         <tr>
             <th colspan="2">Info locataire</th>
             <th colspan="1">Saisie du</th>
-            <th colspan="7">Total du</th>
+            <th colspan="8">Total du</th>
             <th colspan="3">Part reçue du locataire</th>
             <th colspan="3">Part reçue de la CAF</th>
-            <th colspan="3">Remboursement bailleur</th>
+            <th colspan="4">Remboursement bailleur</th>
             <th colspan="1">Restant dû</th>
-            <th colspan="2">édition</th>
+            <th colspan="1">édition</th>
         </tr>
 
         <tr>
@@ -43,6 +43,7 @@
 
             <th>date</th>
 
+            <th>restant du m-1</th>
             <th>caution</th>
             <th>regul. Pack S</th>
             <th>regul. charges</th>
@@ -59,13 +60,13 @@
             <th>Mode</th>
             <th>Montant</th>
 
+            <th>Motif</th>
             <th>Date</th>
             <th>Mode</th>
             <th>Montant</th>
 
             <th>Montant</th>
 
-            <th>Modif</th>
             <th>Supr</th>
         </tr>
 
@@ -125,54 +126,201 @@ addPaiement();
 
 
 
-document.addEventListener('change', function (e) {
+function updateTotal(row) {
 
-    if (
-        e.target.name.includes('[LocatairesID]')
-    ) {
+    const option = row.querySelector('[name*="[LocatairesID]"]')
+        ?.selectedOptions[0];
+
+    if (!option) {
+        return;
+    }
+
+    const caution = parseFloat(option.dataset.caution) || 0;
+    const loyer = parseFloat(option.dataset.loyer) || 0;
+    const charge = parseFloat(option.dataset.charge) || 0;
+    const packs = parseFloat(option.dataset.packs) || 0;
+
+    let restantm = parseFloat(option.dataset.restantm) || 0;
+    const currentLocataire = row.querySelector('[name*="[LocatairesID]"]').value;
+    const allRows = document.querySelectorAll('.paiement-item');
+
+    for (const previousRow of allRows) {
+
+        if (previousRow === row) {
+            break;
+        }
+
+        const previousLocataire = previousRow
+            .querySelector('[name*="[LocatairesID]"]')
+            ?.value;
+
+        if (previousLocataire === currentLocataire) {
+
+            const previousRestant = parseFloat(
+                previousRow.querySelector('.restant-du-input')?.value
+            );
+
+            if (!isNaN(previousRestant)) {
+                restantm = previousRestant;
+            }
+        }
+    }
+
+    const regulPacks = parseFloat(
+        row.querySelector('[name*="[RegulPacksServices]"]').value
+    ) || 0;
+
+    const regulCharges = parseFloat(
+        row.querySelector('[name*="[RegulProvisionsPourCharges]"]').value
+    ) || 0;
+
+    const total =
+        caution +
+        loyer +
+        charge +
+        packs +
+        regulPacks +
+        regulCharges +
+        restantm;
+
+    const totalCell = row.querySelector('.total-cell');
+
+    if (totalCell) {
+        totalCell.textContent = total;
+    }
+
+    const restantMCell = row.querySelector('.restantm-cell');
+
+    if (restantMCell) {
+        restantMCell.textContent = restantm;
+    }
+}
+
+function updateRestantDu(row) {
+
+    const option = row.querySelector('[name*="[LocatairesID]"]')
+        ?.selectedOptions[0];
+
+    if (!option) {
+        return;
+    }
+
+    const caution = parseFloat(option.dataset.caution) || 0;
+    const loyer = parseFloat(option.dataset.loyer) || 0;
+    const charge = parseFloat(option.dataset.charge) || 0;
+    const packs = parseFloat(option.dataset.packs) || 0;
+
+    let restantm = parseFloat(option.dataset.restantm) || 0;
+    const currentLocataire = row.querySelector('[name*="[LocatairesID]"]').value;
+    const allRows = document.querySelectorAll('.paiement-item');
+
+    for (const previousRow of allRows) {
+
+        if (previousRow === row) {
+            break;
+        }
+
+        const previousLocataire = previousRow
+            .querySelector('[name*="[LocatairesID]"]')
+            ?.value;
+
+        if (previousLocataire === currentLocataire) {
+
+            const previousRestant = parseFloat(
+                previousRow.querySelector('.restant-du-input')?.value
+            );
+
+            if (!isNaN(previousRestant)) {
+                restantm = previousRestant;
+            }
+        }
+    }
+
+    const regulPacks = parseFloat(
+        row.querySelector('[name*="[RegulPacksServices]"]').value
+    ) || 0;
+
+    const regulCharges = parseFloat(
+        row.querySelector('[name*="[RegulProvisionsPourCharges]"]').value
+    ) || 0;
+
+    const partLocataire = parseFloat(
+        row.querySelector('[name*="[part_recue_du_locataire_montant]"]').value
+    ) || 0;
+
+    const partCAF = parseFloat(
+        row.querySelector('[name*="[part_recue_de_la_CAF_montant]"]').value
+    ) || 0;
+
+    const partRBT = parseFloat(
+        row.querySelector('[name*="[RBT_montant]"]').value
+    ) || 0;
+
+    const total =
+        caution +
+        loyer +
+        charge +
+        packs +
+        regulPacks +
+        regulCharges +
+        restantm;
+
+    const restantDu = total - partLocataire - partCAF + partRBT;
+
+    const restantInput = row.querySelector('.restant-du-input');
+
+    if (restantInput) {
+        restantInput.value = restantDu;
+    }
+
+    const totalCell = row.querySelector('.total-cell');
+
+    if (totalCell) {
+        totalCell.textContent = total;
+    }
+}
+
+document.addEventListener('input', function (e) {
+
+    const row = e.target.closest('tr');
+
+    if (!row) {
+        return;
+    }
+    updateRestantDu(row);
+
+    // changement locataire
+    if (e.target.name.includes('[LocatairesID]')) {
 
         const option = e.target.selectedOptions[0];
 
+        const appart = option.dataset.appart;
 
-        const appart = parseFloat(option.dataset.appart) || 0;
         const caution = parseFloat(option.dataset.caution) || 0;
         const loyer = parseFloat(option.dataset.loyer) || 0;
         const charge = parseFloat(option.dataset.charge) || 0;
         const packs = parseFloat(option.dataset.packs) || 0;
+        const restantm = parseFloat(option.dataset.restantm) || 0;
 
-        const total = caution + loyer + charge + packs;
+        row.querySelector('.appart-cell').textContent = appart;
+        row.querySelector('.caution-cell').textContent = caution;
+        row.querySelector('.loyer-cell').textContent = loyer;
+        row.querySelector('.charge-cell').textContent = charge;
+        row.querySelector('.packs-cell').textContent = packs;
+        row.querySelector('.restantm-cell').textContent = restantm;
 
-        const row = e.target.closest('tr');
+        updateTotal(row);
+    }
 
-
-        const appartCell = row.querySelector('.appart-cell');
-        const cautionCell = row.querySelector('.caution-cell');
-        const loyerCell = row.querySelector('.loyer-cell');
-        const chargeCell = row.querySelector('.charge-cell');
-        const packsCell = row.querySelector('.packs-cell');
-        const totalCell = row.querySelector('.total-cell');
-
-
-        if (appartCell) {
-            appartCell.textContent = appart;
-        }
-        if (cautionCell) {
-            cautionCell.textContent = caution;
-        }
-        if (loyerCell) {
-            loyerCell.textContent = loyer;
-        }
-        if (chargeCell) {
-            chargeCell.textContent = charge;
-        }
-        if (packsCell) {
-            packsCell.textContent = packs;
-        }
-        if (totalCell) {
-            totalCell.textContent = total;
-        }
+    // modification régules
+    if (
+        e.target.name.includes('[RegulPacksServices]') ||
+        e.target.name.includes('[RegulProvisionsPourCharges]')
+    ) {
+        updateTotal(row);
     }
 });
+
 
 </script>
 

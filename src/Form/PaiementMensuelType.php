@@ -36,7 +36,8 @@ class PaiementMensuelType extends AbstractType
                         'data-packs' => $locataire->getLatestCharge()?->getMontant(),
                         'data-caution' => $locataire->getPaiementsMensuels()->isEmpty()
                             ? $locataire->getMontantCaution()
-                            : 0,                    
+                            : 0,
+                        'data-restantm' => $locataire->getRestantDuTropPercu()//restant du M-1
                     ];
                 },
 
@@ -48,13 +49,38 @@ class PaiementMensuelType extends AbstractType
                 }
             ])
             ->add('date')
+
             ->add('part_recue_du_locataire_date')
             ->add('part_recue_du_locataire_mode')
             ->add('part_recue_du_locataire_montant')
+
             ->add('part_recue_de_la_CAF_date')
             ->add('part_recue_de_la_CAF_mode')
             ->add('part_recue_de_la_CAF_montant')
-            ->add('restant_du_trop_percu_fin_de_mois')
+
+            ->add('RBT_motif', null, [
+                'mapped' => false,
+                'required' => false,
+            ])
+            ->add('RBT_date', null, [
+                'mapped' => false,
+                'required' => false,
+            ])
+            ->add('RBT_mode', null, [
+                'mapped' => false,
+                'required' => false,
+            ])
+            ->add('RBT_montant', null, [
+                'mapped' => false,
+                'required' => false,
+            ])
+
+            ->add('restant_du_trop_percu_fin_de_mois', null, [
+                'attr' => [
+                    'class' => 'restant-du-input',
+                    'readonly' => true,
+                ]
+            ])
             ->add('RegulPacksServices')
             ->add('RegulProvisionsPourCharges')
         ;

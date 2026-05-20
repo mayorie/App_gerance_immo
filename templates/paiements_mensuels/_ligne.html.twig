@@ -10,17 +10,21 @@
     <td>
         {{ form_widget(form.date) }}
     </td>
+    
+    <td class="restantm-cell">
+        -
+    </td>
 
     <td class="caution-cell">
         -
     </td>
 
     <td>
-        {{ form_widget(form.part_recue_du_locataire_mode) }}
+        {{ form_widget(form.RegulPacksServices) }}
     </td>
 
     <td>
-        {{ form_widget(form.part_recue_du_locataire_montant) }}
+        {{ form_widget(form.RegulProvisionsPourCharges) }}
     </td>
 
     <td class="loyer-cell">
@@ -40,27 +44,39 @@
     </td>
 
     <td>
-        {{ form_widget(form.part_recue_de_la_CAF_date) }}
+        {{ form_widget(form.part_recue_du_locataire_date) }}
+    </td>
+    <td>
+        {{ form_widget(form.part_recue_du_locataire_mode) }}
+    </td>
+    <td>
+        {{ form_widget(form.part_recue_du_locataire_montant) }}
     </td>
 
     <td>
+        {{ form_widget(form.part_recue_de_la_CAF_date) }}
+    </td>
+    <td>
         {{ form_widget(form.part_recue_de_la_CAF_mode) }}
     </td>
-
     <td>
         {{ form_widget(form.part_recue_de_la_CAF_montant) }}
     </td>
 
     <td>
+        {{ form_widget(form.RBT_motif) }}
+    </td>
+    <td>
+        {{ form_widget(form.RBT_date) }}
+    </td>
+    <td>
+        {{ form_widget(form.RBT_mode) }}
+    </td>
+    <td>
+        {{ form_widget(form.RBT_montant) }}
+    </td>
+
+    <td>
         {{ form_widget(form.restant_du_trop_percu_fin_de_mois) }}
     </td>
-
-    <td>
-        {{ form_widget(form.RegulPacksServices) }}
-    </td>
-
-    <td>
-        {{ form_widget(form.RegulProvisionsPourCharges) }}
-    </td>
-
 </tr>

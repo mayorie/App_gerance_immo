@@ -143,6 +143,15 @@
 
                 <td>{{ p.RestantDuTropPercuFinDeMois }} €</td>
 
+                <td>
+                    
+                </td>
+                <td>
+                    <form method="post" action="{{ path('paiements_delete', {'id': p.id}) }}" onsubmit="return confirm('Supprimer ce paiement ?');" >
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ p.id) }}">
+                        <button type="submit">🗑️</button>
+                    </form>
+                </td>
 
             </tr>
         {% endfor %}
@@ -153,10 +162,6 @@
 
 {# POPUP flash #}
 {% for message in app.flashes('error') %}
-    <script>alert("{{ message }}");</script>
-{% endfor %}
-
-{% for message in app.flashes('success') %}
     <script>alert("{{ message }}");</script>
 {% endfor %}
 

@@ -143,4 +143,26 @@ final class PaiementsMensuelsController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/paiements/{id}/delete', name: 'paiements_delete', methods: ['POST'])]
+    public function delete(
+        PaiementsMensuels $paiement,
+        Request $request,
+        EntityManagerInterface $em
+    ): Response {
+
+        $submittedToken = $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('delete' . $paiement->getId(), $submittedToken)) {
+            $this->addFlash('error', 'Token CSRF invalide');
+            return $this->redirectToRoute('app_paiements_mensuels');
+        }
+
+        $em->remove($paiement);
+        $em->flush();
+
+        $this->addFlash('success', 'Paiement supprimé');
+
+        return $this->redirectToRoute('app_paiements_mensuels');
+    }
 }

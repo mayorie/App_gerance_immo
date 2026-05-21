@@ -218,15 +218,17 @@ function recalcRow(row) {
     const partRBT = parseFloat(row.querySelector('[name*="[RBT_montant]"]').value) || 0;
 
     const total =
-        caution +
-        loyer +
-        charge +
-        packs +
-        regulPacks +
-        regulCharges +
-        restantm;
+        Math.round((
+            caution +
+            loyer +
+            charge +
+            packs +
+            regulPacks +
+            regulCharges +
+            restantm
+        )*100)/100;
 
-    const restantDu = total - partLoc - partCAF + partRBT;
+    const restantDu = Math.round((total - partLoc - partCAF + partRBT)*100)/100;
 
     row.querySelector('.restant-du-input').value = restantDu;
     row.querySelector('.total-cell').textContent = total;

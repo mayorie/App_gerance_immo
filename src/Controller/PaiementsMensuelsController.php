@@ -100,6 +100,14 @@ final class PaiementsMensuelsController extends AbstractController
 
                 $em->persist($paiement);
 
+                $locataire = $paiement->getLocatairesID();
+
+                $locataire->setRestantDuTropPercu(
+                    $paiement->getRestantDuTropPercuFinDeMois()
+                );
+
+                $em->persist($locataire);
+
                 $RBTMontant = $paiementForm->get('RBT_montant')->getData();
 
                 if ($RBTMontant !== null) {

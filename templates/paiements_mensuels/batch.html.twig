@@ -228,7 +228,7 @@ function recalcRow(row) {
             restantm
         )*100)/100;
 
-    const restantDu = total - partLoc - partCAF + partRBT;
+    const restantDu = Math.round((total - partLoc - partCAF + partRBT)*100)/100;
 
     row.querySelector('.restant-du-input').value = restantDu;
     row.querySelector('.total-cell').textContent = total;

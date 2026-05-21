@@ -218,13 +218,15 @@ function recalcRow(row) {
     const partRBT = parseFloat(row.querySelector('[name*="[RBT_montant]"]').value) || 0;
 
     const total =
-        caution +
-        loyer +
-        charge +
-        packs +
-        regulPacks +
-        regulCharges +
-        restantm;
+        Math.round((
+            caution +
+            loyer +
+            charge +
+            packs +
+            regulPacks +
+            regulCharges +
+            restantm
+        )*100)/100;
 
     const restantDu = total - partLoc - partCAF + partRBT;
 

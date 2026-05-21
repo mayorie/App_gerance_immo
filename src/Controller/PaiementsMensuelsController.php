@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\PaiementsMensuels;
+use App\Entity\RBTBailleur;
 use App\Repository\PaiementsMensuelsRepository;
 use App\Repository\LocatairesRepository;
 use App\Repository\RBTBailleurRepository;
@@ -84,9 +85,7 @@ final class PaiementsMensuelsController extends AbstractController
     ): Response {
 
         $data = [
-            'paiements' => [
-                new PaiementsMensuels()
-            ]
+            'paiements' => []
         ];
 
         $form = $this->createForm(PaiementsBatchType::class, $data);

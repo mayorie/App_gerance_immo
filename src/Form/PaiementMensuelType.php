@@ -54,13 +54,15 @@ class PaiementMensuelType extends AbstractType
                         ->orderBy('l.nom', 'ASC');
                 }
             ])
-            ->add('date', null, [
+            ->add('date', DateType::class, [
+                'widget' => 'single_text',
                 'attr' => [
-                    'class' => 'input-medium'
+                    'class' => 'input-medium paiement-date'
                 ]
             ])
 
-            ->add('part_recue_du_locataire_date', null, [
+            ->add('part_recue_du_locataire_date', DateType::class, [
+                'widget' => 'single_text',
                 'attr' => [
                     'class' => 'input-medium'
                 ]
@@ -85,7 +87,8 @@ class PaiementMensuelType extends AbstractType
                     'class' => 'input-small'
                 ]
             ])
-            ->add('part_recue_de_la_CAF_date', null, [
+            ->add('part_recue_de_la_CAF_date', DateType::class, [
+                'widget' => 'single_text',
                 'attr' => [
                     'class' => 'input-medium'
                 ]

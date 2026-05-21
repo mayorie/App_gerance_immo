@@ -78,13 +78,16 @@
         } %}
     {% endset %}
 
-    <tbody id="paiements-container">
+    <tbody id="paiements-container" data-index="{{ form.paiements|length }}">
     </tbody>
 
 </table>
 
-{{ form_end(form, { render_rest: false }) }}
+<div style="display:none;">
+    {{ form_widget(form.paiements) }}
+</div>
 
+{{ form_end(form) }}
 
 
 
@@ -103,7 +106,7 @@ const container = document.getElementById('paiements-container');
 
 const prototype = `{{ prototype|e('js') }}`;
 
-let index = 0;
+let index = container.dataset.index;
 
 function addPaiement() {
 
@@ -121,7 +124,7 @@ function addPaiement() {
         const previousRow = rows[rows.length - 2];
 
         const previousDate =
-            previousRow.querySelector('[name*="[date]"]')?.value;
+            previousRow.querySelector('.paiement-date')?.value;
 
         if (previousDate) {
 
@@ -149,7 +152,7 @@ function addPaiement() {
     const firstDay = `${year}-${month}-01`;
     const fifthDay = `${year}-${month}-05`;
 
-    row.querySelector('[name*="[date]"]').value = firstDay;
+    row.querySelector('.paiement-date').value = firstDay;
     row.querySelector('[name*="[part_recue_de_la_CAF_date]"]').value = fifthDay;
 
     index++;

@@ -206,7 +206,58 @@ function recalcRow(row) {
         }
     }
 
-    const loyer = parseFloat(option.dataset.loyer) || 0;
+    let loyer = parseFloat(option.dataset.loyer) || 0;
+
+    const bailIN = option.dataset.bailIn || null;
+    const bailOUT = option.dataset.bailOut || null;
+
+    if (bailIN) {
+
+        const dateBail = new Date(bailIN);
+
+        const jourEntree = dateBail.getDate();
+
+        const annee = dateBail.getFullYear();
+        const mois = dateBail.getMonth();
+
+        // nombre de jours dans le mois
+        const joursDansLeMois = new Date(
+            annee,
+            mois + 1,
+            0
+        ).getDate();
+
+        // jours à payer jusqu'à la fin du mois
+        const joursAPayer = joursDansLeMois - jourEntree;
+
+        // prorata
+        loyer = Math.round((
+            (loyer / joursDansLeMois) * joursAPayer
+        ) * 100) / 100;
+    }
+
+    if (bailOUT) {
+
+        const dateBail = new Date(bailOUT);
+
+        const joursAPayer = dateBail.getDate();
+
+        const annee = dateBail.getFullYear();
+        const mois = dateBail.getMonth();
+
+        // nombre de jours dans le mois
+        const joursDansLeMois = new Date(
+            annee,
+            mois + 1,
+            0
+        ).getDate();
+
+        // prorata
+        loyer = Math.round((
+            (loyer / joursDansLeMois) * joursAPayer
+        ) * 100) / 100;
+    }
+
     const charge = parseFloat(option.dataset.charge) || 0;
     const packs = parseFloat(option.dataset.packs) || 0;
 

@@ -130,6 +130,8 @@
                 <td>{{ p.PartRecueDeLaCafMode }}</td>
                 <td>{{ p.PartRecueDeLaCafMontant ? p.PartRecueDeLaCafMontant ~ ' €' : '-' }}</td>
 
+                <td>{{ RBT and RBT.date ? RBT.date|date('d/m/Y') : '-' }}</td>
+                <td>{{ RBT ? RBT.mode : '-' }}</td>
                 <td>
                     {% if RBT and RBT.montant is not null %}
                         {{ RBT.montant }} €
@@ -137,14 +139,14 @@
                         -
                     {% endif %}
                 </td>
-                <td>{{ RBT ? RBT.mode : '-' }}</td>
-                <td>{{ RBT and RBT.date ? RBT.date|date('d/m/Y') : '-' }}</td>
 
 
                 <td>{{ p.RestantDuTropPercuFinDeMois }} €</td>
-
+                
                 <td>
-                    
+                    <a href="{{ path('paiement_edit', {id: p.id}) }}" >
+                        ✏️
+                    </a>
                 </td>
                 <td>
                     <form method="post" action="{{ path('paiements_delete', {'id': p.id}) }}" onsubmit="return confirm('Supprimer ce paiement ?');" >

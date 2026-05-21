@@ -1,0 +1,319 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<div class="div-titre">
+
+    <a href="{{ path('app_paiements_mensuels') }}" class="btn-retour">
+        Retour
+    </a>
+
+    <h1>Modifier un paiement</h1>
+
+</div>
+
+{{ form_start(form) }}
+
+<table style="border-collapse: separate; border-spacing: 8px 5px; width: 100%;">
+
+    <thead>
+
+        <tr>
+            <th colspan="2">Info locataire</th>
+            <th colspan="1">Saisie du</th>
+            <th colspan="8">Total du</th>
+            <th colspan="3">Part reçue du locataire</th>
+            <th colspan="3">Part reçue de la CAF</th>
+            <th colspan="4">Remboursement bailleur</th>
+            <th colspan="1">Restant dû</th>
+        </tr>
+
+        <tr>
+            <th>Locataire</th>
+            <th>appart</th>
+
+            <th>Date</th>
+
+            <th>Restant M-1</th>
+            <th>Caution</th>
+            <th>Régul Pack S</th>
+            <th>Régul charges</th>
+            <th>Loyer HC</th>
+            <th>Charges</th>
+            <th>Pack S</th>
+            <th>Total</th>
+
+            <th>Date</th>
+            <th>Mode</th>
+            <th>Montant</th>
+
+            <th>Date</th>
+            <th>Mode</th>
+            <th>Montant</th>
+
+            <th>Motif</th>
+            <th>Date</th>
+            <th>Mode</th>
+            <th>Montant</th>
+
+            <th>Montant</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        <tr class="paiement-item">
+
+            <td>
+                {{ form.vars.data.LocatairesID.prenom }}
+                {{ form.vars.data.LocatairesID.nom }}
+                <div style="display:none;">
+                    {{ form_widget(form.LocatairesID) }}
+                </div>
+            </td>
+
+            <td class="appart-cell">
+                {{ form.vars.data.LocatairesID.LogementsID.idAppart }}
+            </td>
+
+            <td>
+                {{ form_widget(form.date) }}
+            </td>
+
+            <td class="restantm-cell">
+                {{ form.vars.data.LocatairesID.restantDuTropPercu }}
+            </td>
+
+            <td class="caution-cell">
+                {{ form.vars.data.LocatairesID.montantCaution }}
+            </td>
+
+            <td>
+                {{ form_widget(form.RegulPacksServices, {
+                    attr: { class: 'input-small' }
+                }) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.RegulProvisionsPourCharges, {
+                    attr: { class: 'input-small' }
+                }) }}
+            </td>
+
+            <td class="loyer-cell">
+                {{ form.vars.data.LocatairesID.latestLoyer.montant }}
+            </td>
+
+            <td class="charge-cell">
+                {{ form.vars.data.LocatairesID.latestCharge.montant }}
+            </td>
+
+            <td class="packs-cell">
+                {{ form.vars.data.LocatairesID.latestPackServices.montant }}
+            </td>
+
+            <td class="total-cell">
+                -
+            </td>
+
+            <td>
+                {{ form_widget(form.part_recue_du_locataire_date) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.part_recue_du_locataire_mode) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.part_recue_du_locataire_montant) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.part_recue_de_la_CAF_date) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.part_recue_de_la_CAF_mode) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.part_recue_de_la_CAF_montant) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.RBT_motif) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.RBT_date) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.RBT_mode) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.RBT_montant) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.restant_du_trop_percu_fin_de_mois) }}
+            </td>
+
+        </tr>
+
+    </tbody>
+
+</table>
+
+<button class="btn-create">
+    Enregistrer
+</button>
+
+{{ form_end(form) }}
+
+<link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+
+<script>
+function recalcRow(row) {
+
+    const option = row.querySelector('[name*="[LocatairesID]"]')?.selectedOptions[0];
+    if (!option) return;
+
+    let caution = parseFloat(option.dataset.caution) || 0;
+    let restantm = parseFloat(option.dataset.restantm) || 0;
+
+    const currentLocataire = row.querySelector('[name*="[LocatairesID]"]').value;
+
+    const allRows = document.querySelectorAll('.paiement-item');
+
+    for (const previousRow of allRows) {
+
+        if (previousRow === row) break;
+
+        const previousLocataire =
+            previousRow.querySelector('[name*="[LocatairesID]"]')?.value;
+
+        if (previousLocataire === currentLocataire) {
+
+            caution = 0;
+
+            const prevRestant = parseFloat(
+                previousRow.querySelector('.restant-du-input')?.value
+            );
+
+            if (!isNaN(prevRestant)) {
+                restantm = prevRestant;
+            }
+        }
+    }
+
+    const loyer = parseFloat(option.dataset.loyer) || 0;
+    const charge = parseFloat(option.dataset.charge) || 0;
+    const packs = parseFloat(option.dataset.packs) || 0;
+
+    const regulPacks = parseFloat(row.querySelector('[name*="[RegulPacksServices]"]').value) || 0;
+    const regulCharges = parseFloat(row.querySelector('[name*="[RegulProvisionsPourCharges]"]').value) || 0;
+
+    const partLoc = parseFloat(row.querySelector('[name*="[part_recue_du_locataire_montant]"]').value) || 0;
+    const partCAF = parseFloat(row.querySelector('[name*="[part_recue_de_la_CAF_montant]"]').value) || 0;
+    const partRBT = parseFloat(row.querySelector('[name*="[RBT_montant]"]').value) || 0;
+
+    const total =
+        Math.round((
+            caution +
+            loyer +
+            charge +
+            packs +
+            regulPacks +
+            regulCharges +
+            restantm
+        )*100)/100;
+
+    const restantDu = Math.round((total - partLoc - partCAF + partRBT)*100)/100;
+
+    row.querySelector('.restant-du-input').value = restantDu;
+    row.querySelector('.total-cell').textContent = total;
+    row.querySelector('.restantm-cell').textContent = restantm;
+    row.querySelector('.caution-cell').textContent = caution;
+}
+
+
+
+
+
+
+document.addEventListener('input', function (e) {
+
+    const row = e.target.closest('tr');
+
+    if (!row) {
+        return;
+    }
+    recalcRow(row);
+
+    // changement locataire
+    if (e.target.name.includes('[LocatairesID]')) {
+
+        const option = e.target.selectedOptions[0];
+
+        const appart = option.dataset.appart;
+
+        const caution = parseFloat(option.dataset.caution) || 0;
+        const loyer = parseFloat(option.dataset.loyer) || 0;
+        const charge = parseFloat(option.dataset.charge) || 0;
+        const packs = parseFloat(option.dataset.packs) || 0;
+        const restantm = parseFloat(option.dataset.restantm) || 0;
+
+        row.querySelector('.appart-cell').textContent = appart;
+        row.querySelector('.caution-cell').textContent = caution;
+        row.querySelector('.loyer-cell').textContent = loyer;
+        row.querySelector('.charge-cell').textContent = charge;
+        row.querySelector('.packs-cell').textContent = packs;
+        row.querySelector('.restantm-cell').textContent = restantm;
+
+        recalcRow(row);
+    }
+
+    // modification régules
+    if (
+        e.target.name.includes('[RegulPacksServices]') ||
+        e.target.name.includes('[RegulProvisionsPourCharges]')
+    ) {
+        recalcRow(row);
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const row = document.querySelector('.paiement-item');
+
+    if (row) {
+        recalcRow(row);
+
+        const option =
+            row.querySelector('[name*="[LocatairesID]"]')?.selectedOptions[0];
+
+        if (option) {
+
+            row.querySelector('.appart-cell').textContent =
+                option.dataset.appart;
+
+            row.querySelector('.loyer-cell').textContent =
+                option.dataset.loyer;
+
+            row.querySelector('.charge-cell').textContent =
+                option.dataset.charge;
+
+            row.querySelector('.packs-cell').textContent =
+                option.dataset.packs;
+        }
+    }
+});
+
+</script>
+
+{% endblock %}

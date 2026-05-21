@@ -143,6 +143,115 @@ final class PaiementsMensuelsController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+    
+    #[Route('/paiements/{id}/edit', name: 'paiement_edit')]
+    public function edit(
+        Request $request,
+        PaiementsMensuels $paiement,
+        EntityManagerInterface $em,
+        RBTBailleurRepository $repoRBT
+    ): Response {
+
+        $rbt = $repoRBT->findOneBy([
+            'Paiements_mensuelID' => $paiement
+        ]);
+
+        $form = $this->createForm(
+            PaiementMensuelType::class,
+            $paiement
+        );
+
+        // préchargement des champs RBT
+        if ($rbt) {
+
+            $form->get('RBT_motif')->setData(
+                $rbt->getMotif()
+            );
+
+            $form->get('RBT_date')->setData(
+                $rbt->getDate()
+            );
+
+            $form->get('RBT_mode')->setData(
+                $rbt->getMode()
+            );
+
+            $form->get('RBT_montant')->setData(
+                $rbt->getMontant()
+            );
+
+        } else {
+
+            $form->get('RBT_motif')->setData(null);
+            $form->get('RBT_date')->setData(null);
+            $form->get('RBT_mode')->setData(null);
+            $form->get('RBT_montant')->setData(null);
+        }
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $locataire = $paiement->getLocatairesID();
+
+            if ($locataire) {
+
+                $locataire->setRestantDuTropPercu(
+                    $paiement->getRestantDuTropPercuFinDeMois()
+                );
+            }
+
+            // gestion du RBT
+            $RBTMontant = $form->get('RBT_montant')->getData();
+
+            if ($RBTMontant !== null) {
+
+                if (!$rbt) {
+                    $rbt = new RBTBailleur();
+                    $rbt->setPaiementsMensuelID($paiement);
+                }
+
+                $rbt->setMotif(
+                    $form->get('RBT_motif')->getData()
+                );
+
+                $rbt->setDate(
+                    $form->get('RBT_date')->getData()
+                );
+
+                $rbt->setMode(
+                    $form->get('RBT_mode')->getData()
+                );
+
+                $rbt->setMontant($RBTMontant);
+
+                $em->persist($rbt);
+
+            } elseif ($rbt) {
+
+                // suppression si montant vidé
+                $em->remove($rbt);
+            }
+
+            $em->flush();
+
+            $this->addFlash(
+                'success',
+                'Paiement modifié.'
+            );
+
+            return $this->redirectToRoute(
+                'app_paiements_mensuels'
+            );
+        }
+
+        return $this->render(
+            'paiements_mensuels/edit.html.twig',
+            [
+                'form' => $form->createView(),
+            ]
+        );
+    }
 
     #[Route('/paiements/{id}/delete', name: 'paiements_delete', methods: ['POST'])]
     public function delete(

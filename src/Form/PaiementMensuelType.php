@@ -6,6 +6,7 @@ use App\Entity\PaiementsMensuels;
 use App\Entity\Locataires;
 
 use App\Repository\LocatairesRepository;
+use App\Repository\RBTBailleurRepository;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 

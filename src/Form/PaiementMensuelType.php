@@ -6,6 +6,7 @@ use App\Entity\PaiementsMensuels;
 use App\Entity\Locataires;
 
 use App\Repository\LocatairesRepository;
+use App\Repository\RBTBailleurRepository;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
@@ -34,13 +35,16 @@ class PaiementMensuelType extends AbstractType
 
                     return [
                         'data-appart' => $locataire->getLogementsID()?->getIdAppart(),
-                        'data-loyer' => $locataire->getLatestLoyer()?->getMontant(),
                         'data-charge' => $locataire->getLatestCharge()?->getMontant(),
                         'data-packs' => $locataire->getLatestPackServices()?->getMontant(),
                         'data-caution' => $locataire->getPaiementsMensuels()->isEmpty()
                             ? $locataire->getMontantCaution()
                             : 0,
-                        'data-restantm' => $locataire->getRestantDuTropPercu()//restant du M-1
+                        'data-restantm' => $locataire->getRestantDuTropPercu(),//restant du M-1
+
+                        'data-loyer' => $locataire->getLatestLoyer()?->getMontant(),
+                        'data-bail-in' => $locataire->getDebutBail()?->format('Y-m-d'),
+                        'data-bail-out' => $locataire->getDateDeSortie()?->format('Y-m-d'),
                     ];
                 },
                 'attr' => [

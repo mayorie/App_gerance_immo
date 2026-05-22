@@ -3,24 +3,16 @@
 {% block body %}
 
 <div class="div-titre">
-    <a href="{{ path('app_paiements_mensuels') }}" class="btn-retour">Retour</a>
 
-    <h1>Ajout des paiements</h1>
+    <a href="{{ path('app_paiements_mensuels') }}" class="btn-retour">
+        Retour
+    </a>
 
-    <button type="button" id="add-paiement" class="btn-create">
-        Ajouter un paiement
-    </button>
+    <h1>Modifier un paiement</h1>
 
-    <button type="submit" form="paiements-form" class="btn-create">
-        Enregistrer
-    </button>
 </div>
 
-{{ form_start(form, {
-    attr: {
-        id: 'paiements-form'
-    }
-}) }}
+{{ form_start(form) }}
 
 <table style="border-collapse: separate; border-spacing: 8px 5px; width: 100%;">
 
@@ -34,21 +26,20 @@
             <th colspan="3">Part reçue de la CAF</th>
             <th colspan="4">Remboursement bailleur</th>
             <th colspan="1">Restant dû</th>
-            <th colspan="1">édition</th>
         </tr>
 
         <tr>
             <th>Locataire</th>
             <th>appart</th>
 
-            <th>date</th>
+            <th>Date</th>
 
-            <th>restant du m-1</th>
-            <th>caution</th>
-            <th>regul. Pack S</th>
-            <th>regul. charges</th>
+            <th>Restant M-1</th>
+            <th>Caution</th>
+            <th>Régul Pack S</th>
+            <th>Régul charges</th>
             <th>Loyer HC</th>
-            <th>charges</th>
+            <th>Charges</th>
             <th>Pack S</th>
             <th>Total</th>
 
@@ -66,113 +57,127 @@
             <th>Montant</th>
 
             <th>Montant</th>
-
-            <th>Supr</th>
         </tr>
 
     </thead>
 
-    {% set prototype %}
-        {% include 'paiements_mensuels/_ligne.html.twig' with {
-            form: form.paiements.vars.prototype
-        } %}
-    {% endset %}
+    <tbody>
 
-    <tbody id="paiements-container" data-index="{{ form.paiements|length }}">
+        <tr class="paiement-item">
+
+            <td>
+                {{ form.vars.data.LocatairesID.prenom }}
+                {{ form.vars.data.LocatairesID.nom }}
+                <div style="display:none;">
+                    {{ form_widget(form.LocatairesID) }}
+                </div>
+            </td>
+
+            <td class="appart-cell">
+                {{ form.vars.data.LocatairesID.LogementsID.idAppart }}
+            </td>
+
+            <td>
+                {{ form_widget(form.date) }}
+            </td>
+
+            <td class="restantm-cell">
+                {{ form.vars.data.LocatairesID.restantDuTropPercu }}
+            </td>
+
+            <td class="caution-cell">
+                {{ form.vars.data.LocatairesID.montantCaution }}
+            </td>
+
+            <td>
+                {{ form_widget(form.RegulPacksServices, {
+                    attr: { class: 'input-small' }
+                }) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.RegulProvisionsPourCharges, {
+                    attr: { class: 'input-small' }
+                }) }}
+            </td>
+
+            <td class="loyer-cell">
+                {{ form.vars.data.LocatairesID.latestLoyer.montant }}
+            </td>
+
+            <td class="charge-cell">
+                {{ form.vars.data.LocatairesID.latestCharge.montant }}
+            </td>
+
+            <td class="packs-cell">
+                {{ form.vars.data.LocatairesID.latestPackServices.montant }}
+            </td>
+
+            <td class="total-cell">
+                -
+            </td>
+
+            <td>
+                {{ form_widget(form.part_recue_du_locataire_date) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.part_recue_du_locataire_mode) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.part_recue_du_locataire_montant) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.part_recue_de_la_CAF_date) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.part_recue_de_la_CAF_mode) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.part_recue_de_la_CAF_montant) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.RBT_motif) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.RBT_date) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.RBT_mode) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.RBT_montant) }}
+            </td>
+
+            <td>
+                {{ form_widget(form.restant_du_trop_percu_fin_de_mois) }}
+            </td>
+
+        </tr>
+
     </tbody>
 
 </table>
 
-<div style="display:none;">
-    {{ form_widget(form.paiements) }}
-</div>
+<button class="btn-create">
+    Enregistrer
+</button>
 
 {{ form_end(form) }}
-
-
-
 
 <link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
 <link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
 
 
-
-
-
-
 <script>
-
-const container = document.getElementById('paiements-container');
-
-const prototype = `{{ prototype|e('js') }}`;
-
-let index = container.dataset.index;
-
-function addPaiement() {
-
-    const newForm = prototype.replace(/__name__/g, index);
-    container.insertAdjacentHTML('beforeend', newForm);
-
-    const rows = container.querySelectorAll('.paiement-item');
-    const row = rows[rows.length - 1];
-
-    let year;
-    let month;
-
-    if (rows.length > 1) {
-
-        const previousRow = rows[rows.length - 2];
-
-        const previousDate =
-            previousRow.querySelector('.paiement-date')?.value;
-
-        if (previousDate) {
-
-            const previous = new Date(previousDate);
-
-            year = previous.getFullYear();
-            month = String(previous.getMonth() + 1).padStart(2, '0');
-
-        } else {
-
-            const today = new Date();
-
-            year = today.getFullYear();
-            month = String(today.getMonth() + 1).padStart(2, '0');
-        }
-
-    } else {
-
-        const today = new Date();
-
-        year = today.getFullYear();
-        month = String(today.getMonth() + 1).padStart(2, '0');
-    }
-
-    const firstDay = `${year}-${month}-01`;
-    const fifthDay = `${year}-${month}-05`;
-
-    row.querySelector('.paiement-date').value = firstDay;
-    row.querySelector('[name*="[part_recue_de_la_CAF_date]"]').value = fifthDay;
-
-    index++;
-}
-
-
-
-
-document
-    .getElementById('add-paiement')
-    .addEventListener('click', addPaiement);
-
-// première ligne automatique
-addPaiement();
-
-
-
-
-
-
 function recalcRow(row) {
 
     const option = row.querySelector('[name*="[LocatairesID]"]')?.selectedOptions[0];
@@ -206,58 +211,7 @@ function recalcRow(row) {
         }
     }
 
-    let loyer = parseFloat(option.dataset.loyer) || 0;
-
-    const bailIN = option.dataset.bailIn || null;
-    const bailOUT = option.dataset.bailOut || null;
-
-    if (caution>0 ) {
-
-        const dateBail = new Date(bailIN);
-
-        const jourEntree = dateBail.getDate();
-
-        const annee = dateBail.getFullYear();
-        const mois = dateBail.getMonth();
-
-        // nombre de jours dans le mois
-        const joursDansLeMois = new Date(
-            annee,
-            mois + 1,
-            0
-        ).getDate();
-
-        // jours à payer jusqu'à la fin du mois
-        const joursAPayer = joursDansLeMois - jourEntree;
-
-        // prorata
-        loyer = Math.round((
-            (loyer / joursDansLeMois) * joursAPayer
-        ) * 100) / 100;
-    }
-
-    if (bailOUT) {
-
-        const dateBail = new Date(bailOUT);
-
-        const joursAPayer = dateBail.getDate();
-
-        const annee = dateBail.getFullYear();
-        const mois = dateBail.getMonth();
-
-        // nombre de jours dans le mois
-        const joursDansLeMois = new Date(
-            annee,
-            mois + 1,
-            0
-        ).getDate();
-
-        // prorata
-        loyer = Math.round((
-            (loyer / joursDansLeMois) * joursAPayer
-        ) * 100) / 100;
-    }
-
+    const loyer = parseFloat(option.dataset.loyer) || 0;
     const charge = parseFloat(option.dataset.charge) || 0;
     const packs = parseFloat(option.dataset.packs) || 0;
 
@@ -333,29 +287,30 @@ document.addEventListener('input', function (e) {
     }
 });
 
+document.addEventListener('DOMContentLoaded', function () {
 
+    const row = document.querySelector('.paiement-item');
 
+    if (row) {
+        recalcRow(row);
 
+        const option =
+            row.querySelector('[name*="[LocatairesID]"]')?.selectedOptions[0];
 
+        if (option) {
 
-document.addEventListener('click', function (e) {
-    if (e.target.classList.contains('btn-delete-row')) {
+            row.querySelector('.appart-cell').textContent =
+                option.dataset.appart;
 
-        const row = e.target.closest('tr');
+            row.querySelector('.loyer-cell').textContent =
+                option.dataset.loyer;
 
-        if (!row) return;
+            row.querySelector('.charge-cell').textContent =
+                option.dataset.charge;
 
-        const rows = [...document.querySelectorAll('.paiement-item')];
-        const index = rows.indexOf(row);
-
-        row.remove();
-
-        // recalcul toutes les lignes après suppression
-        const remainingRows = document.querySelectorAll('.paiement-item');
-
-        remainingRows.forEach(r => {
-            recalcRow(r);
-        });
+            row.querySelector('.packs-cell').textContent =
+                option.dataset.packs;
+        }
     }
 });
 

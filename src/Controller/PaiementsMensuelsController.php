@@ -18,16 +18,37 @@ use Doctrine\ORM\EntityManagerInterface;
 final class PaiementsMensuelsController extends AbstractController
 {
     #[Route('/paiements', name: 'app_paiements_mensuels')]
-    public function index(PaiementsMensuelsRepository $repoPaiements, LocatairesRepository $locataireRepo, RBTBailleurRepository $repoRBT): Response {
+    public function index(
+        Request $request,
+        PaiementsMensuelsRepository $repoPaiements,
+        LocatairesRepository $locataireRepo,
+        RBTBailleurRepository $repoRBT
+    ): Response {
 
-        $paiements = $repoPaiements->findBy([], ['date' => 'DESC']);
+        $locataireId = $request->query->get('locataireId');
+
+        if ($locataireId) {
+
+            $paiements = $repoPaiements->findBy(
+                ['LocatairesID' => $locataireId],
+                ['date' => 'DESC']
+            );
+
+        } else {
+
+            $paiements = $repoPaiements->findBy(
+                [],
+                ['date' => 'DESC']
+            );
+        }
+
         $firstPaiements = $repoPaiements->findFirstPaiementsIds();
         $locataires = $locataireRepo->findAll();
 
-        // transformer en tableau simple [1, 5, 8, ...]
         $firstPaiementsIds = array_column($firstPaiements, 'id');
 
         $result = [];
+
         foreach ($paiements as $paiement) {
 
             $loyer = $repoPaiements->findLoyerHC($paiement);
@@ -38,8 +59,8 @@ final class PaiementsMensuelsController extends AbstractController
             $result[] = [
                 'paiement' => $paiement,
                 'loyerHC'  => $loyer,
-                'charge' => $charge,
-                'PS' => $PS,
+                'charge'   => $charge,
+                'PS'       => $PS,
                 'RBT'      => $RBT,
             ];
         }
@@ -48,33 +69,8 @@ final class PaiementsMensuelsController extends AbstractController
             'paiements' => $result,
             'firstPaiementsIds' => $firstPaiementsIds,
             'locataires' => $locataires,
-            'locataire' => null,
+            'locataireId' => $locataireId,
             'mois' => null
-        ]);
-    }
-
-    #[Route('/paiements/new', name: 'paiements_new')]
-    public function new(
-        Request $request,
-        EntityManagerInterface $em
-    ): Response {
-
-        $paiement = new PaiementsMensuels();
-
-        $form = $this->createForm(PaiementMensuelType::class, $paiement);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $em->persist($paiement);
-            $em->flush();
-
-            return $this->redirectToRoute('app_paiements_mensuels');
-        }
-
-        return $this->render('paiements_mensuels/new.html.twig', [
-            'form' => $form->createView(),
         ]);
     }
 

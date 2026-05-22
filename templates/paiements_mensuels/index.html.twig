@@ -16,7 +16,7 @@
     <select name="locataireId">
         <option value="">-- Tous --</option>
         {% for l in locataires %}
-            <option value="{{ l.id }}">
+            <option value="{{ l.id }}" {% if locataireId == l.id %}selected{% endif %}>
                 {{ l.nom }} {{ l.prenom }}
             </option>
         {% endfor %}
@@ -28,7 +28,7 @@
 <hr>
 
 {% if paiements is empty %}
-    <p>Aucun paiement trouvé pour ce mois.</p>
+    <p>Aucun paiement trouvé.</p>
 {% else %}
 
 <table style="border-collapse: separate; border-spacing:  8px 5px; width: 100%;">

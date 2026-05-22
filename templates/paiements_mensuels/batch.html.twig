@@ -211,7 +211,7 @@ function recalcRow(row) {
     const bailIN = option.dataset.bailIn || null;
     const bailOUT = option.dataset.bailOut || null;
 
-    if (bailIN) {
+    if (caution>0 ) {
 
         const dateBail = new Date(bailIN);
 

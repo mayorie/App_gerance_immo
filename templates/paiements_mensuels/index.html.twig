@@ -7,7 +7,6 @@
 <div class="div-titre">
     <a href="{{ path('app_home') }}" class="btn-retour">Retour</a>
     <h1>Paiements mensuels</h1>
-    <a href="{{ path('paiements_new') }}" class="btn-create">➕ Créer un paiement</a>
     <a href="{{ path('paiements_batch') }}" class="btn-create">➕ Créer des paiements</a>
 </div>
 
@@ -27,11 +26,6 @@
 </form>
 
 <hr>
-
-<h2>
-    Paiements du mois :
-    {{ (mois ?? "now"|date('Y-m'))|date("m/Y") }}
-</h2>
 
 {% if paiements is empty %}
     <p>Aucun paiement trouvé pour ce mois.</p>

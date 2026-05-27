@@ -207,6 +207,8 @@ function recalcRow(row) {
     }
 
     let loyer = parseFloat(option.dataset.loyer) || 0;
+    let charge = parseFloat(option.dataset.charge) || 0;
+    let packs = parseFloat(option.dataset.packs) || 0;
 
     const bailIN = option.dataset.bailIn || null;
     const bailOUT = option.dataset.bailOut || null;
@@ -228,11 +230,17 @@ function recalcRow(row) {
         ).getDate();
 
         // jours à payer jusqu'à la fin du mois
-        const joursAPayer = joursDansLeMois - jourEntree;
+        const joursAPayer = joursDansLeMois - jourEntree +1;
 
         // prorata
         loyer = Math.round((
             (loyer / joursDansLeMois) * joursAPayer
+        ) * 100) / 100;
+        charge = Math.round((
+            (charge / joursDansLeMois) * joursAPayer
+        ) * 100) / 100;
+        packs = Math.round((
+            (packs / joursDansLeMois) * joursAPayer
         ) * 100) / 100;
     }
 
@@ -256,10 +264,15 @@ function recalcRow(row) {
         loyer = Math.round((
             (loyer / joursDansLeMois) * joursAPayer
         ) * 100) / 100;
+        charge = Math.round((
+            (charge / joursDansLeMois) * joursAPayer
+        ) * 100) / 100;
+        packs = Math.round((
+            (packs / joursDansLeMois) * joursAPayer
+        ) * 100) / 100;
     }
 
-    const charge = parseFloat(option.dataset.charge) || 0;
-    const packs = parseFloat(option.dataset.packs) || 0;
+
 
     const regulPacks = parseFloat(row.querySelector('[name*="[RegulPacksServices]"]').value) || 0;
     const regulCharges = parseFloat(row.querySelector('[name*="[RegulProvisionsPourCharges]"]').value) || 0;
@@ -267,6 +280,9 @@ function recalcRow(row) {
     const partLoc = parseFloat(row.querySelector('[name*="[part_recue_du_locataire_montant]"]').value) || 0;
     const partCAF = parseFloat(row.querySelector('[name*="[part_recue_de_la_CAF_montant]"]').value) || 0;
     const partRBT = parseFloat(row.querySelector('[name*="[RBT_montant]"]').value) || 0;
+
+
+
 
     const total =
         Math.round((
@@ -281,10 +297,16 @@ function recalcRow(row) {
 
     const restantDu = Math.round((total - partLoc - partCAF + partRBT)*100)/100;
 
+    const appart = option.dataset.appart;
+
     row.querySelector('.restant-du-input').value = restantDu;
     row.querySelector('.total-cell').textContent = total;
     row.querySelector('.restantm-cell').textContent = restantm;
     row.querySelector('.caution-cell').textContent = caution;
+    row.querySelector('.appart-cell').textContent = appart;
+    row.querySelector('.loyer-cell').textContent = loyer;
+    row.querySelector('.charge-cell').textContent = charge;
+    row.querySelector('.packs-cell').textContent = packs;
 }
 
 
@@ -306,20 +328,7 @@ document.addEventListener('input', function (e) {
 
         const option = e.target.selectedOptions[0];
 
-        const appart = option.dataset.appart;
 
-        const caution = parseFloat(option.dataset.caution) || 0;
-        const loyer = parseFloat(option.dataset.loyer) || 0;
-        const charge = parseFloat(option.dataset.charge) || 0;
-        const packs = parseFloat(option.dataset.packs) || 0;
-        const restantm = parseFloat(option.dataset.restantm) || 0;
-
-        row.querySelector('.appart-cell').textContent = appart;
-        row.querySelector('.caution-cell').textContent = caution;
-        row.querySelector('.loyer-cell').textContent = loyer;
-        row.querySelector('.charge-cell').textContent = charge;
-        row.querySelector('.packs-cell').textContent = packs;
-        row.querySelector('.restantm-cell').textContent = restantm;
 
         recalcRow(row);
     }

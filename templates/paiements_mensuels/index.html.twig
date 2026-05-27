@@ -77,81 +77,99 @@
     </thead>
 
     <tbody>
-        {% for item in paiements %}
-            {% set p = item.paiement %}
-            {% set loyer = item.loyerHC %}
-            {% set charge = item.charge %}
-            {% set PS = item.PS %}
-            {% set total =
-                (p.id in firstPaiementsIds ? p.LocatairesID.montantCaution : 0)
-                + (p.RegulPacksServices ?? 0)
-                + (p.RegulProvisionsPourCharges ?? 0)
-                + (loyer ?? 0)
-                + (charge ?? 0)
-                + (PS ?? 0)
-            %}
-            {% set RBT = item.RBT %}
 
-            <tr>
-                <td>{{ p.LocatairesID.nom }} {{ p.LocatairesID.prenom }}</td>
-                <td>{{ p.LocatairesID.LogementsID.idAppart }}</td>
+{% for item in paiements %}
 
+    {% set p = item.paiement %}
+    {% set loyer = item.loyerHC %}
+    {% set charge = item.charge %}
+    {% set PS = item.PS %}
+    {% set RBT = item.RBT %}
 
-                <td>{{ p.Date ? p.Date|date('d/m/Y') : '-'  }}</td>
+    <tr
+        class="paiement-row"
 
+        data-caution="{{ p.id in firstPaiementsIds ? p.LocatairesID.montantCaution : 0 }}"
+        data-regul-packs="{{ p.RegulPacksServices ?? 0 }}"
+        data-regul-charges="{{ p.RegulProvisionsPourCharges ?? 0 }}"
+        data-loyer="{{ loyer ?? 0 }}"
+        data-charge="{{ charge ?? 0 }}"
+        data-ps="{{ PS ?? 0 }}"
 
-                <td>
-                    {% if p.id in firstPaiementsIds %}
-                        {{ p.LocatairesID.montantCaution }} €
-                    {% else %}
-                        -
-                    {% endif %}
-                </td>
-                <td>{{ p.RegulPacksServices }} €</td>
-                <td>{{ p.RegulProvisionsPourCharges }} €</td>
-                <td>{{ loyer }} €</td>
-                <td>{{ charge }} €</td>
-                <td>{{ PS }} €</td>
-                <td>{{ total }} €</td>
+        data-bail-in="{{ p.LocatairesID.debutBail ? p.LocatairesID.debutBail|date('Y-m-d') : '' }}"
+        data-bail-out="{{ p.LocatairesID.dateDeSortie ? p.LocatairesID.dateDeSortie|date('Y-m-d') : '' }}"
+    >
 
+        <td>{{ p.LocatairesID.nom }} {{ p.LocatairesID.prenom }}</td>
+        <td>{{ p.LocatairesID.LogementsID.idAppart }}</td>
 
-                <td>{{ p.partRecueDuLocataireDate ? p.partRecueDuLocataireDate|date('d/m/Y') : '-' }}</td>
-                <td>{{ p.partRecueDuLocataireMode }}</td>
-                <td>{{ p.partRecueDuLocataireMontant ? p.partRecueDuLocataireMontant ~ ' €' : '-' }}</td>
+        <td>{{ p.Date ? p.Date|date('d/m/Y') : '-' }}</td>
 
+        <td>
+            {% if p.id in firstPaiementsIds %}
+                {{ p.LocatairesID.montantCaution }} €
+            {% else %}
+                -
+            {% endif %}
+        </td>
 
-                <td>{{ p.partRecueDeLaCafDate ? p.partRecueDeLaCafDate|date('d/m/Y') : '-' }}</td>
-                <td>{{ p.PartRecueDeLaCafMode }}</td>
-                <td>{{ p.PartRecueDeLaCafMontant ? p.PartRecueDeLaCafMontant ~ ' €' : '-' }}</td>
+        <td>{{ p.RegulPacksServices ?? 0 }} €</td>
+        <td>{{ p.RegulProvisionsPourCharges ?? 0 }} €</td>
 
-                <td>{{ RBT and RBT.date ? RBT.date|date('d/m/Y') : '-' }}</td>
-                <td>{{ RBT ? RBT.mode : '-' }}</td>
-                <td>
-                    {% if RBT and RBT.montant is not null %}
-                        {{ RBT.montant }} €
-                    {% else %}
-                        -
-                    {% endif %}
-                </td>
+        <td class="loyer-cell">{{ loyer ?? 0 }} €</td>
+        <td class="charge-cell">{{ charge ?? 0 }} €</td>
+        <td class="ps-cell">{{ PS ?? 0 }} €</td>
 
+        <td class="total-cell"></td>
 
-                <td>{{ p.RestantDuTropPercuFinDeMois }} €</td>
-                
-                <td>
-                    <a href="{{ path('paiement_edit', {id: p.id}) }}" >
-                        ✏️
-                    </a>
-                </td>
-                <td>
-                    <form method="post" action="{{ path('paiements_delete', {'id': p.id}) }}" onsubmit="return confirm('Supprimer ce paiement ?');" >
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ p.id) }}">
-                        <button type="submit">🗑️</button>
-                    </form>
-                </td>
+        <td>{{ p.partRecueDuLocataireDate ? p.partRecueDuLocataireDate|date('d/m/Y') : '-' }}</td>
+        <td>{{ p.partRecueDuLocataireMode }}</td>
+        <td>{{ p.partRecueDuLocataireMontant ? p.partRecueDuLocataireMontant ~ ' €' : '-' }}</td>
 
-            </tr>
-        {% endfor %}
-    </tbody>
+        <td>{{ p.partRecueDeLaCafDate ? p.partRecueDeLaCafDate|date('d/m/Y') : '-' }}</td>
+        <td>{{ p.PartRecueDeLaCafMode }}</td>
+        <td>{{ p.PartRecueDeLaCafMontant ? p.PartRecueDeLaCafMontant ~ ' €' : '-' }}</td>
+
+        <td>{{ RBT and RBT.date ? RBT.date|date('d/m/Y') : '-' }}</td>
+        <td>{{ RBT ? RBT.mode : '-' }}</td>
+
+        <td>
+            {% if RBT and RBT.montant is not null %}
+                {{ RBT.montant }} €
+            {% else %}
+                -
+            {% endif %}
+        </td>
+
+        <td>{{ p.RestantDuTropPercuFinDeMois }} €</td>
+
+        <td>
+            <a href="{{ path('paiement_edit', {id: p.id}) }}">
+                ✏️
+            </a>
+        </td>
+
+        <td>
+            <form
+                method="post"
+                action="{{ path('paiements_delete', {'id': p.id}) }}"
+                onsubmit="return confirm('Supprimer ce paiement ?');"
+            >
+                <input
+                    type="hidden"
+                    name="_token"
+                    value="{{ csrf_token('delete' ~ p.id) }}"
+                >
+
+                <button type="submit">🗑️</button>
+            </form>
+        </td>
+
+    </tr>
+
+{% endfor %}
+
+</tbody>
 </table>
 
 {% endif %}
@@ -163,5 +181,141 @@
 
 <link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
 <link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.querySelectorAll('.paiement-row').forEach(row => {
+
+        const caution =
+            parseFloat(row.dataset.caution) || 0;
+
+        const regulPacks =
+            parseFloat(row.dataset.regulPacks) || 0;
+
+        const regulCharges =
+            parseFloat(row.dataset.regulCharges) || 0;
+
+        let loyer =
+            parseFloat(row.dataset.loyer) || 0;
+
+        let charge =
+            parseFloat(row.dataset.charge) || 0;
+
+        let ps =
+            parseFloat(row.dataset.ps) || 0;
+
+        const bailIN =
+            row.dataset.bailIn || null;
+
+        const bailOUT =
+            row.dataset.bailOut || null;
+
+
+        /*
+        =========================
+        PRORATA ENTRÉE
+        =========================
+        */
+
+        if (bailIN && caution > 0) {
+
+            const dateBail = new Date(bailIN);
+
+            const jourEntree = dateBail.getDate();
+
+            const annee = dateBail.getFullYear();
+            const mois = dateBail.getMonth();
+
+            const joursDansLeMois = new Date(
+                annee,
+                mois + 1,
+                0
+            ).getDate();
+
+            const joursAPayer =
+                joursDansLeMois - jourEntree + 1;
+
+            loyer = Math.round((
+                (loyer / joursDansLeMois) * joursAPayer
+            ) * 100) / 100;
+
+            charge = Math.round((
+                (charge / joursDansLeMois) * joursAPayer
+            ) * 100) / 100;
+
+            ps = Math.round((
+                (ps / joursDansLeMois) * joursAPayer
+            ) * 100) / 100;
+        }
+
+
+        /*
+        =========================
+        PRORATA SORTIE
+        =========================
+        */
+
+        if (bailOUT) {
+
+            const dateBail = new Date(bailOUT);
+
+            const joursAPayer =
+                dateBail.getDate();
+
+            const annee = dateBail.getFullYear();
+            const mois = dateBail.getMonth();
+
+            const joursDansLeMois = new Date(
+                annee,
+                mois + 1,
+                0
+            ).getDate();
+
+            loyer = Math.round((
+                (loyer / joursDansLeMois) * joursAPayer
+            ) * 100) / 100;
+
+            charge = Math.round((
+                (charge / joursDansLeMois) * joursAPayer
+            ) * 100) / 100;
+
+            ps = Math.round((
+                (ps / joursDansLeMois) * joursAPayer
+            ) * 100) / 100;
+        }
+
+
+        /*
+        =========================
+        TOTAL
+        =========================
+        */
+
+        const total = Math.round((
+            caution +
+            regulPacks +
+            regulCharges +
+            loyer +
+            charge +
+            ps
+        ) * 100) / 100;
+
+        row.querySelector('.total-cell').textContent =
+            total + ' €';
+
+        row.querySelector('.loyer-cell').textContent =
+            loyer + ' €';
+
+        row.querySelector('.charge-cell').textContent =
+            charge + ' €';
+
+        row.querySelector('.ps-cell').textContent =
+            ps + ' €';
+    });
+
+});
+</script>
 
 {% endblock %}

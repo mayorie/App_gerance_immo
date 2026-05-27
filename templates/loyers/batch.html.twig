@@ -11,12 +11,24 @@
 
 <form method="post">
 
-<table class="table-locataires">
+<div class="body" style="margin-bottom: 20px; display: flex; gap: 20px; align-items: center;">
+    <div>
+        <label for="irl_courant">IRL année N (trimestre de référence) :</label>
+        <input type="number" id="irl_courant" name="irl_courant" step="0.01" class="input" style="width: 150px;">
+    </div>
+    <div>
+        <label for="irl_precedent">IRL année N-1 (même trimestre) :</label>
+        <input type="number" id="irl_precedent" name="irl_precedent" step="0.01" class="input" style="width: 150px;">
+    </div>
+</div>
+
+<table class="table-locataires" style="border-collapse: separate; border-spacing: 8px 5px;">
     <thead>
         <tr>
             <th>Locataire</th>
             <th>Logement</th>
-            <th>Montant (€)</th>
+            <th>Loyer HC actuel (€)</th>
+            <th>Nouveau loyer HC</th>
             <th>Date d'application</th>
         </tr>
     </thead>
@@ -27,6 +39,12 @@
                 <td>{{ locataire.nom }} {{ locataire.prenom }}</td>
                 <td>{{ locataire.LogementsID.idAppart }}</td>
                 <td>
+                    <input type="number" 
+                        name="montant_actuel[{{ locataire.id }}]" step="0.01" class="input"
+                        value="{{ locataire.getLatestLoyer() ? locataire.getLatestLoyer().getMontant() : '' }}">
+
+                </td>
+                <td>
                     <input type="number"
                            name="montant[{{ locataire.id }}]"
                            step="0.01"
@@ -36,14 +54,19 @@
                 <td>
                     <input type="date"
                            name="date[{{ locataire.id }}]"
-                           class="input">
+                           class="input"
+                           value="{{ "now"|date_modify("+1 month")|date("Y-m-01") }}">
                 </td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<button type="submit" class="btn-create">
+<button type="button" onclick="calculerTousLesLoyers()" class="btn-create">
+    🔄 Calculer tous les loyers
+</button>
+
+<button type="submit" class="btn-create" style="float: right;">
     💾 Enregistrer tout les loyers
 </button>
 
@@ -52,4 +75,27 @@
 <link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
 <link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
 
+<script>
+function calculerTousLesLoyers() {
+    const irlCourant = document.getElementById('irl_courant').value;
+    const irlPrecedent = document.getElementById('irl_precedent').value;
+    
+    if (!irlCourant || !irlPrecedent || irlPrecedent == 0) {
+        alert('Veuillez remplir les IRL avec des valeurs valides');
+        return;
+    }
+    
+    const rows = document.querySelectorAll('tbody tr');
+    
+    rows.forEach(row => {
+        const montantActuel = row.querySelector('input[name^="montant_actuel"]').value;
+        const champNouveauLoyer = row.querySelector('input[name^="montant["]');
+        
+        if (montantActuel) {
+            const nouveauLoyer = Math.round(parseFloat(montantActuel) * parseFloat(irlCourant) / parseFloat(irlPrecedent));
+            champNouveauLoyer.value = nouveauLoyer;
+        }
+    });
+}
+</script>
 {% endblock %}

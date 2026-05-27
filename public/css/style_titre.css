@@ -25,3 +25,10 @@
     background: linear-gradient(135deg, #ff5c46 0%, #f9a149 100%);
 }
 
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 30px;
+    color: #222;
+}

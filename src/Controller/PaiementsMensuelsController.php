@@ -263,9 +263,23 @@ final class PaiementsMensuelsController extends AbstractController
             return $this->redirectToRoute('app_paiements_mensuels');
         }
 
+        $locataire = $paiement->getLocatairesID();
+
         $em->remove($paiement);
         $em->flush();
 
+        $lastPaiement = $locataire->getLatestPaiement();
+        if ($lastPaiement) {
+
+            $locataire->setRestantDuTropPercu(
+                $lastPaiement->getRestantDuTropPercuFinDeMois()
+            );
+        } else {
+            $locataire->setRestantDuTropPercu(0);
+        }
+
+        $em->flush();
+        
         $this->addFlash('success', 'Paiement supprimé');
 
         return $this->redirectToRoute('app_paiements_mensuels');

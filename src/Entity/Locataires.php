@@ -623,6 +623,23 @@ class Locataires
         return $this;
     }
 
+    public function getLatestPaiement(): ?PaiementsMensuels
+    {
+        $paiements = $this->getPaiementsMensuels();
+
+        if ($paiements->isEmpty()) {
+            return null;
+        }
+
+        $paiements = $paiements->toArray();
+
+        usort($paiements, fn($a, $b) =>
+            $b->getDate() <=> $a->getDate()
+        );
+
+        return $paiements[0];
+    }
+
     public function getStatut(): ?string
     {
         return $this->statut;

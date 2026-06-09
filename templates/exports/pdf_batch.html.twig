@@ -1,5 +1,7 @@
-<h1>Quittances PDF</h1>
-
+<div class="div-titre" style="justify-content: flex-start;">
+    <a href="{{ path('app_home') }}" class="btn-retour">Retour</a>
+    <h1 style="margin-left: 200px;">Quittances PDF</h1>
+</div>
 <form method="get">
 
     <label>Mois :</label>
@@ -36,15 +38,14 @@
         Filtrer
     </button>
 
-    <a href="{{ path('export_pdf_batch_zip', { mois: mois, annee: annee }) }}">
-        📦 Télécharger tout en ZIP
+    <a href="{{ path('export_pdf_batch_zip', { mois: mois, annee: annee }) }}" style="margin-left: 80px;" class="btn-create">📦 Télécharger tout en ZIP>
     </a>
 
 </form>
 
 <br>
 
-<table>
+<table style="border-collapse: separate; border-spacing: 8px 5px;">
     <thead>
         <tr>
             <th>Locataire</th>
@@ -76,7 +77,7 @@
                     }) }}"
                     target="_blank"
                 >
-                    👁️ Aperçu
+                    👁️
                 </a>
             </td>
             
@@ -89,7 +90,7 @@
                     }) }}"
                     target="_blank"
                 >
-                    📄 Télécharger
+                    📄
                 </a>
             </td>
         </tr>

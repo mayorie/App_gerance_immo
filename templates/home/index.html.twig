@@ -61,11 +61,17 @@
         </a>
     </nav>
 
-            <h2>ETATS :</h2>
-        <a href="{{ path('export_pdf_batch') }}" class="home-link home-link-5">
-            <span class="home-link-emoji">🔌</span>
-            exports quittances
+            <h2>ETATS EXPORTABLES :</h2>
+    <nav class="home-nav home-nav-row">
+        <a href="{{ path('export_pdf_batch') }}" class="home-link home-link-1">
+            <span class="home-link-emoji">🧑‍🧑‍🧒</span>
+            Quittances
         </a>
+        <a href="{{ path('app_paiements_mensuels') }}" class="home-link home-link-6">
+            <span class="home-link-emoji">🗓️</span>
+            Comptabilité
+        </a>
+    </nav>
 
 </div>
 {% endblock %}

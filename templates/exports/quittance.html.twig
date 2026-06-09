@@ -7,7 +7,7 @@
 
         body{
             font-family: DejaVu Sans;
-            margin: 0;
+            margin: 50;
             padding: 0mm;
             background: white;
         }
@@ -19,31 +19,31 @@
 
 <div class="page">
 
-    <hr style="border-color: navy;">
-    <h1 style="text-align: center; color: navy;">
+    <hr style="border-color: #2570ebdd;">
+    <h1 style="text-align: center; color: #2570ebdd; font-size: 14px">
         QUITTANCE DE LOYER DE {{ "%02d"|format(mois) }}/{{ annee }}
     </h1>
-    <hr style="border-color: navy;">
+    <hr style="border-color: #2570ebdd;">
 
-    <p>
+    <p style="font-size: 10px">
         Je soussignée, Céline MAHE, propriétaire du logement situé au {{ locataire.LogementsID.adresse }}, 
         apt {{locataire.LogementsID.appt}}, {{locataire.LogementsID.CodePostal}} {{locataire.LogementsID.ville}},
-        donné en location à {{ locataire.prenom }} {{ locataire.nom }} déclare avoir reçu de celui(celle)-ci à titre de loyer{% if packServices > 0 %}, de charges et du pack Services{% else %} et de charges{% endif %}
-        pour la période du {{ paiements[0].paiement.date|date('d/m/Y') }} au 
+        donné en location à <b style="color: #2570ebdd;">{{ locataire.prenom }} {{ locataire.nom }}</b> déclare avoir reçu de celui(celle)-ci à titre de loyer{% if packServices > 0 %}, de charges et du pack Services{% else %} et de charges{% endif %}
+        pour la période <b style="color: #2570ebdd;">du {{ paiements[0].paiement.date|date('d/m/Y') }} au 
         {{ date(annee ~ '-' ~ "%02d"|format(mois) ~ '-01')
             |date_modify('last day of this month')
             |date('d') }}/{{ "%02d"|format(mois) }}/{{ annee }}
-        les éléments suivants :
+        </b>les éléments suivants :
     </p>
 
-    <p>
+    <p style="font-size: 10px; font-weight: bold; text-decoration: underline;">
         Ancien Solde - RESTANT-DU avant la période : {{lastPaiementPreviousMonth.restantDuTropPercuFinDeMois ?? 0}} €
     </p>
 
     {% set totalDu = loyer + charges + packServices + caution + regulPS + regulCharges %}
 
-    <p style="padding-left: 50px;">
-        Sommes dues au titre des loyers et charges sur la période :<br>
+    <p style="font-size: 10px; padding-left: 50px;">
+        <b>Sommes dues au titre des loyers et charges sur la période :</b><br>
         - Loyer : {{ loyer }} €<br>
         - Charges : {{ charges }} €<br>
         {% if packServices > 0 %}- Pack ‘Services’ : {{ packServices }} €<br>{% endif %}
@@ -51,16 +51,16 @@
         {% if regulPS > 0 %}- Régularisation de Pack Services : {{ regulPS }} €<br>{% endif %}
         {% if regulCharges > 0 %}- Régularisation de charges : {{ regulCharges }} €<br>{% endif %}
         <br>
-        Soit un total dû pour la période de : {{ totalDu }} €<br>    </p>
+        <b>Soit un total dû pour la période de : {{ totalDu }} €</b><br>    </p>
     <br>
 
-    <p style="padding-left: 50px;">
+    <p style="font-size: 10px; padding-left: 50px; font-weight: bold;">
         Règlements reçus sur la période :
     </p>
 
     {% set totalRecu = 0 %}
 
-    <ul style="padding-left: 80px;">
+    <ul style="font-size: 10px; padding-left: 60px;">
 
         {% for item in paiements %}
 
@@ -118,19 +118,19 @@
         {% endfor %}
     </ul>
 
-    <p style="padding-left: 50px;">
+    <p style="font-size: 10px; font-weight: bold; padding-left: 50px;">
         Soit un total reçu pour la période de : {{ totalRecu }} €
     </p>
 
     {% set restantDuTropPercu = totalRecu - totalDu %}
 
-    <p>
+    <p style="font-size: 10px; font-weight: bold; text-decoration: underline;">
         Nouveau Solde -
         {{ restantDuTropPercu <= 0 ? 'RESTANT DU' : 'TROP PERCU' }}
         après la période : {{ restantDuTropPercu }} €
     </p>
 
-    <p>
+    <p style="font-size: 10px">
         La présente quittance est valable sous réserve d'encaissement des sommes indiquées et de tous droits ou instances en cours. 
         Elle n'est libératoire que pour la période indiquée et n'implique pas présomption de paiement des quittances antérieures qui pourraient rester dues.
         <br><br>
@@ -139,7 +139,7 @@
         Signature :
     </p>
 
-    <img src="{{ signature }}" alt="Signature" style="width:200px;">
+    <img src="{{ signature }}" alt="Signature" style="width:100px; padding-left: 20px;">
 </div>
 
 </body>

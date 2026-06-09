@@ -26,20 +26,37 @@ final class PaiementsMensuelsController extends AbstractController
     ): Response {
 
         $locataireId = $request->query->get('locataireId');
+        $annee = $request->query->get('annee');
 
+        // Récupérer tous les paiements pour extraire les années
+        $allPaiements = $repoPaiements->findBy([], ['date' => 'DESC']);
+        $annees = [];
+        foreach ($allPaiements as $paiement) {
+            if ($paiement->getDate()) {
+                $year = $paiement->getDate()->format('Y');
+                if (!in_array($year, $annees)) {
+                    $annees[] = $year;
+                }
+            }
+        }
+        rsort($annees);
+
+        // Construire les critères de recherche
+        $criteria = [];
         if ($locataireId) {
+            $criteria['LocatairesID'] = $locataireId;
+        }
 
-            $paiements = $repoPaiements->findBy(
-                ['LocatairesID' => $locataireId],
-                ['date' => 'DESC']
-            );
+        $paiements = $repoPaiements->findBy(
+            $criteria,
+            ['date' => 'DESC']
+        );
 
-        } else {
-
-            $paiements = $repoPaiements->findBy(
-                [],
-                ['date' => 'DESC']
-            );
+        // Filtrer par année si sélectionnée
+        if ($annee) {
+            $paiements = array_filter($paiements, function($paiement) use ($annee) {
+                return $paiement->getDate() && $paiement->getDate()->format('Y') == $annee;
+            });
         }
 
         $firstPaiements = $repoPaiements->findFirstPaiementsIds();
@@ -70,6 +87,8 @@ final class PaiementsMensuelsController extends AbstractController
             'firstPaiementsIds' => $firstPaiementsIds,
             'locataires' => $locataires,
             'locataireId' => $locataireId,
+            'annees' => $annees,
+            'annee' => $annee,
             'mois' => null
         ]);
     }

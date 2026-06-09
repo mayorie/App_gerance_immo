@@ -8,4 +8,6 @@
 /vendor/
 /private/*
 !private/.gitkeep
+/archive/*
+!archive/.gitkeep
 ###< symfony/framework-bundle ###

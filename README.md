@@ -25,3 +25,5 @@ puis faire ces commandes une après l'autre :
 php bin/console doctrine:migrations:migrate
 
 mettez votre signature dans private, le nom du fichier doit être : Signature.jpg
+
+php.ini : faire php --ini et trouver : Loaded Configuration File: et prenez le chemin pour le mettre dans un explorateur de fichier

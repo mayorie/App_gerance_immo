@@ -16,6 +16,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
+use ZipArchive;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+
 final class ExportsController extends AbstractController
 {
     #[Route('/exports', name: 'app_exports')]
@@ -184,6 +188,70 @@ final class ExportsController extends AbstractController
         );
 
         return $response;
+    }
+
+
+
+    #[Route('/exports/pdf/batch/zip', name: 'export_pdf_batch_zip')]
+    public function exportPdfBatchZip(
+        Request $request,
+        LocatairesRepository $locatairesRepo,
+        PaiementsMensuelsRepository $paiementsRepo,
+        RBTBailleurRepository $rbtRepo
+    ): Response
+    {
+        $mois = $request->query->getInt('mois');
+        $annee = $request->query->getInt('annee');
+
+        $locataires = $locatairesRepo->findAyantPaiementMoisEtAnnee($mois, $annee);
+
+        $zip = new \ZipArchive();
+
+        // 👉 dossier cible dans ton projet
+        $directory = $this->getParameter('kernel.project_dir') . '/archive/quittances';
+
+        // 👉 sécurité : créer le dossier s'il n'existe pas
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
+        // 👉 nom du fichier ZIP dans ton dossier
+        $zipPath = $directory . "/" . $mois . '_' . $annee . '_quittances' . '.zip';
+
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+            throw new \Exception('Impossible de créer le ZIP');
+        }
+
+        foreach ($locataires as $locataire) {
+
+            $data = $this->getQuittanceData(
+                $locataire,
+                $mois,
+                $annee,
+                $paiementsRepo,
+                $rbtRepo
+            );
+
+            $html = $this->renderView('exports/quittance.html.twig', $data);
+
+            $options = new \Dompdf\Options();
+            $options->set('defaultFont', 'DejaVu Sans');
+
+            $dompdf = new \Dompdf\Dompdf($options);
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
+
+            $pdfContent = $dompdf->output();
+
+            $filename = $locataire->getNom() . '_' . $locataire->getPrenom() . '_' . $mois . '_' . $annee . '.pdf';
+
+            $zip->addFromString($filename, $pdfContent);
+        }
+
+        $zip->close();
+
+        return new \Symfony\Component\HttpFoundation\BinaryFileResponse($zipPath);
     }
 
 

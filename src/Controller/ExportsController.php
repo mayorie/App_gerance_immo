@@ -249,6 +249,13 @@ final class ExportsController extends AbstractController
             $regulCharges += $paiement->getRegulProvisionsPourCharges() ?? 0;
         }
 
+        $path = $this->getParameter('kernel.project_dir') . '/private/Signature.jpg';
+
+        $type = pathinfo($path, PATHINFO_EXTENSION);
+        $data = file_get_contents($path);
+
+        $signature = 'data:image/' . $type . ';base64,' . base64_encode($data);
+
         return [
             'locataire' => $locataire,
             'paiements' => $paiementsAvecRbt,
@@ -261,6 +268,7 @@ final class ExportsController extends AbstractController
             'caution' => $caution,
             'regulPS' => $regulPS,
             'regulCharges' => $regulCharges,
+            'signature' => $signature
         ];
     }
 }

@@ -23,3 +23,5 @@ reset Base de bonnées :
 supprimer : data.db du dossier var
 puis faire ces commandes une après l'autre : 
 php bin/console doctrine:migrations:migrate
+
+mettez votre signature dans private, le nom du fichier doit être : Signature.jpg

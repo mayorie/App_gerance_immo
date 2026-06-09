@@ -8,9 +8,21 @@
     <a href="{{ path('app_home') }}" class="btn-retour">Retour</a>
     <h1>Paiements mensuels</h1>
     <a href="{{ path('paiements_batch') }}" class="btn-create">➕ Créer des paiements</a>
+    <button id="exportCsv" class="btn-create">📥 Export CSV</button>
 </div>
 
 <form method="get" action="{{ path('app_paiements_mensuels') }}">
+    <label>Année :</label>
+
+    <select name="annee">
+        <option value="">-- Toutes --</option>
+        {% for year in annees %}
+            <option value="{{ year }}" {% if annee == year %}selected{% endif %}>
+                {{ year }}
+            </option>
+        {% endfor %}
+    </select>
+
     <label>Locataire :</label>
 
     <select name="locataireId">
@@ -23,6 +35,10 @@
     </select>
 
     <button type="submit">Filtrer</button>
+
+    <label style="margin-left: 20px;">
+        <input type="checkbox" id="comptabilite"> Comptabilité ?
+    </label>
 </form>
 
 <hr>
@@ -95,6 +111,7 @@
         data-loyer="{{ loyer ?? 0 }}"
         data-charge="{{ charge ?? 0 }}"
         data-ps="{{ PS ?? 0 }}"
+        data-num-comptable="{{ p.LocatairesID.numComptable ?? '' }}"
 
         data-bail-in="{{ p.LocatairesID.debutBail ? p.LocatairesID.debutBail|date('Y-m-d') : '' }}"
         data-bail-out="{{ p.LocatairesID.dateDeSortie ? p.LocatairesID.dateDeSortie|date('Y-m-d') : '' }}"
@@ -315,6 +332,103 @@ document.addEventListener('DOMContentLoaded', function () {
             ps + ' €';
     });
 
+    // Export CSV functionality
+    document.getElementById('exportCsv').addEventListener('click', function() {
+        const table = document.querySelector('table');
+        if (!table) return;
+
+        const comptabilite = document.getElementById('comptabilite').checked;
+        let csv = [];
+        const rows = table.querySelectorAll('tr');
+        const theadRows = table.querySelectorAll('thead tr');
+
+        // Fusionner les deux lignes d'en-têtes
+        if (theadRows.length >= 2) {
+            const header1 = theadRows[0].querySelectorAll('th');
+            const header2 = theadRows[1].querySelectorAll('th');
+
+            let mergedHeader = [];
+            let h2Index = 0;
+
+            header1.forEach((h1, i) => {
+                const colspan = parseInt(h1.getAttribute('colspan')) || 1;
+                const h1Text = h1.textContent.trim();
+
+                for (let j = 0; j < colspan; j++) {
+                    const h2Text = header2[h2Index] ? header2[h2Index].textContent.trim() : '';
+                    const mergedText = h1Text && h2Text ? h1Text + '-' + h2Text : (h1Text || h2Text);
+                    const cleanedText = mergedText.replace(/"/g, '""');
+                    mergedHeader.push('"' + cleanedText + '"');
+                    h2Index++;
+
+                    // Insérer le champ num_comptable après la 2ème colonne si comptabilité cochée
+                    if (comptabilite && h2Index === 2) {
+                        mergedHeader.push('"Num comptable"');
+                    }
+                }
+            });
+
+            csv.push(mergedHeader.join(','));
+        }
+
+        // Exporter les données du tbody
+        let tbodyRows = table.querySelectorAll('tbody tr');
+        tbodyRows = Array.from(tbodyRows);
+
+        // Trier par numéro comptable croissant puis par date si comptabilité cochée
+        if (comptabilite) {
+            tbodyRows.sort((a, b) => {
+                const numA = parseInt(a.dataset.numComptable) || 0;
+                const numB = parseInt(b.dataset.numComptable) || 0;
+
+                if (numA !== numB) {
+                    return numA - numB;
+                }
+
+                // Second critère : tri par date (3ème colonne)
+                const dateA = a.cells[2]?.textContent.trim() || '';
+                const dateB = b.cells[2]?.textContent.trim() || '';
+                return dateA.localeCompare(dateB);
+            });
+        }
+
+        tbodyRows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            let rowData = [];
+            let cellIndex = 0;
+
+            cells.forEach(cell => {
+                if (cell.style.display !== 'none') {
+                    let text = cell.textContent.trim();
+                    text = text.replace(/€/g, '').replace(/-/g, '');
+                    text = '"' + text.replace(/"/g, '""') + '"';
+                    rowData.push(text);
+                    cellIndex++;
+
+                    // Insérer le champ num_comptable après la 2ème colonne si comptabilité cochée
+                    if (comptabilite && cellIndex === 2) {
+                        const numComptable = row.dataset.numComptable || '';
+                        rowData.push('"' + numComptable.replace(/"/g, '""') + '"');
+                    }
+                }
+            });
+            if (rowData.length > 0) {
+                csv.push(rowData.join(','));
+            }
+        });
+
+        const csvContent = csv.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'paiements_mensuels_' + new Date().toISOString().slice(0, 10) + '.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
 });
 </script>
 

@@ -1,0 +1,98 @@
+<h1>Quittances PDF</h1>
+
+<form method="get">
+
+    <label>Mois :</label>
+
+    <select name="mois">
+
+        {% for m in 1..12 %}
+            <option
+                value="{{ m }}"
+                {% if m == mois %}selected{% endif %}
+            >
+                {{ m }}
+            </option>
+        {% endfor %}
+
+    </select>
+
+    <label>Année :</label>
+
+    <select name="annee">
+
+        {% for a in (annee-5)..(annee+1) %}
+            <option
+                value="{{ a }}"
+                {% if a == annee %}selected{% endif %}
+            >
+                {{ a }}
+            </option>
+        {% endfor %}
+
+    </select>
+
+    <button type="submit">
+        Filtrer
+    </button>
+
+</form>
+
+<br>
+
+<table>
+    <thead>
+        <tr>
+            <th>Locataire</th>
+            <th>Appartement</th>
+            <th>Aperçu</th>
+            <th>PDF</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% for locataire in locataires %}
+        <tr>
+            <td>
+                {{ locataire.nom }}
+                {{ locataire.prenom }}
+            </td>
+
+            <td>
+                {{ locataire.LogementsID.idAppart }}
+            </td>
+
+            <td>
+                <a
+                    href="{{ path('export_pdf_preview', {
+                        id: locataire.id,
+                        mois: mois,
+                        annee: annee
+                    }) }}"
+                    target="_blank"
+                >
+                    👁️ Aperçu
+                </a>
+            </td>
+            
+            <td>
+                <a
+                    href="{{ path('export_pdf', {
+                        id: locataire.id,
+                        mois: mois,
+                        annee: annee
+                    }) }}"
+                    target="_blank"
+                >
+                    📄 Télécharger
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+
+    </tbody>
+</table>
+
+<link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">

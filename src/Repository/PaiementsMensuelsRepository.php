@@ -115,4 +115,53 @@ class PaiementsMensuelsRepository extends ServiceEntityRepository
 
         return $pack ? $pack->getMontant() : null;
     }
+
+    public function findByLocataireMoisEtAnnee(
+        int $locataireId,
+        int $mois,
+        int $annee
+    ): array
+    {
+        $debut = new \DateTime(sprintf(
+            '%04d-%02d-01 00:00:00',
+            $annee,
+            $mois
+        ));
+
+        $fin = (clone $debut)->modify('first day of next month');
+
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.LocatairesID = :locataire')
+            ->andWhere('p.date >= :debut')
+            ->andWhere('p.date < :fin')
+            ->setParameter('locataire', $locataireId)
+            ->setParameter('debut', $debut)
+            ->setParameter('fin', $fin)
+            ->orderBy('p.date', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findLastPaiementPreviousMonth(
+        int $locataireId,
+        int $mois,
+        int $annee
+    ): ?PaiementsMensuels
+    {
+        $debutMois = new \DateTimeImmutable(sprintf(
+            '%04d-%02d-01 00:00:00',
+            $annee,
+            $mois
+        ));
+
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.LocatairesID = :locataire')
+            ->andWhere('p.date < :debutMois')
+            ->setParameter('locataire', $locataireId)
+            ->setParameter('debutMois', $debutMois)
+            ->orderBy('p.date', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+
+        body{
+            font-family: DejaVu Sans;
+            margin: 0;
+            padding: 0mm;
+            background: white;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <hr style="border-color: navy;">
+    <h1 style="text-align: center; color: navy;">
+        QUITTANCE DE LOYER DE {{ "%02d"|format(mois) }}/{{ annee }}
+    </h1>
+    <hr style="border-color: navy;">
+
+    <p>
+        Je soussignée, Céline MAHE, propriétaire du logement situé au {{ locataire.LogementsID.adresse }}, 
+        apt {{locataire.LogementsID.appt}}, {{locataire.LogementsID.CodePostal}} {{locataire.LogementsID.ville}},
+        donné en location à {{ locataire.prenom }} {{ locataire.nom }} déclare avoir reçu de celui(celle)-ci à titre de loyer{% if packServices > 0 %}, de charges et du pack Services{% else %} et de charges{% endif %}
+        pour la période du {{ paiements[0].paiement.date|date('d/m/Y') }} au 
+        {{ date(annee ~ '-' ~ "%02d"|format(mois) ~ '-01')
+            |date_modify('last day of this month')
+            |date('d') }}/{{ "%02d"|format(mois) }}/{{ annee }}
+        les éléments suivants :
+    </p>
+
+    <p>
+        Ancien Solde - RESTANT-DU avant la période : {{lastPaiementPreviousMonth.restantDuTropPercuFinDeMois ?? 0}} €
+    </p>
+
+    {% set totalDu = loyer + charges + packServices + caution + regulPS + regulCharges %}
+
+    <p style="padding-left: 50px;">
+        Sommes dues au titre des loyers et charges sur la période :<br>
+        - Loyer : {{ loyer }} €<br>
+        - Charges : {{ charges }} €<br>
+        {% if packServices > 0 %}- Pack ‘Services’ : {{ packServices }} €<br>{% endif %}
+        {% if caution > 0 %}- Caution : {{ caution }} €<br>{% endif %}
+        {% if regulPS > 0 %}- Régularisation de Pack Services : {{ regulPS }} €<br>{% endif %}
+        {% if regulCharges > 0 %}- Régularisation de charges : {{ regulCharges }} €<br>{% endif %}
+        <br>
+        Soit un total dû pour la période de : {{ totalDu }} €<br>    </p>
+    <br>
+
+    <p style="padding-left: 50px;">
+        Règlements reçus sur la période :
+    </p>
+
+    {% set totalRecu = 0 %}
+
+    <ul style="padding-left: 80px;">
+
+        {% for item in paiements %}
+
+            {% set paiement = item.paiement %}
+            {% set rbt = item.rbt %}
+
+            {# Paiement locataire #}
+
+            {% if paiement.partRecueDuLocataireMontant > 0 %}
+                <li>
+                    Paiement terme à échoir :
+                    {{ paiement.partRecueDuLocataireMontant }} €
+                    par 
+                    {{ paiement.partRecueDuLocataireMode }}
+                    le 
+                    {{ paiement.partRecueDuLocataireDate|date('d/m/Y') }}
+                </li>
+
+                {% set totalRecu = totalRecu + paiement.partRecueDuLocataireMontant %}
+
+            {% endif %}
+
+            {# Paiement CAF #}
+
+            {% if paiement.partRecueDeLaCAFMontant > 0 %}
+                <li>
+                    Paiement CAF terme échu :
+                    {{ paiement.partRecueDeLaCAFMontant }} €
+                    par 
+                    {{ paiement.partRecueDeLaCAFMode }}
+                    le
+                    {{ paiement.partRecueDeLaCAFDate|date('d/m/Y') }}
+                </li>
+
+                {% set totalRecu = totalRecu + paiement.partRecueDeLaCAFMontant %}
+
+            {% endif %}
+
+            {# RBT Bailleur #}
+
+            {% if rbt %}
+                <li>
+                    Paiement CAF terme échu :
+                    {{ rbt.montant }} €
+                    par 
+                    {{ rbt.mode }}
+                    le
+                    {{ rbt.date|date('d/m/Y') }}
+                </li>
+
+                {% set totalRecu = totalRecu + rbt.montant %}
+
+            {% endif %}
+
+        {% endfor %}
+    </ul>
+
+    <p style="padding-left: 50px;">
+        Soit un total reçu pour la période de : {{ totalRecu }} €
+    </p>
+
+    {% set restantDuTropPercu = totalRecu - totalDu %}
+
+    <p>
+        Nouveau Solde -
+        {{ restantDuTropPercu <= 0 ? 'RESTANT DU' : 'TROP PERCU' }}
+        après la période : {{ restantDuTropPercu }} €
+    </p>
+
+    <p>
+        La présente quittance est valable sous réserve d'encaissement des sommes indiquées et de tous droits ou instances en cours. 
+        Elle n'est libératoire que pour la période indiquée et n'implique pas présomption de paiement des quittances antérieures qui pourraient rester dues.
+        <br><br>
+        A Toulouse, le {{ "now"|date("d/m/Y") }}<br>
+        Sous toutes réserves de droits, dont quittance.<br>
+        Signature :
+    </p>
+</div>
+
+</body>
+
+
+</html>

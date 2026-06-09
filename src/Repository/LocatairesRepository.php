@@ -40,4 +40,28 @@ class LocatairesRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findAyantPaiementMoisEtAnnee(
+        int $mois,
+        int $annee
+    ): array
+    {
+        $debut = new \DateTimeImmutable(sprintf(
+            '%04d-%02d-01 00:00:00',
+            $annee,
+            $mois
+        ));
+
+        $fin = $debut->modify('first day of next month');
+
+        return $this->createQueryBuilder('l')
+            ->distinct()
+            ->join('l.Paiements_mensuels', 'p')
+            ->andWhere('p.date >= :debut')
+            ->andWhere('p.date < :fin')
+            ->setParameter('debut', $debut)
+            ->setParameter('fin', $fin)
+            ->getQuery()
+            ->getResult();
+    }
 }

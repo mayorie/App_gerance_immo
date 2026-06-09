@@ -6,4 +6,6 @@
 /public/bundles/
 /var/
 /vendor/
+/private/*
+!private/.gitkeep
 ###< symfony/framework-bundle ###

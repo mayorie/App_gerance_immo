@@ -2,8 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Locataires;
+
+use App\Repository\LocatairesRepository;
+use App\Repository\PaiementsMensuelsRepository;
+use App\Repository\RBTBailleurRepository;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
 use Dompdf\Dompdf;
@@ -62,57 +69,109 @@ final class ExportsController extends AbstractController
         return $response;
     }
 
-    #[Route('/export/pdf', name: 'export_pdf')]
-    public function exportPdf(): Response
+    #[Route('/exports/pdf/batch', name: 'export_pdf_batch')]
+    public function exportPdfBatch(
+        Request $request,
+        LocatairesRepository $locatairesRepo
+    ): Response
     {
-        $html = '
-            <h1>Paiements</h1>
+        $mois = $request->query->getInt(
+            'mois',
+            (int) date('m')
+        );
 
-            <table
-                border="1"
-                cellpadding="8"
-                cellspacing="0"
-                width="100%"
-            >
-                <thead>
-                    <tr>
-                        <th>Locataire</th>
-                        <th>Montant</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
+        $annee = $request->query->getInt(
+            'annee',
+            (int) date('Y')
+        );
 
-                <tbody>
-                    <tr>
-                        <td>Dépont</td>
-                        <td>500 €</td>
-                        <td>2026-05-01</td>
-                    </tr>
+        $locataires = $locatairesRepo
+            ->findAyantPaiementMoisEtAnnee(
+                $mois,
+                $annee
+            );
 
-                    <tr>
-                        <td>Durand</td>
-                        <td>650 €</td>
-                        <td>2026-05-02</td>
-                    </tr>
-                </tbody>
-            </table>
-        ';
+        return $this->render(
+            'exports/pdf_batch.html.twig',
+            [
+                'locataires' => $locataires,
+                'mois' => $mois,
+                'annee' => $annee
+            ]
+        );
+    }
+
+    #[Route('/exports/pdf/{id}/preview', name: 'export_pdf_preview')]
+    public function previewPdf(
+        int $id,
+        Request $request,
+        LocatairesRepository $repo,
+        PaiementsMensuelsRepository $paiementsRepo,
+        RBTBailleurRepository $rbtBailleurRepo,
+    ): Response
+    {
+        $mois = $request->query->getInt('mois');
+        $annee = $request->query->getInt('annee');
+
+        $locataire = $repo->find($id);
+
+        if (!$locataire) {
+            throw $this->createNotFoundException('Locataire introuvable');
+        }
+
+        return $this->render(
+            'exports/quittance.html.twig',
+            $this->getQuittanceData(
+                $locataire,
+                $mois,
+                $annee,
+                $paiementsRepo,
+                $rbtBailleurRepo
+            )
+        );
+    }
+    
+    #[Route('/exports/pdf/{id}', name: 'export_pdf')]
+    public function exportPdf(
+        int $id,
+        Request $request,
+        LocatairesRepository $repo,
+        PaiementsMensuelsRepository $paiementsRepo,
+        RBTBailleurRepository $rbtBailleurRepo,
+    ): Response
+    {
+        $mois = $request->query->getInt('mois');
+        $annee = $request->query->getInt('annee');
+
+        $locataire = $repo->find($id);
+
+        if (!$locataire) {
+            throw $this->createNotFoundException(
+                'Locataire introuvable'
+            );
+        }
+
+        $html = $this->renderView(
+            'exports/quittance.html.twig',
+            $this->getQuittanceData(
+                $locataire,
+                $mois,
+                $annee,
+                $paiementsRepo,
+                $rbtBailleurRepo
+            )
+        );
 
         $options = new Options();
-
         $options->set('defaultFont', 'DejaVu Sans');
 
         $dompdf = new Dompdf($options);
 
         $dompdf->loadHtml($html);
-
         $dompdf->setPaper('A4', 'portrait');
-
         $dompdf->render();
 
-        $response = new Response(
-            $dompdf->output()
-        );
+        $response = new Response($dompdf->output());
 
         $response->headers->set(
             'Content-Type',
@@ -121,9 +180,87 @@ final class ExportsController extends AbstractController
 
         $response->headers->set(
             'Content-Disposition',
-            'attachment; filename="paiements.pdf"'
+            'attachment; filename="quittance.pdf"'
         );
 
         return $response;
+    }
+
+
+    
+    private function getQuittanceData(
+        Locataires $locataire,
+        int $mois,
+        int $annee,
+        PaiementsMensuelsRepository $paiementsRepo,
+        RBTBailleurRepository $rbtBailleurRepo
+    ): array
+    {
+        $paiements = $paiementsRepo->findByLocataireMoisEtAnnee(
+            $locataire->getId(),
+            $mois,
+            $annee
+        );
+
+        $paiementsAvecRbt = [];
+
+        foreach ($paiements as $paiement) {
+
+            $rbt = $rbtBailleurRepo->findOneBy([
+                'Paiements_mensuelID' => $paiement
+            ]);
+
+            $paiementsAvecRbt[] = [
+                'paiement' => $paiement,
+                'rbt' => $rbt
+            ];
+        }
+
+        $loyer = null;
+        $charges = null;
+        $packServices = null;
+
+        if (!empty($paiements)) {
+            $paiementReference = $paiements[0];
+
+            $loyer = $paiementsRepo->findLoyerHC($paiementReference);
+            $charges = $paiementsRepo->findProvisionPourCharges($paiementReference);
+            $packServices = $paiementsRepo->findPackService($paiementReference);
+        }
+
+        $lastPaiementPreviousMonth =
+            $paiementsRepo->findLastPaiementPreviousMonth(
+                $locataire->getId(),
+                $mois,
+                $annee
+            );
+
+        $caution = null;
+
+        if ($lastPaiementPreviousMonth === null) {
+            $caution = $locataire->getMontantCaution();
+        }
+
+        $regulPS = 0;
+        $regulCharges = 0;
+
+        foreach ($paiements as $paiement) {
+            $regulPS += $paiement->getRegulPacksServices() ?? 0;
+            $regulCharges += $paiement->getRegulProvisionsPourCharges() ?? 0;
+        }
+
+        return [
+            'locataire' => $locataire,
+            'paiements' => $paiementsAvecRbt,
+            'loyer' => $loyer,
+            'charges' => $charges,
+            'packServices' => $packServices,
+            'mois' => $mois,
+            'annee' => $annee,
+            'lastPaiementPreviousMonth' => $lastPaiementPreviousMonth,
+            'caution' => $caution,
+            'regulPS' => $regulPS,
+            'regulCharges' => $regulCharges,
+        ];
     }
 }

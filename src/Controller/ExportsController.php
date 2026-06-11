@@ -216,7 +216,7 @@ final class ExportsController extends AbstractController
         }
 
         // 👉 nom du fichier ZIP dans ton dossier
-        $zipPath = $directory . "/" . $annee . '_' . $mois . '_quittances' . '.zip';
+        $zipPath = $directory . "/" . $annee . '_' . sprintf("%02d", $mois) . '_quittances' . '.zip';
 
         if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
             throw new \Exception('Impossible de créer le ZIP');
@@ -244,7 +244,7 @@ final class ExportsController extends AbstractController
 
             $pdfContent = $dompdf->output();
 
-            $filename = $locataire->getNom() . '_' . $locataire->getPrenom() . '_' . $annee . '_' . $mois . '.pdf';
+            $filename = $locataire->getNom() . '_' . $locataire->getPrenom() . '_' . $annee . '_' . sprintf("%02d", $mois) . '.pdf';
 
             $zip->addFromString($filename, $pdfContent);
         }

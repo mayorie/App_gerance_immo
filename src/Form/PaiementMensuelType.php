@@ -33,6 +33,15 @@ class PaiementMensuelType extends AbstractType
 
                 'choice_attr' => function (Locataires $locataire) {
 
+                    $datesPaiements = [];
+
+                    foreach ($locataire->getPaiementsMensuels() as $paiement) {
+
+                        if ($paiement->getDate()) {
+                            $datesPaiements[] = $paiement->getDate()->format('Y-m-d');
+                        }
+                    }
+
                     return [
                         'data-appart' => $locataire->getLogementsID()?->getIdAppart(),
                         'data-charge' => $locataire->getLatestCharge()?->getMontant(),
@@ -40,11 +49,12 @@ class PaiementMensuelType extends AbstractType
                         'data-caution' => $locataire->getPaiementsMensuels()->isEmpty()
                             ? $locataire->getMontantCaution()
                             : 0,
-                        'data-restantm' => $locataire->getRestantDuTropPercu(),//restant du M-1
-
+                        'data-restantm' => $locataire->getRestantDuTropPercu(),
                         'data-loyer' => $locataire->getLatestLoyer()?->getMontant(),
                         'data-bail-in' => $locataire->getDebutBail()?->format('Y-m-d'),
                         'data-bail-out' => $locataire->getDateDeSortie()?->format('Y-m-d'),
+
+                        'data-paiements' => implode(',', $datesPaiements),
                     ];
                 },
                 'attr' => [

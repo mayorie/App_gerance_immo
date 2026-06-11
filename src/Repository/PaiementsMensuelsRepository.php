@@ -164,4 +164,20 @@ class PaiementsMensuelsRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function findDatesByLocataire(int $locataireId): array
+    {
+        $result = $this->createQueryBuilder('p')
+            ->select('p.date')
+            ->andWhere('p.LocatairesID = :locataire')
+            ->setParameter('locataire', $locataireId)
+            ->orderBy('p.date', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_map(
+            fn(array $row) => $row['date'],
+            $result
+        );
+    }
 }

@@ -177,9 +177,15 @@ function recalcRow(row) {
 
     const option = row.querySelector('[name*="[LocatairesID]"]')?.selectedOptions[0];
     if (!option) return;
+    const paiements = option.dataset.paiements
+    ? option.dataset.paiements.split(',') : [];
+    const datePaiement = row.querySelector('.paiement-date').value;
 
     let caution = parseFloat(option.dataset.caution) || 0;
     let restantm = parseFloat(option.dataset.restantm) || 0;
+    let loyer = parseFloat(option.dataset.loyer) || 0;
+    let charge = parseFloat(option.dataset.charge) || 0;
+    let packs = parseFloat(option.dataset.packs) || 0;
 
     const currentLocataire = row.querySelector('[name*="[LocatairesID]"]').value;
 
@@ -203,12 +209,35 @@ function recalcRow(row) {
             if (!isNaN(prevRestant)) {
                 restantm = prevRestant;
             }
+
+            //vérifie qu'il n'y a pas de paiement du locataire dans le meme mois dans le batch.
+            const prevDate = previousRow.querySelector('.paiement-date')?.value.substring(0, 7);
+            const moisCourant = datePaiement.substring(0, 7);
+            if (prevDate === moisCourant) {
+                loyer = 0;
+                charge = 0;
+                packs = 0;
+            }
         }
     }
 
-    let loyer = parseFloat(option.dataset.loyer) || 0;
-    let charge = parseFloat(option.dataset.charge) || 0;
-    let packs = parseFloat(option.dataset.packs) || 0;
+    //vérifie qu'il n'y a pas de paiement du locataire dans le meme mois dans la BD.
+    if (datePaiement) {
+
+        const moisCourant = datePaiement.substring(0, 7);
+
+        const dejaPaye = paiements.some(
+            p => p.substring(0, 7) === moisCourant
+        );
+
+        if (dejaPaye) {
+            loyer = 0;
+            charge = 0;
+            packs = 0;
+        }
+    }
+
+
 
     const bailIN = option.dataset.bailIn || null;
     const bailOUT = option.dataset.bailOut || null;

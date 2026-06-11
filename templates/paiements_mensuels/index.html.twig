@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ps + ' €';
     });
 
-    // Export CSV functionality
+    // fontionnalités Export CSV
     document.getElementById('exportCsv').addEventListener('click', function() {
         const table = document.querySelector('table');
         if (!table) return;
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            csv.push(mergedHeader.join(','));
+            csv.push(mergedHeader.join(';'));
         }
 
         // Exporter les données du tbody
@@ -395,25 +395,31 @@ document.addEventListener('DOMContentLoaded', function () {
         tbodyRows.forEach(row => {
             const cells = row.querySelectorAll('td');
             let rowData = [];
-            let cellIndex = 0;
+            let visibleIndex = 0;
 
-            cells.forEach(cell => {
+            cells.forEach((cell) => {
                 if (cell.style.display !== 'none') {
                     let text = cell.textContent.trim();
-                    text = text.replace(/€/g, '').replace(/-/g, '');
-                    text = '"' + text.replace(/"/g, '""') + '"';
-                    rowData.push(text);
-                    cellIndex++;
+                    text = text.replace(/"/g, '').replace(/€/g, '').replace(/-/g, '').replace(/\s+$/, '');
+                    
+                    const isNumeric = /^-?\d+\.?\d*$/.test(text) && text !== '' && !text.includes('/');
+                    text = text.replace(/\./g, ',');
+                    
+                    if (isNumeric) {
+                        rowData.push(text);
+                    } else {
+                        rowData.push('"' + text.replace(/"/g, '""') + '"');
+                    }
 
-                    // Insérer le champ num_comptable après la 2ème colonne si comptabilité cochée
-                    if (comptabilite && cellIndex === 2) {
+                    if (comptabilite && visibleIndex === 1) {
                         const numComptable = row.dataset.numComptable || '';
                         rowData.push('"' + numComptable.replace(/"/g, '""') + '"');
                     }
+                    visibleIndex++;
                 }
             });
             if (rowData.length > 0) {
-                csv.push(rowData.join(','));
+                csv.push(rowData.join(';'));
             }
         });
 

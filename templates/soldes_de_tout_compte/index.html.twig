@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Soldes de tout compte{% endblock %}
+
+{% block body %}
+
+    <div class="div-titre" style="justify-content: flex-start;">
+        <a href="{{ path('app_home') }}" class="btn-retour">Retour</a>
+        <h1 style="margin-left: 200px;">Soldes de tout compte</h1>
+        <button id="exportCsv" class="btn-create" style="margin-left: 120px;">📥 Export CSV</button>
+    </div>
+
+    <table style="border-collapse: separate; border-spacing: 8px 5px;">
+    <thead>
+        <tr>
+            <th>LOCATAIRE</th>
+            <th>LOGEMENT ID</th>
+            <th>NUM COMPTABLE</th>
+            <th>DATE SOLDE</th>
+            <th>MODE PAIEMENT</th>
+            <th>BANQUE</th>
+            <th>MONTANT SOLDE</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for locataire in locataires %}
+            {% if locataire.montantSoldeDeToutCompte is not null %}
+                <tr>
+                    <td>{{ locataire.prenom }} {{ locataire.nom }}</td>
+                    <td>{{ locataire.LogementsID.id }}</td>
+                    <td>{{ locataire.numComptable }}</td>
+                    <td>{{ locataire.dateSoldeDeToutCompte ? locataire.dateSoldeDeToutCompte|date('d/m/Y') : '' }}</td>
+                    <td>{{ locataire.modePaiementSoldeDeToutCompte }}</td>
+                    <td>{{ locataire.banqueSoldeDeToutCompte }}</td>
+                    <td>{{ locataire.montantSoldeDeToutCompte }} €</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+
+<link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('exportCsv').addEventListener('click', function() {
+        const table = document.querySelector('table');
+        if (!table) return;
+
+        let csv = [];
+        const rows = table.querySelectorAll('tr');
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('th, td');
+            let rowData = [];
+
+            cells.forEach((cell, index) => {
+                let text = cell.textContent.trim();
+                text = text.replace(/€/g, '').replace(/-/g, '');
+                // Remplacer le point par une virgule pour la colonne montant solde (dernière colonne)
+                if (index === cells.length - 1) {
+                    text = text.replace(/\./g, ',');
+                    // Ne pas mettre de guillemets autour des valeurs numériques
+                    rowData.push(text);
+                } else {
+                    text = '"' + text.replace(/"/g, '""') + '"';
+                    rowData.push(text);
+                }
+            });
+
+            if (rowData.length > 0) {
+                csv.push(rowData.join(';'));
+            }
+        });
+
+        const csvContent = '\uFEFF' + csv.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'soldes_de_tout_compte_' + new Date().toISOString().slice(0, 10) + '.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+});
+</script>
+
+{% endblock %}

@@ -11,7 +11,7 @@
 <div class="alert-banner">
     <strong>⚠️ Anniversaire VISALE :</strong>
     {% for locataire in locatairesAlerte %}
-        {{ locataire.nom }} {{ locataire.prenom }}{% if not loop.last %}, {% endif %}
+        {{ locataire.prenom|capitalize }} {{ locataire.nom }} {% if not loop.last %}, {% endif %}
     {% endfor %}
 </div>
 {% endif %}

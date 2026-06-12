@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\PacksServices;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Locataires;
 
 /**
  * @extends ServiceEntityRepository<PacksServices>
@@ -40,4 +41,20 @@ class PacksServicesRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findPackServicePourDate(
+        Locataires $locataire,
+        \DateTimeInterface $date
+    ): ?PacksServices
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.LocatairesID = :locataire')
+            ->andWhere('p.date_MES <= :date')
+            ->setParameter('locataire', $locataire)
+            ->setParameter('date', $date)
+            ->orderBy('p.date_MES', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

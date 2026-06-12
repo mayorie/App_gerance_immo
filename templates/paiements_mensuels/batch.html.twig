@@ -173,19 +173,33 @@ addPaiement();
 
 
 
-function recalcRow(row) {
+async function recalcRow(row) {
 
     const option = row.querySelector('[name*="[LocatairesID]"]')?.selectedOptions[0];
     if (!option) return;
+    const locataireId = row.querySelector('[name*="[LocatairesID]"]').value;
     const paiements = option.dataset.paiements
     ? option.dataset.paiements.split(',') : [];
     const datePaiement = row.querySelector('.paiement-date').value;
 
     let caution = parseFloat(option.dataset.caution) || 0;
     let restantm = parseFloat(option.dataset.restantm) || 0;
-    let loyer = parseFloat(option.dataset.loyer) || 0;
-    let charge = parseFloat(option.dataset.charge) || 0;
-    let packs = parseFloat(option.dataset.packs) || 0;
+
+    let loyer = 0;
+    let charge = 0;
+    let packs = 0;
+
+    if (locataireId && datePaiement) {
+
+        const montants = await chargerMontants(
+            datePaiement,
+            locataireId
+        );
+
+        loyer = montants.loyer;
+        charge = montants.charge;
+        packs = montants.packs;
+    }
 
     const currentLocataire = row.querySelector('[name*="[LocatairesID]"]').value;
 
@@ -343,14 +357,14 @@ function recalcRow(row) {
 
 
 
-document.addEventListener('input', function (e) {
+document.addEventListener('input',async  function (e) {
 
     const row = e.target.closest('tr');
 
     if (!row) {
         return;
     }
-    recalcRow(row);
+    await recalcRow(row);
 
     // changement locataire
     if (e.target.name.includes('[LocatairesID]')) {
@@ -396,6 +410,21 @@ document.addEventListener('click', function (e) {
         });
     }
 });
+
+async function chargerMontants(datePaiement, locataireId) {
+
+    const response = await fetch(
+        `/api/montants-locataire?locataire=${locataireId}&date=${datePaiement}`
+    );
+
+    const data = await response.json();
+
+    return {
+        loyer: parseFloat(data.loyer) || 0,
+        charge: parseFloat(data.charge) || 0,
+        packs: parseFloat(data.pack) || 0
+    };
+}
 
 </script>
 

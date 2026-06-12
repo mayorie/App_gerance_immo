@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\LoyersHC;
+use App\Entity\Locataires;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,4 +41,20 @@ class LoyersHCRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findLoyerPourDate(
+        Locataires $locataire,
+        \DateTimeInterface $date
+    ): ?LoyersHC
+    {
+        return $this->createQueryBuilder('l')
+            ->where('l.LocatairesID = :locataire')
+            ->andWhere('l.date_MES <= :date')
+            ->setParameter('locataire', $locataire)
+            ->setParameter('date', $date)
+            ->orderBy('l.date_MES', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

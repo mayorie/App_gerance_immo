@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\ProvisionsPourCharges;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Locataires;
 
 /**
  * @extends ServiceEntityRepository<ProvisionsPourCharges>
@@ -40,4 +41,20 @@ class ProvisionsPourChargesRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findChargePourDate(
+        Locataires $locataire,
+        \DateTimeInterface $date
+    ): ?ProvisionsPourCharges
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.LocatairesID = :locataire')
+            ->andWhere('c.date_MES <= :date')
+            ->setParameter('locataire', $locataire)
+            ->setParameter('date', $date)
+            ->orderBy('c.date_MES', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

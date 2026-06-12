@@ -26,7 +26,7 @@ class PaiementMensuelType extends AbstractType
                 
 
                 'choice_label' => function (Locataires $locataire) {
-                    return $locataire->getPrenom() . ' ' . $locataire->getNom();
+                    return $locataire->getNom() . ' ' . $locataire->getPrenom();
                 },
 
                 'placeholder' => 'Choisir un locataire',

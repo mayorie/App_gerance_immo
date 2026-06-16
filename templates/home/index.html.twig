@@ -7,6 +7,14 @@
 {% endblock %}
 
 {% block body %}
+{% if locatairesAlerte|length > 0 %}
+<div class="alert-banner">
+    <strong>⚠️ Anniversaire VISALE :</strong>
+    {% for locataire in locatairesAlerte %}
+        {{ locataire.prenom|capitalize }} {{ locataire.nom }} {% if not loop.last %}, {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
 <div class="home-container">
     <h1 class="home-title">Ma gestion immobilière</h1>
         <h2>SAISIE D'UN NOUVEAU :</h2>

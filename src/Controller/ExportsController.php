@@ -294,7 +294,33 @@ final class ExportsController extends AbstractController
             $loyer = $paiementsRepo->findLoyerHC($paiementReference);
             $charges = $paiementsRepo->findProvisionPourCharges($paiementReference);
             $packServices = $paiementsRepo->findPackService($paiementReference);
+        } else {
+            // Si pas de paiements, récupérer les derniers montants en vigueur du locataire
+            $latestLoyer = $locataire->getLatestLoyer();
+            $latestCharge = $locataire->getLatestCharge();
+            $latestPack = $locataire->getLatestPackServices();
+
+            $loyer = $latestLoyer ? $latestLoyer->getMontant() : null;
+            $charges = $latestCharge ? $latestCharge->getMontant() : null;
+            $packServices = $latestPack ? $latestPack->getMontant() : null;
         }
+
+        // Calcul du prorata temporis
+        $prorataInfo = $this->calculerProrata(
+            $locataire,
+            $mois,
+            $annee,
+            $loyer,
+            $charges,
+            $packServices
+        );
+
+        $loyer = $prorataInfo['loyer'];
+        $charges = $prorataInfo['charges'];
+        $packServices = $prorataInfo['packServices'];
+        $estProrata = $prorataInfo['estProrata'];
+        $joursAPayer = $prorataInfo['joursAPayer'];
+        $joursDansLeMois = $prorataInfo['joursDansLeMois'];
 
         $lastPaiementPreviousMonth =
             $paiementsRepo->findLastPaiementPreviousMonth(
@@ -336,7 +362,73 @@ final class ExportsController extends AbstractController
             'caution' => $caution,
             'regulPS' => $regulPS,
             'regulCharges' => $regulCharges,
-            'signature' => $signature
+            'signature' => $signature,
+            'estProrata' => $estProrata,
+            'joursAPayer' => $joursAPayer,
+            'joursDansLeMois' => $joursDansLeMois
+        ];
+    }
+
+    private function calculerProrata(
+        Locataires $locataire,
+        int $mois,
+        int $annee,
+        ?float $loyer,
+        ?float $charges,
+        ?float $packServices
+    ): array {
+        $debutBail = $locataire->getDebutBail();
+        $dateSortie = $locataire->getDateDeSortie();
+
+        $estProrata = false;
+        $joursAPayer = null;
+        $joursDansLeMois = null;
+
+        // Nombre de jours dans le mois
+        $dateDebutMois = new \DateTime(sprintf('%04d-%02d-01', $annee, $mois));
+        $dateFinMois = (clone $dateDebutMois)->modify('last day of this month');
+        $joursDansLeMois = (int)$dateFinMois->format('d');
+
+        // Prorata entrée (premier mois de bail)
+        if ($debutBail && $debutBail->format('Y-m') === sprintf('%04d-%02d', $annee, $mois)) {
+            $estProrata = true;
+            $jourEntree = (int)$debutBail->format('d');
+            $joursAPayer = $joursDansLeMois - $jourEntree + 1;
+
+            if ($loyer !== null) {
+                $loyer = round(($loyer / $joursDansLeMois) * $joursAPayer, 2);
+            }
+            if ($charges !== null) {
+                $charges = round(($charges / $joursDansLeMois) * $joursAPayer, 2);
+            }
+            if ($packServices !== null) {
+                $packServices = round(($packServices / $joursDansLeMois) * $joursAPayer, 2);
+            }
+        }
+
+        // Prorata sortie (dernier mois de bail)
+        if ($dateSortie && $dateSortie->format('Y-m') === sprintf('%04d-%02d', $annee, $mois)) {
+            $estProrata = true;
+            $joursAPayer = (int)$dateSortie->format('d');
+
+            if ($loyer !== null) {
+                $loyer = round(($loyer / $joursDansLeMois) * $joursAPayer, 2);
+            }
+            if ($charges !== null) {
+                $charges = round(($charges / $joursDansLeMois) * $joursAPayer, 2);
+            }
+            if ($packServices !== null) {
+                $packServices = round(($packServices / $joursDansLeMois) * $joursAPayer, 2);
+            }
+        }
+
+        return [
+            'loyer' => $loyer,
+            'charges' => $charges,
+            'packServices' => $packServices,
+            'estProrata' => $estProrata,
+            'joursAPayer' => $joursAPayer,
+            'joursDansLeMois' => $joursDansLeMois
         ];
     }
 }

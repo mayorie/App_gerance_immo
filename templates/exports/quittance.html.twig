@@ -26,14 +26,14 @@
     <hr style="border-color: #2570ebdd;">
 
     <p style="font-size: 10px">
-        Je soussignée, Céline MAHE, propriétaire du logement situé au {{ locataire.LogementsID.adresse }}, 
+        Je soussignée, Céline MAHE, propriétaire du logement situé au {{ locataire.LogementsID.adresse }},
         apt {{locataire.LogementsID.appt}}, {{locataire.LogementsID.CodePostal}} {{locataire.LogementsID.ville}},
         donné en location à <b style="color: #2570ebdd;">{{ locataire.prenom }} {{ locataire.nom }}</b> déclare avoir reçu de celui(celle)-ci à titre de loyer{% if packServices > 0 %}, de charges et du pack Services{% else %} et de charges{% endif %}
-        pour la période <b style="color: #2570ebdd;">du {{ paiements[0].paiement.date|date('d/m/Y') }} au 
+        pour la période <b style="color: #2570ebdd;">du {{ paiements[0].paiement.date|date('d/m/Y') }} au
         {{ date(annee ~ '-' ~ "%02d"|format(mois) ~ '-01')
             |date_modify('last day of this month')
             |date('d') }}/{{ "%02d"|format(mois) }}/{{ annee }}
-        </b>les éléments suivants :
+        </b>{% if estProrata %} <b style="color: #ff6600;">(Calcul au prorata temporis : {{ joursAPayer }}/{{ joursDansLeMois }} jours)</b>{% endif %} les éléments suivants :
     </p>
 
     <p style="font-size: 10px; font-weight: bold; text-decoration: underline;">

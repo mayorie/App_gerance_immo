@@ -26,7 +26,10 @@ class LocataireType extends AbstractType
             ->add('prenom')
             ->add('tel')
             ->add('mail')
-            ->add('date_de_naissance')
+            ->add('date_de_naissance', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])        
             ->add('lieu_de_naissance')
             ->add('statut', ChoiceType::class, [
                 'choices' => [
@@ -38,9 +41,15 @@ class LocataireType extends AbstractType
                 'placeholder' => 'Choisir un statut',
             ])            
             ->add('num_comptable')
-            ->add('debut_bail')
+            ->add('debut_bail', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])            
             ->add('montant_caution')
-            ->add('date_EDL_entree')
+            ->add('date_EDL_entree', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])        
             ->add('num_comptable')
             ->add('LogementsID', EntityType::class, [
                 'class' => Logements::class,

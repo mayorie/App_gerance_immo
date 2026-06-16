@@ -8,6 +8,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+
 
 class GarantsPhysiquesSousFormType extends AbstractType
 {
@@ -21,7 +23,10 @@ class GarantsPhysiquesSousFormType extends AbstractType
             ->add('adresse')
             ->add('code_postal')
             ->add('ville')
-            ->add('date_de_naissance')
+            ->add('date_de_naissance', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])        
             ->add('lieu_de_naissance')
         ;
     }

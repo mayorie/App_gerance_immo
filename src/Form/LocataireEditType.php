@@ -13,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;        
 
 class LocataireEditType extends AbstractType
 {
@@ -24,7 +24,10 @@ class LocataireEditType extends AbstractType
             ->add('prenom')
             ->add('tel')
             ->add('mail')
-            ->add('date_de_naissance')
+            ->add('date_de_naissance', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])        
             ->add('lieu_de_naissance')
             ->add('statut', ChoiceType::class, [
                 'choices' => [
@@ -36,17 +39,38 @@ class LocataireEditType extends AbstractType
                 'placeholder' => 'Choisir un statut',
             ])            
             ->add('num_comptable')
-            ->add('debut_bail')
+            ->add('debut_bail', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])        
             ->add('montant_caution')
             ->add('loyer_TCC')
             ->add('restant_du_trop_percu')
-            ->add('date_EDL_entree')
-            ->add('preavis_recu_le')
-            ->add('debut_du_preavis')
-            ->add('date_EDL_sortie')
-            ->add('date_de_sortie')
+            ->add('date_EDL_entree', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])        
+            ->add('preavis_recu_le', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])
+            ->add('debut_du_preavis', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])
+            ->add('date_EDL_sortie', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])
+            ->add('date_de_sortie', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])
             ->add('montant_solde_de_tout_compte')
-            ->add('date_solde_de_tout_compte')
+            ->add('date_solde_de_tout_compte', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])
             ->add('mode_paiement_solde_de_tout_compte')
             ->add('banque_solde_de_tout_compte')
             ->add('cloture_contrat_visale')

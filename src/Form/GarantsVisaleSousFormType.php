@@ -8,6 +8,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+
 
 class GarantsVisaleSousFormType extends AbstractType
 {
@@ -15,7 +17,10 @@ class GarantsVisaleSousFormType extends AbstractType
     {
         $builder
             ->add('texte')
-            ->add('date_anniversaire')
+            ->add('date_anniversaire', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+            ])        
         ;
     }
 

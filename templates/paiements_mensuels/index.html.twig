@@ -52,7 +52,7 @@
         <tr>
             <th colspan="2">Info locataire</th>
             <th colspan="1">Saisie du</th>
-            <th colspan="6">Total du</th>
+            <th colspan="6">Sommes dues</th>
             <th colspan="3">Part reçue du locataire</th>
             <th colspan="3">Part reçue de la CAF</th>
             <th colspan="3">Remboursement bailleur</th>
@@ -112,6 +112,7 @@
         data-ps="{{ PS ?? 0 }}"
         data-num-comptable="{{ p.LocatairesID.numComptable ?? '' }}"
 
+        data-date-paiement="{{ p.Date ? p.Date|date('Y-m-d') : '' }}"
         data-bail-in="{{ p.LocatairesID.debutBail ? p.LocatairesID.debutBail|date('Y-m-d') : '' }}"
         data-bail-out="{{ p.LocatairesID.dateDeSortie ? p.LocatairesID.dateDeSortie|date('Y-m-d') : '' }}"
     >
@@ -186,7 +187,7 @@
 </tbody>
 </table>
 
-<p style="color: #957e7ee1;"><i>NB : Restant dû Fin de mois = Restant dû Début mois +Total dû - Total reçu + RBT</i></p>
+<p style="color: #957e7ee1;"><i>NB : Restant dû Fin de mois = Restant dû Début mois +Total dû - Total reçu + RBT<Br>Si Restant dû <0, c'est un Trop perçu !</i></p>
 {% endif %}
 
 {# POPUP flash #}
@@ -221,84 +222,92 @@ document.addEventListener('DOMContentLoaded', function () {
         let ps =
             parseFloat(row.dataset.ps) || 0;
 
+        const datePaiement =
+            row.dataset.datePaiement ? new Date(row.dataset.datePaiement) : null;
+
         const bailIN =
             row.dataset.bailIn || null;
 
         const bailOUT =
             row.dataset.bailOut || null;
 
+        // Fonction pour vérifier si deux dates sont dans le même mois
+        function isSameMonth(date1, date2) {
+            return date1.getFullYear() === date2.getFullYear() &&
+                   date1.getMonth() === date2.getMonth();
+        }
 
-        /*
-        =========================
-        PRORATA ENTRÉE
-        =========================
-        */
+        /*PRORATA ENTRÉE*/
 
-        if (bailIN && caution > 0) {
+        if (bailIN && caution > 0 && datePaiement) {
 
             const dateBail = new Date(bailIN);
 
-            const jourEntree = dateBail.getDate();
+            // Appliquer le prorata seulement si le paiement est dans le même mois que l'entrée
+            if (isSameMonth(datePaiement, dateBail)) {
 
-            const annee = dateBail.getFullYear();
-            const mois = dateBail.getMonth();
+                const jourEntree = dateBail.getDate();
 
-            const joursDansLeMois = new Date(
-                annee,
-                mois + 1,
-                0
-            ).getDate();
+                const annee = dateBail.getFullYear();
+                const mois = dateBail.getMonth();
 
-            const joursAPayer =
-                joursDansLeMois - jourEntree + 1;
+                const joursDansLeMois = new Date(
+                    annee,
+                    mois + 1,
+                    0
+                ).getDate();
 
-            loyer = Math.round((
-                (loyer / joursDansLeMois) * joursAPayer
-            ) * 100) / 100;
+                const joursAPayer =
+                    joursDansLeMois - jourEntree + 1;
 
-            charge = Math.round((
-                (charge / joursDansLeMois) * joursAPayer
-            ) * 100) / 100;
+                loyer = Math.round((
+                    (loyer / joursDansLeMois) * joursAPayer
+                ) * 100) / 100;
 
-            ps = Math.round((
-                (ps / joursDansLeMois) * joursAPayer
-            ) * 100) / 100;
+                charge = Math.round((
+                    (charge / joursDansLeMois) * joursAPayer
+                ) * 100) / 100;
+
+                ps = Math.round((
+                    (ps / joursDansLeMois) * joursAPayer
+                ) * 100) / 100;
+            }
         }
 
 
-        /*
-        =========================
-        PRORATA SORTIE
-        =========================
-        */
+        /*PRORATA SORTIE*/
 
-        if (bailOUT) {
+        if (bailOUT && datePaiement) {
 
             const dateBail = new Date(bailOUT);
 
-            const joursAPayer =
-                dateBail.getDate();
+            // Appliquer le prorata seulement si le paiement est dans le même mois que la sortie
+            if (isSameMonth(datePaiement, dateBail)) {
 
-            const annee = dateBail.getFullYear();
-            const mois = dateBail.getMonth();
+                const joursAPayer =
+                    dateBail.getDate();
 
-            const joursDansLeMois = new Date(
-                annee,
-                mois + 1,
-                0
-            ).getDate();
+                const annee = dateBail.getFullYear();
+                const mois = dateBail.getMonth();
 
-            loyer = Math.round((
-                (loyer / joursDansLeMois) * joursAPayer
-            ) * 100) / 100;
+                const joursDansLeMois = new Date(
+                    annee,
+                    mois + 1,
+                    0
+                ).getDate();
 
-            charge = Math.round((
-                (charge / joursDansLeMois) * joursAPayer
-            ) * 100) / 100;
+                loyer = Math.round((
+                    (loyer / joursDansLeMois) * joursAPayer
+                ) * 100) / 100;
 
-            ps = Math.round((
-                (ps / joursDansLeMois) * joursAPayer
-            ) * 100) / 100;
+                charge = Math.round((
+                    (charge / joursDansLeMois) * joursAPayer
+                ) * 100) / 100;
+
+                ps = Math.round((
+                    (ps / joursDansLeMois) * joursAPayer
+                ) * 100) / 100;
+            }
         }
 
         row.querySelector('.loyer-cell').textContent =

@@ -28,7 +28,7 @@ class Locataires
     #[ORM\Column(length: 128, nullable: true)]
     private ?string $mail = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $date_de_naissance = null;
 
     #[ORM\Column(length: 64, nullable: true)]
@@ -38,7 +38,7 @@ class Locataires
     #[ORM\JoinColumn(nullable: false)]
     private ?Logements $LogementsID = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $debut_bail = null;
 
     #[ORM\Column(nullable: true)]
@@ -50,25 +50,25 @@ class Locataires
     #[ORM\Column(nullable: true)]
     private ?float $restant_du_trop_percu = 0;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $date_EDL_entree = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $preavis_recu_le = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $debut_du_preavis = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $date_EDL_sortie = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $date_de_sortie = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $montant_solde_de_tout_compte = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $date_solde_de_tout_compte = null;
 
     #[ORM\Column(length: 3, nullable: true)]

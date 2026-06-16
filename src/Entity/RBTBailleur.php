@@ -17,7 +17,7 @@ class RBTBailleur
     #[ORM\Column(length: 128, nullable: true)]
     private ?string $motif = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $date = null;
 
     #[ORM\Column(nullable: true)]

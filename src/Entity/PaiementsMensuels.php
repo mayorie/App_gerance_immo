@@ -17,7 +17,7 @@ class PaiementsMensuels
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $date = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $part_recue_du_locataire_date = null;
 
     #[ORM\Column(length: 3, nullable: true)]
@@ -26,7 +26,7 @@ class PaiementsMensuels
     #[ORM\Column(nullable: true)]
     private ?float $part_recue_du_locataire_montant = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $part_recue_de_la_CAF_date = null;
 
     #[ORM\Column(length: 3, nullable: true)]

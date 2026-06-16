@@ -17,7 +17,7 @@ class LoyersHC
     #[ORM\Column(nullable: true)]
     private ?float $montant = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $date_MES = null;
 
     #[ORM\ManyToOne(inversedBy: 'Loyers_HC')]

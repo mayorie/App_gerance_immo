@@ -35,7 +35,7 @@ class GarantsPhysiques
     #[ORM\Column(length: 32, nullable: true)]
     private ?string $ville = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $date_de_naissance = null;
 
     #[ORM\Column(length: 64, nullable: true)]

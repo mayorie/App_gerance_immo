@@ -17,7 +17,7 @@ class GarantsVisale
     #[ORM\Column(length: 32, nullable: true)]
     private ?string $texte = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $date_anniversaire = null;
 
     #[ORM\OneToOne(inversedBy: 'Garants_visale', cascade: ['persist', 'remove'])]

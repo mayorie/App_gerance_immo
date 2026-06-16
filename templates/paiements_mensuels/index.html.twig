@@ -300,25 +300,6 @@ document.addEventListener('DOMContentLoaded', function () {
             ) * 100) / 100;
         }
 
-
-        /*
-        =========================
-        TOTAL
-        =========================
-        */
-
-        const total = Math.round((
-            caution +
-            regulPacks +
-            regulCharges +
-            loyer +
-            charge +
-            ps
-        ) * 100) / 100;
-
-        row.querySelector('.total-cell').textContent =
-            total + ' €';
-
         row.querySelector('.loyer-cell').textContent =
             loyer + ' €';
 

@@ -37,7 +37,7 @@
     </p>
 
     <p style="font-size: 10px; font-weight: bold; text-decoration: underline;">
-        Ancien Solde - {{ lastPaiementPreviousMonth.restantDuTropPercuFinDeMois <= 0 ? 'TROP PERCU' : 'RESTANT DU' }} avant la période : {{lastPaiementPreviousMonth.restantDuTropPercuFinDeMois ?? 0}} €
+        Ancien Solde - {{ (lastPaiementPreviousMonth.restantDuTropPercuFinDeMois ?? 0) <= 0 ? 'TROP PERCU' : 'RESTANT DU' }} avant la période : {{lastPaiementPreviousMonth.restantDuTropPercuFinDeMois ?? 0}} €
     </p>
 
     {% set totalDu = loyer + charges + packServices + caution + regulPS + regulCharges %}
@@ -111,7 +111,7 @@
                     {{ rbt.date|date('d/m/Y') }}
                 </li>
 
-                {% set totalRecu = totalRecu + rbt.montant %}
+                {% set totalRecu = totalRecu - rbt.montant %}
 
             {% endif %}
 
@@ -122,7 +122,7 @@
         Soit un total reçu pour la période de : {{ totalRecu }} €
     </p>
 
-    {% set restantDuTropPercu = totalRecu - totalDu %}
+    {% set restantDuTropPercu = totalDu - totalRecu + (lastPaiementPreviousMonth.restantDuTropPercuFinDeMois ?? 0) %}
 
     <p style="font-size: 10px; font-weight: bold; text-decoration: underline;">
         Nouveau Solde -

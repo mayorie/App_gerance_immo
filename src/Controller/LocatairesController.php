@@ -48,7 +48,7 @@ final class LocatairesController extends AbstractController
             $loyerMontant = $form->get('loyer_montant')->getData();
             $loyerDate = $form->get('loyer_date')->getData() ?? $debutBail;
 
-            if ($loyerMontant) {
+            if ($loyerMontant !== null) {
                 $loyer = new LoyersHC();
                 $loyer->setMontant($loyerMontant);
                 $loyer->setDateMES($loyerDate);

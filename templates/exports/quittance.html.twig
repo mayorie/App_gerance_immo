@@ -127,7 +127,7 @@
     <p style="font-size: 10px; font-weight: bold; text-decoration: underline;">
         Nouveau Solde -
         {{ restantDuTropPercu <= 0 ? 'TROP PERCU' : 'RESTANT DU' }}
-        après la période : {{ restantDuTropPercu|number_format(2, ',', '.') }} €
+        après la période : {{ restantDuTropPercu|number_format(2, '.', '.') }} €
     </p>
 
     <p style="font-size: 10px">

@@ -388,7 +388,7 @@ document.addEventListener('DOMContentLoaded', function () {
             cells.forEach((cell) => {
                 if (cell.style.display !== 'none') {
                     let text = cell.textContent.trim();
-                    text = text.replace(/"/g, '').replace(/€/g, '').replace(/-/g, '').replace(/\s+$/, '');
+                    text = text.replace(/"/g, '').replace(/€/g, '').replace(/\s+$/, '');
                     
                     const isNumeric = /^-?\d+\.?\d*$/.test(text) && text !== '' && !text.includes('/');
                     text = text.replace(/\./g, ',');

@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             cells.forEach((cell, index) => {
                 let text = cell.textContent.trim();
-                text = text.replace(/€/g, '').replace(/-/g, '');
+                text = text.replace(/€/g, '');
                 // Remplacer le point par une virgule pour la colonne montant solde (dernière colonne)
                 if (index === cells.length - 1) {
                     text = text.replace(/\./g, ',');

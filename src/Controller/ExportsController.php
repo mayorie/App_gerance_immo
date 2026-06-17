@@ -295,14 +295,7 @@ final class ExportsController extends AbstractController
             $charges = $paiementsRepo->findProvisionPourCharges($paiementReference);
             $packServices = $paiementsRepo->findPackService($paiementReference);
         } else {
-            // Si pas de paiements, récupérer les derniers montants en vigueur du locataire
-            $latestLoyer = $locataire->getLatestLoyer();
-            $latestCharge = $locataire->getLatestCharge();
-            $latestPack = $locataire->getLatestPackServices();
-
-            $loyer = $latestLoyer ? $latestLoyer->getMontant() : null;
-            $charges = $latestCharge ? $latestCharge->getMontant() : null;
-            $packServices = $latestPack ? $latestPack->getMontant() : null;
+            dd("Aucun paiements trouvés.");
         }
 
         // Calcul du prorata temporis

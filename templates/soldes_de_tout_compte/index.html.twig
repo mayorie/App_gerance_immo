@@ -14,7 +14,7 @@
     <thead>
         <tr>
             <th>LOCATAIRE</th>
-            <th>LOGEMENT ID</th>
+            <th>LOGEMENT</th>
             <th>NUM COMPTABLE</th>
             <th>DATE SOLDE</th>
             <th>MODE PAIEMENT</th>
@@ -28,7 +28,7 @@
             {% if locataire.montantSoldeDeToutCompte is not null %}
                 <tr>
                     <td>{{ locataire.prenom }} {{ locataire.nom }}</td>
-                    <td>{{ locataire.LogementsID.id }}</td>
+                    <td>{{ locataire.LogementsID.idAppart }}</td>
                     <td>{{ locataire.numComptable }}</td>
                     <td>{{ locataire.dateSoldeDeToutCompte ? locataire.dateSoldeDeToutCompte|date('d/m/Y') : '' }}</td>
                     <td>{{ locataire.modePaiementSoldeDeToutCompte }}</td>

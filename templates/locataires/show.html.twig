@@ -4,9 +4,9 @@
 
 {% block body %}
 
-    <div class="div-titre">
+    <div class="div-titre" style="position: relative;">
         <a href="{{ path('app_locataires') }}" class="btn-retour">Retour</a>
-        <h1>Fiche d'informations - Locataire</h1>
+        <h1 style="position: absolute; left: 50%; transform: translateX(-50%); margin: 0;">Fiche d'informations - Locataire</h1>
     </div>
 
     <div class="fiche-container">
@@ -92,7 +92,7 @@
                 </tr>
                 <tr>
                     <th>Date EDL sortie</th>
-                    <td>{% if locataire.dateEDLSortie %}{{ locataire.dateEDLSortie|date('d/m/Y') }}{% endif %}</td>
+                    <td style="font-weight: bold;">{% if locataire.dateEDLSortie %}{{ locataire.dateEDLSortie|date('d/m/Y') }}{% endif %}</td>
                     <th>Banque</th>
                     <td>{{ locataire.banqueSoldeDeToutCompte }}</td>
                 </tr>
@@ -146,7 +146,7 @@
                     {{ locataire.commentaires.contenu|nl2br }}
                 </div>
             {% else %}
-                <p>Aucun commentaire</p>
+                <p style="font-size: 14px;">Aucun commentaire</p>
             {% endif %}
         </div>
 

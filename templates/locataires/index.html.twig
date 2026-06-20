@@ -30,6 +30,7 @@
             <th>RESTANT DU</th>
             <th>FIN BAIL</th>
             <th>NUM COMPTA</th>
+            <th>VOIR</th>
             <th>MODIF</th>
             <th>SUPPR</th>
         </tr>
@@ -61,6 +62,11 @@
                     {% endif %}
                 </td>
                 <td>{{ locataire.numComptable }}</td>
+                <td>
+                    <a href="{{ path('locataires_show', {id: locataire.id}) }}" >
+                    👁️
+                    </a>
+                </td>
                 <td>
                     <a href="{{ path('locataires_edit', {id: locataire.id}) }}" >
                     ✏️

@@ -253,6 +253,14 @@ final class LocatairesController extends AbstractController
         ]);
     }
 
+    #[Route('/locataires/show/{id}', name: 'locataires_show')]
+    public function show(Locataires $locataire): Response
+    {
+        return $this->render('locataires/show.html.twig', [
+            'locataire' => $locataire
+        ]);
+    }
+
     #[Route('/locataires/delete/{id}', name: 'locataire_delete', methods: ['POST'])]
     public function delete(
         Request $request,

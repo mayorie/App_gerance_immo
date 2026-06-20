@@ -1,0 +1,213 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fiche locataire{% endblock %}
+
+{% block body %}
+
+    <div class="div-titre">
+        <a href="{{ path('app_locataires') }}" class="btn-retour">Retour</a>
+        <h1>Fiche d'informations - Locataire</h1>
+    </div>
+
+    <div class="fiche-container">
+        <!-- Informations personnelles / Logement-->
+        <div class="fiche-section">
+            <table class="fiche-table">
+                <tr>
+                    <th style="font-size: 16px;background: #f9f9f9;">Informations personnelles</th>
+                    <td></td>
+                    <th style="font-size: 16px;background: #f9f9f9;">Informations logement</th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>Nom</th>
+                    <td style="background: #d7e02b; font-weight: bold;">{{ locataire.nom }}</td>
+                    <th>Logement</th>
+                    <td style="background: #d7e02b; font-weight: bold;">{{ locataire.LogementsID.idAppart }}</td>
+                </tr>
+                <tr>
+                    <th>Prénom</th>
+                    <td>{{ locataire.prenom }}</td>
+                    <th>Début bail</th>
+                    <td style="font-weight: bold;">{% if locataire.debutBail %}{{ locataire.debutBail|date('d/m/Y') }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>Téléphone</th>
+                    <td>{{ locataire.tel }}</td>
+                    <th>Montant caution</th>
+                    <td>{{ locataire.montantCaution }} €</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ locataire.mail }}</td>
+                </tr>
+                <tr>
+                    <th>Date de naissance</th>
+                    <td>{% if locataire.dateDeNaissance %}{{ locataire.dateDeNaissance|date('d/m/Y') }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>Lieu de naissance</th>
+                    <td>{{ locataire.lieuDeNaissance }}</td>
+                    {% for garant in locataire.garants %}
+                    {% if garant.type == 'VIS' and garant.garantsVisale %}
+                        <th>Numéro Visale</th>
+                        <td style="background: #d7e02b; font-weight: bold;">{{ garant.garantsVisale.texte }}</td>
+                    {% endif %}
+                {% endfor %}
+                </tr>
+                <tr>
+                    <th>Statut</th>
+                    <td>{{ locataire.statut }}</td>
+                    <th>Numéro comptable</th>
+                    <td>{{ locataire.numComptable }}</td>
+                </tr>
+                
+            </table>
+        </div>
+        <!-- Dates clés / Solde de tout compte -->
+        <div class="fiche-section">
+            <table class="fiche-table">
+                <tr>
+                    <th style="font-size: 16px;background: #f9f9f9;">Dates clés</th>
+                    <td></td>
+                    <th style="font-size: 16px;background: #f9f9f9;">Solde de tout compte</th>
+                    <td></td>
+                </tr><tr>
+                    <th>Date EDL entrée</th>
+                    <td>{% if locataire.dateEDLEntree %}{{ locataire.dateEDLEntree|date('d/m/Y') }}{% endif %}</td>
+                    <th>Montant solde</th>
+                    <td>{{ locataire.montantSoldeDeToutCompte }} €</td>
+                </tr>
+                <tr>
+                    <th>Préavis reçu le</th>
+                    <td>{% if locataire.preavisRecuLe %}{{ locataire.preavisRecuLe|date('d/m/Y') }}{% endif %}</td>
+                    <th>Date solde</th>
+                    <td>{% if locataire.dateSoldeDeToutCompte %}{{ locataire.dateSoldeDeToutCompte|date('d/m/Y') }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>Début du préavis</th>
+                    <td>{% if locataire.debutDuPreavis %}{{ locataire.debutDuPreavis|date('d/m/Y') }}{% endif %}</td>
+                    <th>Mode paiement</th>
+                    <td>{{ locataire.modePaiementSoldeDeToutCompte }}</td>
+                </tr>
+                <tr>
+                    <th>Date EDL sortie</th>
+                    <td>{% if locataire.dateEDLSortie %}{{ locataire.dateEDLSortie|date('d/m/Y') }}{% endif %}</td>
+                    <th>Banque</th>
+                    <td>{{ locataire.banqueSoldeDeToutCompte }}</td>
+                </tr>
+                <tr>
+                    <th>Date de sortie</th>
+                    <td>{% if locataire.dateDeSortie %}{{ locataire.dateDeSortie|date('d/m/Y') }}{% endif %}</td>
+                </tr>
+            </table>
+        </div>
+
+        {% set hasGarantsPhysiques = false %}
+        {% for garant in locataire.garants %}
+            {% if garant.type == 'PHY' %}
+                {% set hasGarantsPhysiques = true %}
+            {% endif %}
+        {% endfor %}
+        {% if hasGarantsPhysiques %}
+        <!-- Garants -->
+        <div class="fiche-section">
+            <h2>Garants ({{ locataire.garants|length }})</h2>
+            <table class="fiche-table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Téléphone</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for garant in locataire.garants %}
+                        {% if garant.type == 'PHY' and garant.garantsPhysiques %}
+                            <tr>
+                                <td>{{ garant.garantsPhysiques.nom }}</td>
+                                <td>{{ garant.garantsPhysiques.prenom }}</td>
+                                <td>{{ garant.garantsPhysiques.tel }}</td>
+                                <td>{{ garant.garantsPhysiques.mail }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- Commentaires -->
+        <div class="fiche-section">
+            <h2>Commentaires</h2>
+            {% if locataire.commentaires %}
+                <div class="commentaires-box">
+                    {{ locataire.commentaires.contenu|nl2br }}
+                </div>
+            {% else %}
+                <p>Aucun commentaire</p>
+            {% endif %}
+        </div>
+
+    
+    </div>
+
+    <link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+    <style>
+
+        .fiche-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .fiche-section {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .fiche-section h2 {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .fiche-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .fiche-table th {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            background: #e9ecef;
+            padding: 10px;
+            text-align: left;
+            width: 30%;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+        }
+        .fiche-table td {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .fiche-table tr:last-child th,
+        .fiche-table tr:last-child td {
+            border-bottom: none;
+        }
+        .commentaires-box {
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+        }
+    </style>
+
+{% endblock %}

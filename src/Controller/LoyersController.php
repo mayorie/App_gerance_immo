@@ -24,18 +24,26 @@ final class LoyersController extends AbstractController
 
         $locataireId = $request->query->get('locataireId');
         $locataire = null;
+        $page = $request->query->getInt('page', 1);
+        $limit = 12;
 
         if ($locataireId) {
             $locataire = $locataireRepo->find($locataireId);
-            $loyers = $repo->findBy(['LocatairesID' => $locataire]);
+            $loyers = $repo->findByLocatairePaginated($locataire, $page, $limit);
+            $totalLoyers = $repo->countByLocataire($locataire);
         } else {
-            $loyers = $repo->findAll();
+            $loyers = $repo->findAllPaginated($page, $limit);
+            $totalLoyers = $repo->countAll();
         }
+
+        $totalPages = ceil($totalLoyers / $limit);
 
         return $this->render('loyers/index.html.twig', [
             'loyers' => $loyers,
             'locataires' => $locataires,
-            'locataire' => $locataire
+            'locataire' => $locataire,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
         ]);
     }
 

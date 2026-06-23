@@ -24,18 +24,26 @@ final class PacksServicesController extends AbstractController
 
         $locataireId = $request->query->get('locataireId');
         $locataire = null;
+        $page = $request->query->getInt('page', 1);
+        $limit = 12;
 
         if ($locataireId) {
             $locataire = $locataireRepo->find($locataireId);
-            $packsServices = $repo->findBy(['LocatairesID' => $locataire]);
+            $packsServices = $repo->findByLocatairePaginated($locataire, $page, $limit);
+            $totalPacks = $repo->countByLocataire($locataire);
         } else {
-            $packsServices = $repo->findAll();
+            $packsServices = $repo->findAllPaginated($page, $limit);
+            $totalPacks = $repo->countAll();
         }
+
+        $totalPages = ceil($totalPacks / $limit);
 
         return $this->render('packs_services/index.html.twig', [
             'packsServices' => $packsServices,
             'locataires' => $locataires,
-            'locataire' => $locataire
+            'locataire' => $locataire,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
         ]);
     }
 

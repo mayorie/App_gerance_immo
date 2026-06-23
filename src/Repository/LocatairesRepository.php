@@ -64,4 +64,32 @@ class LocatairesRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findAllOrderedByStatusAndName(): array
+    {
+        return $this->createQueryBuilder('l')
+            ->orderBy('l.a_quitte_le_logement', 'ASC')
+            ->addOrderBy('l.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllOrderedByStatusAndNamePaginated(int $page, int $limit): array
+    {
+        return $this->createQueryBuilder('l')
+            ->orderBy('l.a_quitte_le_logement', 'ASC')
+            ->addOrderBy('l.nom', 'ASC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countAll(): int
+    {
+        return $this->createQueryBuilder('l')
+            ->select('COUNT(l.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

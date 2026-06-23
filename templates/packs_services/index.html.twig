@@ -7,7 +7,7 @@
 
 <div class="div-titre">
         <a href="{{ path('app_home') }}" class="btn-retour">Retour</a>
-        <h1>Liste des packs services</h1>
+        <h1>Liste des packs services & Révisions des Packs services</h1>
         <a href="{{ path('packs_services_batch') }}" class="btn-create">➕ Créer révisions des packs services</a>
 </div>
 
@@ -30,12 +30,6 @@
 </form>
 
 <hr>
-
-{% if locataire %}
-    <h2>Packs services du locataire : {{ locataire.nom }} {{ locataire.prenom }}</h2>
-{% else %}
-    <h2>Packs services & Révisions des Packs services</h2>
-{% endif %}
 
 {% if packsServices is empty %}
     <p>Aucun packs services trouvée. (c'est pas normal)</p>
@@ -86,9 +80,20 @@
     </tbody>
 </table>
 
+    <div class="pagination">
+        {% if currentPage > 1 %}
+            <a href="{{ path('app_packs_services', {page: currentPage - 1, locataireId: locataire ? locataire.id : null}) }}" class="pagination-arrow">◀ Précédent</a>
+        {% endif %}
+        <span class="pagination-info">Page {{ currentPage }} / {{ totalPages }}</span>
+        {% if currentPage < totalPages %}
+            <a href="{{ path('app_packs_services', {page: currentPage + 1, locataireId: locataire ? locataire.id : null}) }}" class="pagination-arrow">Suivant ▶</a>
+        {% endif %}
+    </div>
+
 {% endif %}
 
 <link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
 <link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_pagination.css') }}">
 
 {% endblock %}

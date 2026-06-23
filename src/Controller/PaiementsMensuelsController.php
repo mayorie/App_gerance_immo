@@ -27,6 +27,8 @@ final class PaiementsMensuelsController extends AbstractController
 
         $locataireId = $request->query->get('locataireId');
         $annee = $request->query->get('annee');
+        $page = $request->query->getInt('page', 1);
+        $limit = 12;
 
         // Récupérer tous les paiements pour extraire les années
         $allPaiements = $repoPaiements->findBy([], ['date' => 'DESC']);
@@ -82,14 +84,23 @@ final class PaiementsMensuelsController extends AbstractController
             ];
         }
 
+        // Pagination du résultat final
+        $totalItems = count($result);
+        $totalPages = ceil($totalItems / $limit);
+        $offset = ($page - 1) * $limit;
+        $paginatedResult = array_slice($result, $offset, $limit);
+
         return $this->render('paiements_mensuels/index.html.twig', [
-            'paiements' => $result,
+            'paiements' => $paginatedResult,
+            'allPaiements' => $result,
             'firstPaiementsIds' => $firstPaiementsIds,
             'locataires' => $locataires,
             'locataireId' => $locataireId,
             'annees' => $annees,
             'annee' => $annee,
-            'mois' => null
+            'mois' => null,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
         ]);
     }
 

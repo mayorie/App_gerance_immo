@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\PacksServices;
+use App\Repository\Traits\PaginableRepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Locataires;
@@ -12,6 +13,8 @@ use App\Entity\Locataires;
  */
 class PacksServicesRepository extends ServiceEntityRepository
 {
+    use PaginableRepositoryTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, PacksServices::class);

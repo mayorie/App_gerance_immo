@@ -29,12 +29,6 @@
 
 <hr>
 
-{% if locataire %}
-    <h2>Loyers de {{ locataire.nom }} {{ locataire.prenom }}</h2>
-{% else %}
-    <h2>Tous les loyers</h2>
-{% endif %}
-
 {% if loyers is empty %}
     <p>Aucun loyer trouvé.</p>
 {% else %}
@@ -87,9 +81,20 @@
     </tbody>
 </table>
 
+    <div class="pagination">
+        {% if currentPage > 1 %}
+            <a href="{{ path('app_loyers', {page: currentPage - 1, locataireId: locataire ? locataire.id : null}) }}" class="pagination-arrow">◀ Précédent</a>
+        {% endif %}
+        <span class="pagination-info">Page {{ currentPage }} / {{ totalPages }}</span>
+        {% if currentPage < totalPages %}
+            <a href="{{ path('app_loyers', {page: currentPage + 1, locataireId: locataire ? locataire.id : null}) }}" class="pagination-arrow">Suivant ▶</a>
+        {% endif %}
+    </div>
+
 {% endif %}
 
 <link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
 <link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_pagination.css') }}">
 
 {% endblock %}

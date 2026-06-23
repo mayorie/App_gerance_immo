@@ -24,18 +24,26 @@ final class ChargesController extends AbstractController
 
         $locataireId = $request->query->get('locataireId');
         $locataire = null;
+        $page = $request->query->getInt('page', 1);
+        $limit = 12;
 
         if ($locataireId) {
             $locataire = $locataireRepo->find($locataireId);
-            $charges = $repo->findBy(['LocatairesID' => $locataire]);
+            $charges = $repo->findByLocatairePaginated($locataire, $page, $limit);
+            $totalCharges = $repo->countByLocataire($locataire);
         } else {
-            $charges = $repo->findAll();
+            $charges = $repo->findAllPaginated($page, $limit);
+            $totalCharges = $repo->countAll();
         }
+
+        $totalPages = ceil($totalCharges / $limit);
 
         return $this->render('charges/index.html.twig', [
             'charges' => $charges,
             'locataires' => $locataires,
-            'locataire' => $locataire
+            'locataire' => $locataire,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
         ]);
     }
 

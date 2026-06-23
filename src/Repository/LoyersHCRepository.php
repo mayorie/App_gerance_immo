@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\LoyersHC;
 use App\Entity\Locataires;
+use App\Repository\Traits\PaginableRepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -12,6 +13,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class LoyersHCRepository extends ServiceEntityRepository
 {
+    use PaginableRepositoryTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, LoyersHC::class);

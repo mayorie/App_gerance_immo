@@ -22,11 +22,19 @@ use Doctrine\ORM\EntityManagerInterface;
 final class LocatairesController extends AbstractController
 {
     #[Route('/locataires', name: 'app_locataires')]
-    public function index(LocatairesRepository $repoLocataires): Response
+    public function index(LocatairesRepository $repoLocataires, Request $request): Response
     {
-        $Locataires = $repoLocataires->findAll();
+        $page = $request->query->getInt('page', 1);
+        $limit = 13;
+
+        $locataires = $repoLocataires->findAllOrderedByStatusAndNamePaginated($page, $limit);
+        $totalLocataires = $repoLocataires->countAll();
+        $totalPages = ceil($totalLocataires / $limit);
+
         return $this->render('locataires/index.html.twig', [
-            'locataires' => $Locataires
+            'locataires' => $locataires,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
         ]);
     }
 

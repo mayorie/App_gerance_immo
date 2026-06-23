@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\PaiementsMensuels;
+use App\Repository\Traits\PaginableRepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -11,6 +12,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PaiementsMensuelsRepository extends ServiceEntityRepository
 {
+    use PaginableRepositoryTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, PaiementsMensuels::class);

@@ -52,24 +52,24 @@ class LocataireEditType extends AbstractType
             ])        
             ->add('preavis_recu_le', DateType::class, [
                 'widget' => 'single_text',
-                'required' => true,
+                'required' => false,
             ])
             ->add('debut_du_preavis', DateType::class, [
                 'widget' => 'single_text',
-                'required' => true,
+                'required' => false,
             ])
             ->add('date_EDL_sortie', DateType::class, [
                 'widget' => 'single_text',
-                'required' => true,
+                'required' => false,
             ])
             ->add('date_de_sortie', DateType::class, [
                 'widget' => 'single_text',
-                'required' => true,
+                'required' => false,
             ])
             ->add('montant_solde_de_tout_compte')
             ->add('date_solde_de_tout_compte', DateType::class, [
                 'widget' => 'single_text',
-                'required' => true,
+                'required' => false,
             ])
             ->add('mode_paiement_solde_de_tout_compte')
             ->add('banque_solde_de_tout_compte')

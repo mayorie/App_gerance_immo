@@ -7,6 +7,7 @@ use App\Entity\Locataires;
 use App\Repository\LocatairesRepository;
 use App\Repository\PaiementsMensuelsRepository;
 use App\Repository\RBTBailleurRepository;
+use App\Service\QuittanceMailerService;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -197,11 +198,13 @@ final class ExportsController extends AbstractController
         Request $request,
         LocatairesRepository $locatairesRepo,
         PaiementsMensuelsRepository $paiementsRepo,
-        RBTBailleurRepository $rbtRepo
+        RBTBailleurRepository $rbtRepo,
+        QuittanceMailerService $mailerService
     ): Response
     {
         $mois = $request->query->getInt('mois');
         $annee = $request->query->getInt('annee');
+        $sendByEmail = $request->query->getBoolean('send_email', false);
 
         $locataires = $locatairesRepo->findAyantPaiementMoisEtAnnee($mois, $annee);
 
@@ -221,6 +224,9 @@ final class ExportsController extends AbstractController
         if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
             throw new \Exception('Impossible de créer le ZIP');
         }
+
+        $emailsSent = 0;
+        $emailsFailed = 0;
 
         foreach ($locataires as $locataire) {
 
@@ -247,9 +253,34 @@ final class ExportsController extends AbstractController
             $filename = $locataire->getNom() . '_' . $locataire->getPrenom() . '_' . $annee . '_' . sprintf("%02d", $mois) . '.pdf';
 
             $zip->addFromString($filename, $pdfContent);
+
+            // Envoi par email si demandé
+            if ($sendByEmail) {
+                $email = $locataire->getMail();
+                if (empty($email)) {
+                    $emailsFailed++;
+                } else {
+                    $sent = $mailerService->sendQuittance($pdfContent, $locataire, $mois, $annee);
+                    if ($sent) {
+                        $emailsSent++;
+                    } else {
+                        $emailsFailed++;
+                    }
+                }
+            }
         }
 
         $zip->close();
+
+        // Flash message pour le résumé des envois
+        if ($sendByEmail) {
+            $message = sprintf(
+                '%d quittances envoyées par email, %d échecs.',
+                $emailsSent,
+                $emailsFailed
+            );
+            $this->addFlash('info', $message);
+        }
 
         return new \Symfony\Component\HttpFoundation\BinaryFileResponse($zipPath);
     }

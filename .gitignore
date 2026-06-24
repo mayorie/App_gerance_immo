@@ -11,3 +11,4 @@
 /archive/*
 !archive/.gitkeep
 ###< symfony/framework-bundle ###
+.env

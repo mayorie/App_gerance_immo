@@ -102,6 +102,9 @@ body {
 .home-link-6 {
     background: linear-gradient(135deg, #f7c911 0%, #fcaf20 100%);
 }
+.home-link-7 {
+    background: linear-gradient(135deg, #635002 0%, #986505 100%);
+}
 
 /* Responsive */
 @media (min-width: 768px) {

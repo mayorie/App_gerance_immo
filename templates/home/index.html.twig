@@ -7,6 +7,11 @@
 {% endblock %}
 
 {% block body %}
+<style>
+    body {
+        zoom: 80%;
+    }
+</style>
 {% if locatairesAlerte|length > 0 %}
 <div class="alert-banner">
     <strong>⚠️ Anniversaire VISALE :</strong>
@@ -75,14 +80,27 @@
             <span class="home-link-emoji">🧑‍🧑‍🧒</span>
             Quittances
         </a>
+    </nav>
+            <h2>ETATS COMPTABLES :</h2>
+    <nav class="home-nav home-nav-row">
+        <a href="{{ path('app_pcg') }}" class="home-link home-link-7">
+            <span class="home-link-emoji">🧮</span>
+            PCG
+        </a>
         <a href="{{ path('app_paiements_mensuels') }}" class="home-link home-link-6">
             <span class="home-link-emoji">🗓️</span>
-            Comptabilité des paiements mensuels
+            Des paiements mensuels
         </a>
+        <a href="{{ path('app_paiements_mensuels') }}" class="home-link home-link-7">
+            <span class="home-link-emoji">🧾</span>
+            Des factures fournisseurs
+        </a>
+
         <a href="{{ path('app_soldes_de_tout_compte') }}" class="home-link home-link-1">
-            <span class="home-link-emoji">🗓️</span>
+            <span class="home-link-emoji">📒</span>
             Soldes de tout compte
         </a>
+
     </nav>
 
 </div>

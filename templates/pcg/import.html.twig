@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Import CSV PCG{% endblock %}
+
+{% block body %}
+
+<div class="div-titre">
+    <a href="{{ path('app_pcg') }}" class="btn-retour">Retour</a>
+    <h1>Import CSV - Comptes PCG</h1>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+
+    <div>
+        <label>Fichier CSV</label>
+        <input type="file" name="csv_file" accept=".csv" required>
+    </div>
+
+    <p style="font-size: 0.9em; color: #666;">
+        Format attendu :<br>
+        - Séparateur : point-virgule (;)<br>
+        - Première ligne : en-tête (non importée)<br>
+        - Colonne A : compte<br>
+        - Colonne B : libellé
+    </p>
+
+    <button type="submit">Importer</button>
+
+</form>
+
+<link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+{% endblock %}

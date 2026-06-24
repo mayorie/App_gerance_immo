@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Index PCG{% endblock %}
+
+{% block body %}
+
+<div class="div-titre">
+    <a href="{{ path('app_home') }}" class="btn-retour">Retour</a>
+    <h1>Liste des comptes PCG</h1>
+    <a href="{{ path('pcg_import') }}" class="btn-create">📥 Import CSV</a>
+</div>
+
+<hr>
+
+{% if pcgs is empty %}
+    <p>Aucun compte PCG trouvé.</p>
+{% else %}
+
+<table style="border-collapse: separate; border-spacing: 8px 5px; width: 50%;">
+    <thead>
+        <tr>
+            <th>Compte</th>
+            <th>Libellé</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pcg in pcgs %}
+            <tr>
+                <td>{{ pcg.compte }}</td>
+                <td>{{ pcg.libelle }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endif %}
+
+<link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+{% endblock %}

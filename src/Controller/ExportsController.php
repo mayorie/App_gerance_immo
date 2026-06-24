@@ -254,13 +254,34 @@ final class ExportsController extends AbstractController
 
             $zip->addFromString($filename, $pdfContent);
 
+            // Calcul du solde pour l'email
+            $totalDu = $data['loyer'] + $data['charges'] + $data['packServices'] + $data['caution'] + $data['regulPS'] + $data['regulCharges'];
+            $totalRecu = 0;
+            $hasPaiementLocataire = false;
+            foreach ($data['paiements'] as $item) {
+                $paiement = $item['paiement'];
+                $totalRecu += $paiement->getPartRecueDuLocataireMontant() ?? 0;
+                $totalRecu += $paiement->getPartRecueDeLaCAFMontant() ?? 0;
+                if ($item['rbt']) {
+                    $totalRecu -= $item['rbt']->getMontant();
+                }
+                if (($paiement->getPartRecueDuLocataireMontant() ?? 0) > 0) {
+                    $hasPaiementLocataire = true;
+                }
+            }
+            $restantDuTropPercu = $totalDu - $totalRecu + ($data['lastPaiementPreviousMonth']?->getRestantDuTropPercuFinDeMois() ?? 0);
+
             // Envoi par email si demandé
             if ($sendByEmail) {
                 $email = $locataire->getMail();
                 if (empty($email)) {
                     $emailsFailed++;
                 } else {
-                    $sent = $mailerService->sendQuittance($pdfContent, $locataire, $mois, $annee);
+                    if ($hasPaiementLocataire) {
+                        $sent = $mailerService->sendQuittance($pdfContent, $locataire, $mois, $annee, $restantDuTropPercu);
+                    } else {
+                        $sent = $mailerService->sendRelanceImpaye($pdfContent, $locataire, $mois, $annee, $restantDuTropPercu);
+                    }
                     if ($sent) {
                         $emailsSent++;
                     } else {

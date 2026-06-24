@@ -7,6 +7,7 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Part\DataPart;
 use Twig\Environment;
 use App\Entity\Locataires;
+use App\Repository\PaiementsMensuelsRepository;
 use Psr\Log\LoggerInterface;
 
 class QuittanceMailerService
@@ -14,17 +15,20 @@ class QuittanceMailerService
     private MailerInterface $mailer;
     private Environment $twig;
     private LoggerInterface $logger;
+    private PaiementsMensuelsRepository $paiementsRepo;
     private string $fromEmail;
 
     public function __construct(
         MailerInterface $mailer,
         Environment $twig,
         LoggerInterface $logger,
+        PaiementsMensuelsRepository $paiementsRepo,
         string $fromEmail = '%env(MAILER_FROM_EMAIL)%'
     ) {
         $this->mailer = $mailer;
         $this->twig = $twig;
         $this->logger = $logger;
+        $this->paiementsRepo = $paiementsRepo;
         $this->fromEmail = $fromEmail;
     }
 
@@ -35,13 +39,15 @@ class QuittanceMailerService
      * @param Locataires $locataire Le locataire destinataire
      * @param int $mois Le mois de la quittance
      * @param int $annee L'année de la quittance
+     * @param float|null $restantDuTropPercu Solde calculé (optionnel)
      * @return bool True si l'envoi a réussi, false sinon
      */
     public function sendQuittance(
         string $pdfContent,
         Locataires $locataire,
         int $mois,
-        int $annee
+        int $annee,
+        ?float $restantDuTropPercu = null
     ): bool {
         try {
             $email = $locataire->getMail();
@@ -63,29 +69,23 @@ class QuittanceMailerService
             ]);
 
             $nomMois = $this->getNomMois($mois);
-            $filename = sprintf(
-                'quittance_%s_%d_%s_%s.pdf',
-                $annee,
-                $mois,
-                $locataire->getNom(),
-                $locataire->getPrenom()
-            );
+            
+            $filename = $locataire->getNom() . '_' . $locataire->getPrenom() . '_' . $annee . '_' . sprintf("%02d", $mois) . '.pdf';
 
             $email = (new Email())
                 ->from($this->fromEmail)
                 ->to($email)
                 ->subject(sprintf(
-                    'Quittance de loyer - %s %d - %s %s',
+                    'Quittance de loyer - %s %d',
                     $nomMois,
                     $annee,
-                    $locataire->getNom(),
-                    $locataire->getPrenom()
                 ))
                 ->html($this->twig->render('email/quittance.html.twig', [
                     'locataire' => $locataire,
                     'mois' => $mois,
                     'annee' => $annee,
-                    'nomMois' => $nomMois
+                    'nomMois' => $nomMois,
+                    'restantDuTropPercu' => $restantDuTropPercu
                 ]))
                 ->attach($pdfContent, $filename, 'application/pdf');
 
@@ -102,6 +102,83 @@ class QuittanceMailerService
 
         } catch (\Exception $e) {
             $this->logger->error('Erreur lors de l\'envoi de la quittance', [
+                'locataire_id' => $locataire->getId(),
+                'email' => $email,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return false;
+        }
+    }
+
+    /**
+     * Envoie une relance impayé par email à un locataire
+     *
+     * @param string $pdfContent Contenu binaire du PDF
+     * @param Locataires $locataire Le locataire destinataire
+     * @param int $mois Le mois de la quittance
+     * @param int $annee L'année de la quittance
+     * @param float $montantDu Le montant dû
+     * @return bool True si l'envoi a réussi, false sinon
+     */
+    public function sendRelanceImpaye(
+        string $pdfContent,
+        Locataires $locataire,
+        int $mois,
+        int $annee,
+        float $montantDu
+    ): bool {
+        try {
+            $email = $locataire->getMail();
+
+            if (empty($email)) {
+                $this->logger->warning('Locataire sans email pour relance', [
+                    'locataire_id' => $locataire->getId(),
+                    'nom' => $locataire->getNom(),
+                    'prenom' => $locataire->getPrenom()
+                ]);
+                return false;
+            }
+
+            $this->logger->info('Tentative d\'envoi de relance impayé', [
+                'locataire_id' => $locataire->getId(),
+                'email' => $email,
+                'mois' => $mois,
+                'annee' => $annee,
+                'montant_du' => $montantDu
+            ]);
+
+            $nomMois = $this->getNomMois($mois);
+            
+            $filename = $locataire->getNom() . '_' . $locataire->getPrenom() . '_' . $annee . '_' . sprintf("%02d", $mois) . '.pdf';
+
+            $email = (new Email())
+                ->from($this->fromEmail)
+                ->to($email)
+                ->subject('RELANCE IMPAYE DE LOYER')
+                ->html($this->twig->render('email/relance_impaye.html.twig', [
+                    'locataire' => $locataire,
+                    'mois' => $mois,
+                    'annee' => $annee,
+                    'nomMois' => $nomMois,
+                    'montantDu' => $montantDu
+                ]))
+                ->attach($pdfContent, $filename, 'application/pdf');
+
+            $this->mailer->send($email);
+
+            $this->logger->info('Relance impayé envoyée avec succès', [
+                'locataire_id' => $locataire->getId(),
+                'email' => $email,
+                'mois' => $mois,
+                'annee' => $annee
+            ]);
+
+            return true;
+
+        } catch (\Exception $e) {
+            $this->logger->error('Erreur lors de l\'envoi de la relance impayé', [
                 'locataire_id' => $locataire->getId(),
                 'email' => $email,
                 'error' => $e->getMessage(),

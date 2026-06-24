@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Quittance de loyer</title>
+    <title>Relance impayé de loyer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,7 +13,7 @@
             padding: 20px;
         }
         .header {
-            background: #5661b4;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
             color: white;
             padding: 20px;
             text-align: center;
@@ -37,7 +37,7 @@
             background: white;
             padding: 15px;
             margin: 10px 0;
-            border-left: 4px solid #5661b4;
+            border-left: 4px solid #ff6b6b;
         }
         h1 {
             margin: 0;
@@ -50,25 +50,20 @@
 </head>
 <body>
     <div class="header">
-        <h1>Quittance de loyer</h1>
+        <h1>Relance impayé de loyer</h1>
     </div>
     
     <div class="content">
         <p>Bonjour {{ locataire.prenom }} {{ locataire.nom }},</p>
         
-        <p>Veuillez trouver ci-joint votre quittance de loyer pour le mois de <strong>{{ nomMois }} {{ annee }}</strong>.</p>
+        <p>Sauf erreur de ma part, je n'ai pas reçu le règlement du loyer du mois de <strong>{{ nomMois }} {{ annee }}</strong>, vous devez la somme de <strong>{{ montantDu|number_format(2, '.', '.') }} €</strong>.</p>
         
         <div class="info-box">
-            <p><strong>Informations :</strong></p>
-            <ul>
-                <li>Locataire : {{ locataire.nom }} {{ locataire.prenom }}</li>
-                {% if restantDuTropPercu is not null %}
-                <li>Solde : <b>{{ restantDuTropPercu <= 0 ? 'TROP PERCU de' : 'RESTANT DU de' }} {{ restantDuTropPercu|number_format(2, '.', '.') }} €</b></li>
-                {% endif %}
-            </ul>
+            <p>Je vous rappelle que selon les termes du contrat de bail, le loyer doit être reçu au plus tard le 8 de chaque mois.</p>
         </div>
         
-        <p>Si vous avez des questions concernant cette quittance, n'hésitez pas à me contacter.</p>
+        <p>Il s'agit probablement d'un oubli que je vous invite à régulariser au plus vite. Merci.</p>
+        <p><br>Vous trouverez ci-joint la quittance du mois.</p>
         
         <p>Cordialement,</p>
         <p>Céline Mahé</p>

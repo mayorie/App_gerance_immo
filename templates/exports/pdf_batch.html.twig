@@ -23,7 +23,7 @@
 
     <label>Mois :</label>
 
-    <select name="mois">
+    <select name="mois" onchange="this.form.submit()">
 
         {% for m in 1..12 %}
             <option
@@ -38,7 +38,7 @@
 
     <label>Année :</label>
 
-    <select name="annee">
+    <select name="annee" onchange="this.form.submit()">
 
         {% for a in (annee-5)..(annee+1) %}
             <option
@@ -50,10 +50,6 @@
         {% endfor %}
 
     </select>
-
-    <button type="submit">
-        Filtrer
-    </button>
 
     <label style="margin-left: 40px;">
         <input type="checkbox" id="sendEmail" name="send_email">

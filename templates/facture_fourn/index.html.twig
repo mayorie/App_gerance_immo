@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Index Factures Fournisseurs{% endblock %}
+
+{% block body %}
+
+<div class="div-titre">
+    <a href="{{ path('app_home') }}" class="btn-retour">Retour</a>
+    <h1>Liste des factures fournisseurs</h1>
+    <a href="{{ path('facture_fourn_new') }}" class="btn-create">➕ Nouvelle facture</a>
+    {% if anneeSelectionnee %}
+        <a href="{{ path('facture_fourn_export_csv', {'annee': anneeSelectionnee}) }}" class="btn-create">📥 Export CSV {{ anneeSelectionnee }}</a>
+    {% endif %}
+</div>
+
+<hr>
+
+<div style="margin-bottom: 20px;">
+    <form method="get" style="display: inline;">
+        <label for="annee">Filtrer par année :</label>
+        <select name="annee" id="annee" onchange="this.form.submit()">
+            <option value="">Toutes les années</option>
+            {% for anneeData in annees %}
+                <option value="{{ anneeData.annee }}" {% if anneeSelectionnee == anneeData.annee %}selected{% endif %}>
+                    {{ anneeData.annee }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+    <i style="font-size: 9px;">⚠️ L'export CSV est accessible après sélection d'une année.</i>
+</div>
+<hr>
+
+{% if factureFourns is empty %}
+    <p>Aucune facture trouvée.</p>
+{% else %}
+
+<table style="border-collapse: separate; border-spacing: 8px 5px; width: 100%;">
+    <thead>
+        <tr>
+            <th>Date facture</th>
+            <th>Fournisseur</th>
+            <th>Compte PCG</th>
+            <th>Motif</th>
+            <th>Montant</th>
+            <th>Date paiement</th>
+            <th>Mode</th>
+            <th>MODIF</th>
+            <th>SUPPR</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for facture in factureFourns %}
+            <tr>
+                <td>{{ facture.dateFacture ? facture.dateFacture|date('d/m/Y') : '-' }}</td>
+                <td>{{ facture.fournisseur }}</td>
+                <td>{{ facture.pcg ? facture.pcg.compte : '-' }}</td>
+                <td>{{ facture.motif }}</td>
+                <td>{{ facture.montant }} €</td>
+                <td>{{ facture.datePaiement ? facture.datePaiement|date('d/m/Y') : '-' }}</td>
+                <td>{{ facture.mode }}</td>
+                <td>
+                    <a href="{{ path('facture_fourn_edit', {'id': facture.id}) }}" >
+                    ✏️
+                    </a>
+                </td>
+                <td>
+                    <form method="post" action="{{ path('facture_fourn_delete', {'id': facture.id}) }}" onsubmit="return confirm('Supprimer cette facture ?');" >
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ facture.id) }}">
+                        <button type="submit">🗑️</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endif %}
+
+<link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+{% endblock %}

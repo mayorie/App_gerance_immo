@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Facture Fournisseur{% endblock %}
+
+{% block body %}
+
+<div class="div-titre">
+    <a href="{{ path('facture_fourn_index') }}" class="btn-retour">Retour</a>
+    <h1>Modifier facture fournisseur</h1>
+</div>
+
+<form method="post">
+
+    <div>
+        <label>Date facture</label>
+        <input type="date" name="date_facture" value="{{ facture.dateFacture ? facture.dateFacture|date('Y-m-d') : '' }}">
+    </div>
+
+    <div>
+        <label>Fournisseur</label>
+        <input type="text" name="fournisseur" value="{{ facture.fournisseur }}">
+    </div>
+
+    <div>
+        <label>Compte PCG</label>
+        <select name="pcg_id">
+            <option value="">-- Sélectionner --</option>
+            {% for pcg in pcgs %}
+                <option value="{{ pcg.id }}" {% if facture.pcg and facture.pcg.id == pcg.id %}selected{% endif %}>
+                    {{ pcg.compte }} - {{ pcg.libelle }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Motif</label>
+        <input type="text" name="motif" value="{{ facture.motif }}">
+    </div>
+
+    <div>
+        <label>Montant (€)</label>
+        <input type="number" step="0.01" name="montant" value="{{ facture.montant }}">
+    </div>
+
+    <div>
+        <label>Date paiement</label>
+        <input type="date" name="date_paiement" value="{{ facture.datePaiement ? facture.datePaiement|date('Y-m-d') : '' }}">
+    </div>
+
+    <div>
+        <label>Mode de paiement</label>
+        <select name="mode">
+            <option value="">-- Sélectionner --</option>
+            <option value="VIR" {% if facture.mode == 'VIR' %}selected{% endif %}>VIR</option>
+            <option value="CB" {% if facture.mode == 'CB' %}selected{% endif %}>CB</option>
+            <option value="PRELEV" {% if facture.mode == 'PRELEV' %}selected{% endif %}>PRELEV</option>
+            <option value="AUTRES" {% if facture.mode == 'AUTRES' %}selected{% endif %}>AUTRES</option>
+        </select>
+    </div>
+
+    <button type="submit">Enregistrer</button>
+
+</form>
+
+<link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+{% endblock %}

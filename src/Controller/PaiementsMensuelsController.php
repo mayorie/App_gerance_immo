@@ -314,4 +314,125 @@ final class PaiementsMensuelsController extends AbstractController
 
         return $this->redirectToRoute('app_paiements_mensuels');
     }
+
+    #[Route('/paiements/export-csv', name: 'paiements_export_csv')]
+    public function exportCsv(
+        Request $request,
+        PaiementsMensuelsRepository $repoPaiements,
+        LocatairesRepository $locataireRepo,
+        RBTBailleurRepository $repoRBT
+    ): Response {
+        $locataireId = $request->query->get('locataireId');
+        $annee = $request->query->get('annee');
+        $comptabilite = $request->query->getBoolean('comptabilite', false);
+
+        // Construire les critères de recherche
+        $criteria = [];
+        if ($locataireId) {
+            $criteria['LocatairesID'] = $locataireId;
+        }
+
+        $paiements = $repoPaiements->findBy($criteria, ['date' => 'DESC']);
+
+        // Filtrer par année si sélectionnée
+        if ($annee) {
+            $paiements = array_filter($paiements, function($paiement) use ($annee) {
+                return $paiement->getDate() && $paiement->getDate()->format('Y') == $annee;
+            });
+        }
+
+        $firstPaiements = $repoPaiements->findFirstPaiementsIds();
+        $firstPaiementsIds = array_column($firstPaiements, 'id');
+
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $filename = 'paiements_' . ($annee ?: 'all') . '.csv';
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
+
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "\xEF\xBB\xBF");
+
+        // En-têtes
+        $headers = [
+            'LOCATAIRE',
+            'LOGEMENT',
+            'NUM COMPTABLE',
+            'SAISIE DU',
+            'CAUTION',
+            'REGUL. PACK S',
+            'REGUL. CHARGES',
+            'LOYER HC',
+            'CHARGES',
+            'PACK S',
+            'DATE LOC',
+            'MODE LOC',
+            'MONTANT LOC',
+            'DATE CAF',
+            'MODE CAF',
+            'MONTANT CAF',
+            'DATE RBT',
+            'MODE RBT',
+            'MONTANT RBT',
+            'RESTANT DU'
+        ];
+        fputcsv($handle, $headers, ";");
+
+        foreach ($paiements as $paiement) {
+            $loyer = $repoPaiements->findLoyerHC($paiement);
+            $charge = $repoPaiements->findProvisionPourCharges($paiement);
+            $PS = $repoPaiements->findPackService($paiement);
+            $RBT = $repoRBT->findByPaiement($paiement);
+            $locataire = $paiement->getLocatairesID();
+
+            $row = [
+                $locataire ? $locataire->getPrenom() . ' ' . $locataire->getNom() : '',
+                $locataire && $locataire->getLogementsID() ? $locataire->getLogementsID()->getIdAppart() : '',
+                $locataire ? $locataire->getNumComptable() : '',
+                $paiement->getDate() ? $paiement->getDate()->format('d/m/Y') : '',
+                in_array($paiement->getId(), $firstPaiementsIds) && $locataire ? $locataire->getMontantCaution() : 0,
+                $paiement->getRegulPacksServices() ?? 0,
+                $paiement->getRegulProvisionsPourCharges() ?? 0,
+                $loyer ?? 0,
+                $charge ?? 0,
+                $PS ?? 0,
+                $paiement->getPartRecueDuLocataireDate() ? $paiement->getPartRecueDuLocataireDate()->format('d/m/Y') : '',
+                $paiement->getPartRecueDuLocataireMode() ?: '',
+                $paiement->getPartRecueDuLocataireMontant() ?? 0,
+                $paiement->getPartRecueDeLaCafDate() ? $paiement->getPartRecueDeLaCafDate()->format('d/m/Y') : '',
+                $paiement->getPartRecueDeLaCafMode() ?: '',
+                $paiement->getPartRecueDeLaCafMontant() ?? 0,
+                $RBT && $RBT->getDate() ? $RBT->getDate()->format('d/m/Y') : '',
+                $RBT ? $RBT->getMode() : '',
+                $RBT && $RBT->getMontant() !== null ? $RBT->getMontant() : 0,
+                $paiement->getRestantDuTropPercuFinDeMois() ?? 0
+            ];
+
+            // Formatter les montants avec virgule
+            $row = array_map(function($val) {
+                if (is_numeric($val)) {
+                    return number_format($val, 2, ',', '');
+                }
+                return $val;
+            }, $row);
+
+            fputcsv($handle, $row, ";");
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        // Sauvegarder dans archive/comptabilité/[année] si comptabilité est coché et année sélectionnée
+        if ($comptabilite && $annee) {
+            $directory = $this->getParameter('kernel.project_dir') . '/archive/comptabilité/' . $annee;
+            if (!is_dir($directory)) {
+                mkdir($directory, 0777, true);
+            }
+            $filePath = $directory . '/paiements_' . $annee . '.csv';
+            file_put_contents($filePath, $content);
+        }
+
+        $response->setContent($content);
+        return $response;
+    }
 }

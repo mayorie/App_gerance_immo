@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Facture Fournisseur{% endblock %}
+
+{% block body %}
+
+<div class="div-titre">
+    <a href="{{ path('facture_fourn_index') }}" class="btn-retour">Retour</a>
+    <h1>Nouvelle facture fournisseur</h1>
+</div>
+
+<form method="post">
+
+    <div>
+        <label>Date facture</label>
+        <input type="date" name="date_facture" required>
+    </div>
+
+    <div>
+        <label>Fournisseur</label>
+        <input type="text" name="fournisseur" required>
+    </div>
+
+    <div>
+        <label>Compte PCG</label>
+        <select name="pcg_id" required>
+            <option value="">-- Sélectionner --</option>
+            {% for pcg in pcgs %}
+                <option value="{{ pcg.id }}">{{ pcg.compte }} - {{ pcg.libelle }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Motif</label>
+        <input type="text" name="motif">
+    </div>
+
+    <div>
+        <label>Montant (€)</label>
+        <input type="number" step="0.01" name="montant" required>
+    </div>
+
+    <div>
+        <label>Date paiement</label>
+        <input type="date" name="date_paiement" required>
+    </div>
+
+    <div>
+        <label>Mode de paiement</label>
+        <select name="mode" required>
+            <option value="">-- Sélectionner --</option>
+            <option value="VIR">VIR</option>
+            <option value="CB">CB</option>
+            <option value="PRELEV">PRELEV</option>
+            <option value="AUTRES">AUTRES</option>
+        </select>
+    </div>
+
+    <button type="submit">Enregistrer</button>
+
+</form>
+
+<link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+{% endblock %}

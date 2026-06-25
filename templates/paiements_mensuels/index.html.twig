@@ -14,7 +14,7 @@
 <form method="get" action="{{ path('app_paiements_mensuels') }}">
     <label>Année :</label>
 
-    <select name="annee">
+    <select name="annee" onchange="this.form.submit()">
         <option value="">-- Toutes --</option>
         {% for year in annees %}
             <option value="{{ year }}" {% if annee == year %}selected{% endif %}>
@@ -25,7 +25,7 @@
 
     <label>Locataire :</label>
 
-    <select name="locataireId">
+    <select name="locataireId" onchange="this.form.submit()">
         <option value="">-- Tous --</option>
         {% for l in locataires %}
             <option value="{{ l.id }}" {% if locataireId == l.id %}selected{% endif %}>
@@ -34,7 +34,6 @@
         {% endfor %}
     </select>
 
-    <button type="submit">Filtrer</button>
 
     <label style="margin-left: 20px;">
         <input type="checkbox" id="comptabilite"> Comptabilité ?
@@ -475,10 +474,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // fontionnalités Export CSV
     document.getElementById('exportCsv').addEventListener('click', function() {
+        const comptabilite = document.getElementById('comptabilite').checked;
+        const anneeSelect = document.querySelector('select[name="annee"]');
+        const annee = anneeSelect ? anneeSelect.value : '';
+
+        // Si comptabilité est coché et une année est sélectionnée, utiliser la route serveur
+        if (comptabilite && annee) {
+            const locataireIdSelect = document.querySelector('select[name="locataireId"]');
+            const locataireId = locataireIdSelect ? locataireIdSelect.value : '';
+            const url = new URL(window.location.origin + '{{ path('paiements_export_csv') }}');
+            url.searchParams.set('annee', annee);
+            url.searchParams.set('comptabilite', '1');
+            if (locataireId) {
+                url.searchParams.set('locataireId', locataireId);
+            }
+            window.location.href = url.toString();
+            return;
+        }
+
+        // Sinon, utiliser l'export JavaScript existant
         const table = document.getElementById('exportTable');
         if (!table) return;
 
-        const comptabilite = document.getElementById('comptabilite').checked;
         let csv = [];
         const rows = table.querySelectorAll('tr');
         const theadRows = table.querySelectorAll('thead tr');

@@ -25,9 +25,6 @@ class FactureFourn
     private ?Pcg $pcg = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $type_achat = null;
-
-    #[ORM\Column(length: 255)]
     private ?string $motif = null;
 
     #[ORM\Column(type: Types::FLOAT)]
@@ -76,18 +73,6 @@ class FactureFourn
     public function setPcg(?Pcg $pcg): static
     {
         $this->pcg = $pcg;
-
-        return $this;
-    }
-
-    public function getTypeAchat(): ?string
-    {
-        return $this->type_achat;
-    }
-
-    public function setTypeAchat(string $type_achat): static
-    {
-        $this->type_achat = $type_achat;
 
         return $this;
     }

@@ -9,7 +9,7 @@
     <h1>Liste des factures fournisseurs</h1>
     <a href="{{ path('facture_fourn_new') }}" class="btn-create">➕ Nouvelle facture</a>
     {% if anneeSelectionnee %}
-        <a href="{{ path('facture_fourn_export_csv', {'annee': anneeSelectionnee}) }}" class="btn-create">📥 Export CSV {{ anneeSelectionnee }}</a>
+        <a href="{{ path('facture_fourn_export_csv', {'annee': anneeSelectionnee}) }}" class="btn-export">📥 Export CSV {{ anneeSelectionnee }}</a>
     {% endif %}
 </div>
 

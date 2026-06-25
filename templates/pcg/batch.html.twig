@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter des comptes PCG{% endblock %}
+
+{% block body %}
+
+<div class="div-titre">
+    <a href="{{ path('app_pcg') }}" class="btn-retour">Retour</a>
+    <h1>Ajouter des comptes PCG</h1>
+</div>
+
+<hr>
+
+<form method="post">
+    <div id="pcg-container">
+        <div class="pcg-row">
+            <div>
+                <label>Compte</label>
+                <input type="text" name="comptes[]" required pattern="[0-9]+" placeholder="Ex: 605001">
+            </div>
+            <div>
+                <label>Libellé</label>
+                <input type="text" name="libelles[]" required placeholder="Ex: Achats de matériel">
+            </div>
+            <button type="button" class="btn-remove" onclick="removeRow(this)">🗑️</button>
+        </div>
+    </div>
+
+    <button type="button" id="add-row" class="btn-create" style="margin-top: 10px;">➕ Ajouter une ligne</button>
+    <button type="submit" class="btn-create" style="margin-top: 10px;">💾 Enregistrer</button>
+</form>
+
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+<style>
+.pcg-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: flex-end;
+}
+
+.pcg-row > div {
+    flex: 1;
+}
+
+.pcg-row label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.pcg-row input {
+    width: 100%;
+    padding: 5px;
+}
+
+.btn-remove {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-remove:hover {
+    background: #c82333;
+}
+</style>
+
+<script>
+document.getElementById('add-row').addEventListener('click', function() {
+    const container = document.getElementById('pcg-container');
+    const newRow = document.createElement('div');
+    newRow.className = 'pcg-row';
+    newRow.innerHTML = `
+        <div>
+            <label>Compte</label>
+            <input type="text" name="comptes[]" required pattern="[0-9]+" placeholder="Ex: 605001">
+        </div>
+        <div>
+            <label>Libellé</label>
+            <input type="text" name="libelles[]" required placeholder="Ex: Achats de matériel">
+        </div>
+        <button type="button" class="btn-remove" onclick="removeRow(this)">🗑️</button>
+    `;
+    container.appendChild(newRow);
+});
+
+function removeRow(button) {
+    const container = document.getElementById('pcg-container');
+    if (container.children.length > 1) {
+        button.parentElement.remove();
+    } else {
+        alert('Vous devez garder au moins une ligne.');
+    }
+}
+</script>
+
+{% endblock %}

@@ -8,7 +8,7 @@
         <a href="{{ path('app_home') }}" class="btn-retour">Retour</a>
         <h1 style="margin-left: 200px;">Soldes de tout compte</h1>
         {% if anneeSelectionnee %}
-            <a href="{{ path('app_soldes_de_tout_compte_export_csv', {'annee': anneeSelectionnee}) }}" class="btn-create" style="margin-left: 120px;">📥 Export CSV {{ anneeSelectionnee }}</a>
+            <a href="{{ path('app_soldes_de_tout_compte_export_csv', {'annee': anneeSelectionnee}) }}" class="btn-export" style="margin-left: 120px;">📥 Export CSV {{ anneeSelectionnee }}</a>
         {% endif %}
     </div>
 

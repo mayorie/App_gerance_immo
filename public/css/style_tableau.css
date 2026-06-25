@@ -87,6 +87,19 @@ td:nth-last-child(2) {
 .btn-create:hover {
     background: linear-gradient(135deg, #23e311 0%, #047406 100%);
 }
+/* Bouton créer */
+.btn-export {
+    background: linear-gradient(135deg, #f7c911 0%, #fcaf20 100%);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-export:hover {
+    background: linear-gradient(135deg, #fcaf20 0%, #f7c911 100%);
+}
 
 /* Première ligne d'en-têtes */
 thead tr:first-child th {

@@ -16,7 +16,7 @@ final class PcgController extends AbstractController
     #[Route('/pcg', name: 'app_pcg')]
     public function index(PcgRepository $repo): Response
     {
-        $pcgs = $repo->findAll();
+        $pcgs = $repo->findBy([], ['compte' => 'ASC']);
 
         return $this->render('pcg/index.html.twig', [
             'pcgs' => $pcgs
@@ -65,6 +65,45 @@ final class PcgController extends AbstractController
         }
 
         return $this->render('pcg/import.html.twig');
+    }
+
+    #[Route('/pcg/batch', name: 'pcg_batch')]
+    public function batch(Request $request, EntityManagerInterface $em, PcgRepository $repo): Response
+    {
+        if ($request->isMethod('POST')) {
+            $comptes = $request->request->all('comptes');
+            $libelles = $request->request->all('libelles');
+
+            $count = 0;
+            foreach ($comptes as $index => $compte) {
+                $libelle = $libelles[$index] ?? '';
+
+                if (!empty($compte) && !empty($libelle)) {
+                    // Check if compte already exists
+                    $existing = $repo->findOneBy(['compte' => $compte]);
+
+                    if (!$existing) {
+                        $pcg = new Pcg();
+                        $pcg->setCompte(trim($compte));
+                        $pcg->setLibelle(trim($libelle));
+                        $em->persist($pcg);
+                        $count++;
+                    }
+                }
+            }
+
+            $em->flush();
+
+            if ($count > 0) {
+                $this->addFlash('success', "$count comptes PCG ajoutés avec succès.");
+            } else {
+                $this->addFlash('warning', "Aucun nouveau compte ajouté (comptes existants ou champs vides).");
+            }
+
+            return $this->redirectToRoute('app_pcg');
+        }
+
+        return $this->render('pcg/batch.html.twig');
     }
 
     #[Route('/pcg/edit/{id}', name: 'pcg_edit')]

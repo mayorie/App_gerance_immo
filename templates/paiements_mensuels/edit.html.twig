@@ -10,6 +10,13 @@
 
     <h1>Modifier un paiement</h1>
 
+    {% if form.vars.data.date %}
+        {% set anneePaiement = form.vars.data.date|date('Y') %}
+        <a href="{{ path('paiements_export_compta', {'annee': anneePaiement}) }}" class="btn-export">
+            📥 Export Compta {{ anneePaiement }}
+        </a>
+    {% endif %}
+
 </div>
 
 {{ form_start(form) }}

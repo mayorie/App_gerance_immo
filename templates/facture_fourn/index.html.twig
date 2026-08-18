@@ -40,10 +40,14 @@
         <tr>
             <th>Date facture</th>
             <th>Fournisseur</th>
-            <th>Compte PCG</th>
+            <th>Compte PCG 1</th>
+            <th>Montant 1</th>
+            <th>Compte PCG 2</th>
+            <th>Montant 2</th>
+            <th>Remise</th>
             <th>Motif</th>
-            <th>Montant</th>
             <th>Date paiement</th>
+            <th>Montant paiement</th>
             <th>Mode</th>
             <th>MODIF</th>
             <th>SUPPR</th>
@@ -55,10 +59,13 @@
                 <td>{{ facture.dateFacture ? facture.dateFacture|date('d/m/Y') : '-' }}</td>
                 <td>{{ facture.fournisseur }}</td>
                 <td>{{ facture.pcg ? facture.pcg.compte : '-' }}</td>
-                <td>{{ facture.motif }}</td>
                 <td>{{ facture.montant }} €</td>
+                <td>{{ facture.pcg2 ? facture.pcg2.compte : '-' }}</td>
+                <td>{{ facture.montant2 ? facture.montant2 ~ ' €' : '-' }}</td>
+                <td>{{ facture.remise ? facture.remise ~ ' €' : '-' }}</td>
+                <td>{{ facture.motif }}</td>
                 <td>{{ facture.datePaiement ? facture.datePaiement|date('d/m/Y') : '-' }}</td>
-                <td>{{ facture.mode }}</td>
+                <td>{{ facture.montantPaiement ? facture.montantPaiement ~ ' €' : '-' }}</td>                <td>{{ facture.mode }}</td>
                 <td>
                     <a href="{{ path('facture_fourn_edit', {'id': facture.id}) }}" >
                     ✏️

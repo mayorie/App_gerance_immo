@@ -9,6 +9,9 @@
     <h1>Paiements mensuels</h1>
     <a href="{{ path('paiements_batch') }}" class="btn-create">➕ Créer des paiements</a>
     <button id="exportCsv" class="btn-export">📥 Export CSV</button>
+    {% if annee %}
+        <a href="{{ path('paiements_export_compta', {'annee': annee, 'locataireId': locataireId}) }}" class="btn-export">📥 Export Compta {{ annee }}</a>
+    {% endif %}
 </div>
 
 <form method="get" action="{{ path('app_paiements_mensuels') }}">
@@ -38,6 +41,7 @@
     <label style="margin-left: 20px;">
         <input type="checkbox" id="comptabilite"> Comptabilité ?
     </label>
+    <i style="font-size: 9px;">⚠️ L'export CSV comptable est accessible après sélection d'une année.</i>
 </form>
 
 <hr>

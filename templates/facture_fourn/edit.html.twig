@@ -22,7 +22,7 @@
     </div>
 
     <div>
-        <label>Compte PCG</label>
+        <label>Compte PCG 1</label>
         <select name="pcg_id">
             <option value="">-- Sélectionner --</option>
             {% for pcg in pcgs %}
@@ -34,13 +34,40 @@
     </div>
 
     <div>
-        <label>Motif</label>
-        <input type="text" name="motif" value="{{ facture.motif }}">
+        <label>Montant 1 (€)</label>
+        <input type="number" step="0.01" name="montant" value="{{ facture.montant }}">
     </div>
 
     <div>
-        <label>Montant (€)</label>
-        <input type="number" step="0.01" name="montant" value="{{ facture.montant }}">
+        <label>Remise (€)</label>
+        <input type="number" step="0.01" name="remise" value="{{ facture.remise }}">
+    </div>
+
+    <div>
+        <label>Compte PCG 2</label>
+        <select name="pcg2_id">
+            <option value="">-- Sélectionner --</option>
+            {% for pcg in pcgs %}
+                <option value="{{ pcg.id }}" {% if facture.pcg2 and facture.pcg2.id == pcg.id %}selected{% endif %}>
+                    {{ pcg.compte }} - {{ pcg.libelle }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Montant 2 (€)</label>
+        <input type="number" step="0.01" name="montant2" value="{{ facture.montant2 }}">
+    </div>
+
+    <div>
+        <label>Montant paiement (€)</label>
+        <input type="number" step="0.01" name="montant_paiement" value="{{ facture.montantPaiement }}">
+    </div>
+
+    <div>
+        <label>Motif</label>
+        <input type="text" name="motif" value="{{ facture.motif }}">
     </div>
 
     <div>

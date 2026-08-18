@@ -140,3 +140,9 @@ thead tr:nth-child(2) th {
 .input-medium {
     width: 80px;
 }
+
+.col-fit {
+    white-space: nowrap;
+    width: 1%;
+    text-align: center;
+}

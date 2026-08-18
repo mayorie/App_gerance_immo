@@ -22,7 +22,7 @@
     </div>
 
     <div>
-        <label>Compte PCG</label>
+        <label>Compte PCG 1</label>
         <select name="pcg_id" required>
             <option value="">-- Sélectionner --</option>
             {% for pcg in pcgs %}
@@ -32,13 +32,33 @@
     </div>
 
     <div>
-        <label>Motif</label>
-        <input type="text" name="motif">
+        <label>Montant 1 (€)</label>
+        <input type="number" step="0.01" name="montant" required>
     </div>
 
     <div>
-        <label>Montant (€)</label>
-        <input type="number" step="0.01" name="montant" required>
+        <label>Compte PCG 2</label>
+        <select name="pcg2_id">
+            <option value="">-- Sélectionner --</option>
+            {% for pcg in pcgs %}
+                <option value="{{ pcg.id }}">{{ pcg.compte }} - {{ pcg.libelle }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Montant 2 (€)</label>
+        <input type="number" step="0.01" name="montant2">
+    </div>
+
+    <div>
+        <label>Remise (€)</label>
+        <input type="number" step="0.01" name="remise">
+    </div>
+
+    <div>
+        <label>Motif</label>
+        <input type="text" name="motif">
     </div>
 
     <div>
@@ -46,6 +66,11 @@
         <input type="date" name="date_paiement" required>
     </div>
 
+    <div>
+        <label>Montant paiement (€)</label>
+        <input type="number" step="0.01" name="montant_paiement" id="montant_paiement">
+    </div>
+    
     <div>
         <label>Mode de paiement</label>
         <select name="mode" required>
@@ -63,5 +88,22 @@
 
 <link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
 <link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const montant1Input = document.querySelector('input[name="montant"]');
+        const montantPaiementInput = document.getElementById('montant_paiement');
+
+        // Initialiser montant_paiement avec la valeur de montant 1
+        if (montant1Input && montantPaiementInput) {
+            montantPaiementInput.value = montant1Input.value;
+
+            // Mettre à jour automatiquement quand montant 1 change
+            montant1Input.addEventListener('input', function() {
+                montantPaiementInput.value = this.value;
+            });
+        }
+    });
+</script>
 
 {% endblock %}

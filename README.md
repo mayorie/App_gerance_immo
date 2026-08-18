@@ -1,5 +1,10 @@
+------------------ Migration pour création de la base
 php bin/console doctrine:database:create
 php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+
+------------------ Migration pour évolution de la base
+php bin/console doctrine:migrations:diff
 php bin/console doctrine:migrations:migrate
 
 ------------------ lancement du serveur sur le port 8000 :

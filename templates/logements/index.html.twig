@@ -19,6 +19,7 @@
             <th>ADRESSE</th>
             <th>CP</th>
             <th>VILLE</th>
+            <th class="col-fit">COMPTE COMPTABLE (7)</th>
             <th>MODIF</th>
             <th>SUPPR</th>
 
@@ -34,6 +35,7 @@
                 <td>{{ logement.adresse }}</td>
                 <td>{{ logement.CodePostal }}</td>
                 <td>{{ logement.ville }}</td>
+                <td class="col-fit">{{ logement.pcgPrestation ? logement.pcgPrestation.compte : '' }}</td>
                 <td>
                     <a href="{{ path('logement_edit', {id: logement.id}) }}" >
                     ✏️

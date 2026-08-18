@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Locataires;
 use App\Entity\PaiementsMensuels;
 use App\Entity\RBTBailleur;
-use App\Repository\PaiementsMensuelsRepository;
 use App\Repository\LocatairesRepository;
+use App\Repository\PaiementsMensuelsRepository;
+use App\Repository\PcgRepository;
 use App\Repository\RBTBailleurRepository;
 use App\Form\PaiementMensuelType;
 use App\Form\PaiementsBatchType;
@@ -434,5 +436,154 @@ final class PaiementsMensuelsController extends AbstractController
 
         $response->setContent($content);
         return $response;
+    }
+
+    #[Route('/paiements/export-compta', name: 'paiements_export_compta')]
+    public function exportCompta(
+        Request $request,
+        PaiementsMensuelsRepository $repoPaiements,
+        PcgRepository $pcgRepo
+    ): Response {
+        $locataireId = $request->query->get('locataireId');
+        $annee = $request->query->get('annee');
+
+        // Construire les critères de recherche
+        $criteria = [];
+        if ($locataireId) {
+            $criteria['LocatairesID'] = $locataireId;
+        }
+
+        $paiements = $repoPaiements->findBy($criteria, ['date' => 'DESC']);
+
+        // Filtrer par année si sélectionnée
+        if ($annee) {
+            $paiements = array_filter($paiements, function($paiement) use ($annee) {
+                return $paiement->getDate() && $paiement->getDate()->format('Y') == $annee;
+            });
+        }
+
+        $pcg708 = $pcgRepo->findOneBy(['compte' => '708000']);
+        $libellePcg708 = $pcg708 ? $pcg708->getLibelle() : '';
+
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $filename = 'export_compta_' . ($annee ?: 'all') . '.csv';
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
+
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "\xEF\xBB\xBF");
+
+        foreach ($paiements as $paiement) {
+            $date = $paiement->getDate();
+            $dateStr = $date ? $date->format('d/m/Y') : '';
+            $journal = 'VE';
+
+            $locataire = $paiement->getLocatairesID();
+            $logement = $locataire ? $locataire->getLogementsID() : null;
+            $pcgPrestation = $logement ? $logement->getPcgPrestation() : null;
+            $pcgCompte = $pcgPrestation ? $pcgPrestation->getCompte() : '';
+            $pcgLibelle = $pcgPrestation ? $pcgPrestation->getLibelle() : '';
+
+            $nomLocataire = $locataire ? $locataire->getNom() : '';
+            $moisStr = $date ? $date->format('m') : '';
+            $anneeStr = $date ? $date->format('Y') : '';
+
+            // A5: Concatener « LOYER » avec [Locataires.Nom] avec [saisie du.date.Mois] avec [saisie du.date.Année] avec « - LOYER HC »
+            $libelleA = 'LOYER ' . $nomLocataire . ' ' . $moisStr . ' ' . $anneeStr . ' - LOYER HC';
+
+            // A6: [Loyer HC]
+            $loyerHC = $repoPaiements->findLoyerHC($paiement);
+            if ($locataire && $date && $loyerHC !== null) {
+                $loyerHC = $this->calculerProrataMontant($locataire, (int)$date->format('m'), (int)$date->format('Y'), $loyerHC);
+            }
+            $montantLoyer = $loyerHC !== null ? number_format($loyerHC, 2, ',', '') : '0,00';
+
+            // Ligne A
+            $ligneA = [
+                $dateStr,
+                $journal,
+                $pcgCompte,
+                $pcgLibelle,
+                $libelleA,
+                $montantLoyer
+            ];
+            fputcsv($handle, $ligneA, ";");
+
+            // B5: A5 en remplaçant « - LOYER HC » par «- Prov. Charges »
+            $libelleB = str_replace('- LOYER HC', '- Prov. Charges', $libelleA);
+
+            // B6: [Charges]
+            $charges = $repoPaiements->findProvisionPourCharges($paiement);
+            if ($locataire && $date && $charges !== null) {
+                $charges = $this->calculerProrataMontant($locataire, (int)$date->format('m'), (int)$date->format('Y'), $charges);
+            }
+            $montantCharges = $charges !== null ? number_format($charges, 2, ',', '') : '0,00';
+
+            // Ligne B
+            $ligneB = [
+                $dateStr,
+                $journal,
+                '708000',
+                $libellePcg708,
+                $libelleB,
+                $montantCharges
+            ];
+            fputcsv($handle, $ligneB, ";");
+
+            // Ligne vide
+            fputcsv($handle, [], ";");
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        // Sauvegarder dans archive/comptabilité/[année] si année spécifiée
+        if ($annee) {
+            $directory = $this->getParameter('kernel.project_dir') . '/archive/comptabilité/' . $annee;
+            if (!is_dir($directory)) {
+                mkdir($directory, 0777, true);
+            }
+            $filePath = $directory . '/export_compta_' . $annee . '.csv';
+            file_put_contents($filePath, $content);
+        }
+
+        $response->setContent($content);
+        return $response;
+    }
+
+    private function calculerProrataMontant(
+        Locataires $locataire,
+        int $mois,
+        int $annee,
+        ?float $montant
+    ): ?float {
+        if ($montant === null) {
+            return null;
+        }
+
+        $debutBail = $locataire->getDebutBail();
+        $dateSortie = $locataire->getDateDeSortie();
+
+        // Nombre de jours dans le mois
+        $dateDebutMois = new \DateTime(sprintf('%04d-%02d-01', $annee, $mois));
+        $dateFinMois = (clone $dateDebutMois)->modify('last day of this month');
+        $joursDansLeMois = (int)$dateFinMois->format('d');
+
+        // Prorata entrée (premier mois de bail)
+        if ($debutBail && $debutBail->format('Y-m') === sprintf('%04d-%02d', $annee, $mois)) {
+            $jourEntree = (int)$debutBail->format('d');
+            $joursAPayer = $joursDansLeMois - $jourEntree + 1;
+            $montant = round(($montant / $joursDansLeMois) * $joursAPayer, 2);
+        }
+
+        // Prorata sortie (dernier mois de bail)
+        if ($dateSortie && $dateSortie->format('Y-m') === sprintf('%04d-%02d', $annee, $mois)) {
+            $jourSortie = (int)$dateSortie->format('d');
+            $joursAPayer = $jourSortie;
+            $montant = round(($montant / $joursDansLeMois) * $joursAPayer, 2);
+        }
+
+        return $montant;
     }
 }

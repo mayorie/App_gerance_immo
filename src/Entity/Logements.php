@@ -49,6 +49,10 @@ class Logements
     #[ORM\OneToOne(mappedBy: 'LogementsID', cascade: ['persist', 'remove'])]
     private ?Commentaires $commentaires = null;
 
+    #[ORM\ManyToOne(targetEntity: Pcg::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Pcg $pcgPrestation = null;
+
     public function __construct()
     {
         $this->LocatairesID = new ArrayCollection();
@@ -210,6 +214,18 @@ class Logements
         }
 
         $this->commentaires = $commentaires;
+
+        return $this;
+    }
+
+    public function getPcgPrestation(): ?Pcg
+    {
+        return $this->pcgPrestation;
+    }
+
+    public function setPcgPrestation(?Pcg $pcgPrestation): static
+    {
+        $this->pcgPrestation = $pcgPrestation;
 
         return $this;
     }

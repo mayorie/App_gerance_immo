@@ -36,8 +36,12 @@ final class FactureFournController extends AbstractController
             $dateFacture = $request->request->get('date_facture');
             $fournisseur = $request->request->get('fournisseur');
             $pcgId = $request->request->get('pcg_id');
+            $pcg2Id = $request->request->get('pcg2_id');
             $motif = $request->request->get('motif');
             $montant = $request->request->get('montant');
+            $montant2 = $request->request->get('montant2');
+            $remise = $request->request->get('remise');
+            $montantPaiement = $request->request->get('montant_paiement');
             $datePaiement = $request->request->get('date_paiement');
             $mode = $request->request->get('mode');
 
@@ -50,8 +54,28 @@ final class FactureFournController extends AbstractController
                 $facture->setPcg($pcg);
             }
             
+            if ($pcg2Id) {
+                $pcg2 = $pcgRepo->find($pcg2Id);
+                if ($pcg2) {
+                    $facture->setPcg2($pcg2);
+                }
+            }
+            
             $facture->setMotif($motif);
             $facture->setMontant((float) $montant);
+            
+            if ($remise) {
+                $facture->setRemise((float) $remise);
+            }
+            
+            if ($montant2) {
+                $facture->setMontant2((float) $montant2);
+            }
+            
+            if ($montantPaiement) {
+                $facture->setMontantPaiement((float) $montantPaiement);
+            }
+            
             $facture->setDatePaiement(new \DateTimeImmutable($datePaiement));
             $facture->setMode($mode);
 
@@ -75,8 +99,12 @@ final class FactureFournController extends AbstractController
             $dateFacture = $request->request->get('date_facture');
             $fournisseur = $request->request->get('fournisseur');
             $pcgId = $request->request->get('pcg_id');
+            $pcg2Id = $request->request->get('pcg2_id');
             $motif = $request->request->get('motif');
             $montant = $request->request->get('montant');
+            $montant2 = $request->request->get('montant2');
+            $remise = $request->request->get('remise');
+            $montantPaiement = $request->request->get('montant_paiement');
             $datePaiement = $request->request->get('date_paiement');
             $mode = $request->request->get('mode');
 
@@ -95,12 +123,39 @@ final class FactureFournController extends AbstractController
                 }
             }
 
+            if ($pcg2Id) {
+                $pcg2 = $pcgRepo->find($pcg2Id);
+                if ($pcg2) {
+                    $facture->setPcg2($pcg2);
+                }
+            } else {
+                $facture->setPcg2(null);
+            }
+
             if ($motif) {
                 $facture->setMotif($motif);
             }
 
             if ($montant) {
                 $facture->setMontant((float) $montant);
+            }
+
+            if ($remise !== null && $remise !== '') {
+                $facture->setRemise((float) $remise);
+            } else {
+                $facture->setRemise(null);
+            }
+
+            if ($montant2 !== null && $montant2 !== '') {
+                $facture->setMontant2((float) $montant2);
+            } else {
+                $facture->setMontant2(null);
+            }
+
+            if ($montantPaiement !== null && $montantPaiement !== '') {
+                $facture->setMontantPaiement((float) $montantPaiement);
+            } else {
+                $facture->setMontantPaiement(null);
             }
 
             if ($datePaiement) {
@@ -153,39 +208,107 @@ final class FactureFournController extends AbstractController
 
         foreach ($factures as $facture) {
             $dateFacture = $facture->getDateFacture()->format('d/m/Y');
+            $datePaiement = $facture->getDatePaiement() ? $facture->getDatePaiement()->format('d/m/Y') : $dateFacture;
             $fournisseur = $facture->getFournisseur();
             $motif = $facture->getMotif();
-            $montant = number_format($facture->getMontant(), 2, ',', '');
-            $pcg = $facture->getPcg();
-            $comptePcg = $pcg ? $pcg->getCompte() : '';
-            $libellePcg = $pcg ? $pcg->getLibelle() : '';
+            $montant1 = $facture->getMontant();
+            $montant2 = $facture->getMontant2();
+            $remise = $facture->getRemise();
+            $montantPaiement = $facture->getMontantPaiement() ?? $montant1;
+            $pcg1 = $facture->getPcg();
+            $pcg2 = $facture->getPcg2();
+            $comptePcg1 = $pcg1 ? $pcg1->getCompte() : '';
+            $libellePcg1 = $pcg1 ? $pcg1->getLibelle() : '';
+            $comptePcg2 = $pcg2 ? $pcg2->getCompte() : '';
+            $libellePcg2 = $pcg2 ? $pcg2->getLibelle() : '';
             $mode = $facture->getMode();
 
-            // Ligne A (Achat)
+            // Calcul du total (montant 1 + montant 2 si non vide - remise si non vide)
+            $montantTotal = $montant1;
+            if ($montant2 !== null) {
+                $montantTotal += $montant2;
+            }
+            if ($remise !== null) {
+                $montantTotal -= $remise;
+            }
+
+            // Ligne A (Achat - Compte PCG 1)
             $ligneA = [
                 $dateFacture,
                 'AC',
-                $comptePcg,
-                $libellePcg,
+                $comptePcg1,
+                $libellePcg1,
                 $fournisseur . ' - ' . $motif,
-                $montant,
+                number_format($montant1, 2, ',', ''),
                 ''
             ];
             fputcsv($handle, $ligneA, ";");
 
-            // Ligne B (Paiement)
-            $compteBanque = ($mode === 'CB') ? '108000' : '512000';
-            $libelleBanque = ($mode === 'CB') ? 'Compte de l' . "'" . 'exploitant' : 'Banques';
+            // Ligne ABIS (Achat - Compte PCG 2) si non vide
+            if ($pcg2 && $montant2 !== null) {
+                $ligneABis = [
+                    $dateFacture,
+                    'AC',
+                    $comptePcg2,
+                    $libellePcg2,
+                    $fournisseur . ' - ' . $motif,
+                    number_format($montant2, 2, ',', ''),
+                    ''
+                ];
+                fputcsv($handle, $ligneABis, ";");
+            }
+
+            // Ligne ATER (Remise) si non vide
+            if ($remise !== null) {
+                $ligneATer = [
+                    $dateFacture,
+                    'AC',
+                    $comptePcg1,
+                    $libellePcg1,
+                    $fournisseur . ' - ' . $motif,
+                    '',
+                    number_format($remise, 2, ',', '')
+                ];
+                fputcsv($handle, $ligneATer, ";");
+            }
+
+            // Ligne B (Fournisseur - AC)
             $ligneB = [
                 $dateFacture,
+                'AC',
+                '401000',
+                'Fournisseurs',
+                $fournisseur . ' - ' . $motif,
+                '',
+                number_format($montantTotal, 2, ',', '')
+            ];
+            fputcsv($handle, $ligneB, ";");
+
+            // Ligne C (Fournisseur - BQ)
+            $ligneC = [
+                $datePaiement,
+                'BQ',
+                '401000',
+                'Fournisseurs',
+                $mode . ' - ' . $fournisseur . ' - ' . $motif,
+                number_format($montantPaiement, 2, ',', ''),
+                ''
+            ];
+            fputcsv($handle, $ligneC, ";");
+
+            // Ligne D (Paiement)
+            $compteBanque = ($mode === 'CB') ? '108000' : '512000';
+            $libelleBanque = ($mode === 'CB') ? 'Compte de l' . "'" . 'exploitant' : 'Banques';
+            $ligneD = [
+                $datePaiement,
                 'BQ',
                 $compteBanque,
                 $libelleBanque,
                 $mode . ' - ' . $fournisseur . ' - ' . $motif,
                 '',
-                $montant
+                number_format($montantPaiement, 2, ',', '')
             ];
-            fputcsv($handle, $ligneB, ";");
+            fputcsv($handle, $ligneD, ";");
 
             // Ligne vide
             fputcsv($handle, [], ";");

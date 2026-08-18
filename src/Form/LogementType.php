@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\Commentaires;
 use App\Entity\Logements;
+use App\Entity\Pcg;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,6 +25,13 @@ class LogementType extends AbstractType
             ->add('ville')
             ->add('SIRET')
             ->add('num_chambre')
+            ->add('pcgPrestation', EntityType::class, [
+                'class' => Pcg::class,
+                'choice_label' => 'compte',
+                'label' => 'N° comptable - Prestation de services',
+                'required' => false,
+                'placeholder' => 'Sélectionner un compte',
+            ])
             ->add('commentaire', TextareaType::class, [
                 'mapped' => false,
                 'required' => false,

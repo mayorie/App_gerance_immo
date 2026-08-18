@@ -442,7 +442,8 @@ final class PaiementsMensuelsController extends AbstractController
     public function exportCompta(
         Request $request,
         PaiementsMensuelsRepository $repoPaiements,
-        PcgRepository $pcgRepo
+        PcgRepository $pcgRepo,
+        RBTBailleurRepository $repoRBT
     ): Response {
         $locataireId = $request->query->get('locataireId');
         $annee = $request->query->get('annee');
@@ -467,6 +468,12 @@ final class PaiementsMensuelsController extends AbstractController
 
         $pcg790 = $pcgRepo->findOneBy(['compte' => '790002']);
         $libellePcg790 = $pcg790 ? $pcg790->getLibelle() : '';
+
+        $pcg512 = $pcgRepo->findOneBy(['compte' => '512000']);
+        $libellePcg512 = $pcg512 ? $pcg512->getLibelle() : '';
+
+        $pcg108 = $pcgRepo->findOneBy(['compte' => '108000']);
+        $libellePcg108 = $pcg108 ? $pcg108->getLibelle() : '';
 
         $response = new Response();
         $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
@@ -594,8 +601,8 @@ final class PaiementsMensuelsController extends AbstractController
 
             // Ligne F: Compte Locataire
             $numComptable = $locataire && $locataire->getNumComptable() !== null ? (string)$locataire->getNumComptable() : '';
-            $pcgLocataire = $numComptable !== '' ? $pcgRepo->findOneBy(['compte' => $numComptable]) : null;
-            $libellePcgLocataire = $pcgLocataire ? $pcgLocataire->getLibelle() : '';
+            $prenomLocataire = $locataire ? $locataire->getPrenom() : '';
+            $libelleClient = trim('Client ' . $prenomLocataire . ' ' . $nomLocataire);
             $libelleF = trim(str_replace('- LOYER HC', '', $libelleA));
 
             $totalLignes = ($loyerHC ?? 0) + ($charges ?? 0) + ($regulCharges ?? 0) + ($PS ?? 0) + ($regulPS ?? 0);
@@ -606,12 +613,114 @@ final class PaiementsMensuelsController extends AbstractController
                 $dateStr,
                 $journal,
                 $numComptable,
-                $libellePcgLocataire,
+                $libelleClient,
                 $libelleF,
                 $col6F,
                 $col7F
             ];
             fputcsv($handle, $ligneF, ";");
+
+            // Lignes G et H: Part reçue du locataire
+            $partLocMontant = $paiement->getPartRecueDuLocataireMontant();
+            $dateLoc = $paiement->getPartRecueDuLocataireDate();
+            if ($partLocMontant !== null && $partLocMontant > 0) {
+                $dateLocStr = $dateLoc ? $dateLoc->format('d/m/Y') : $dateStr;
+                $modeLoc = $paiement->getPartRecueDuLocataireMode() ?: 'VIR';
+                $compteG = ($modeLoc === 'VIR') ? '512000' : '108000';
+                $libellePcgG = ($compteG === '512000') ? $libellePcg512 : $libellePcg108;
+                $libelleG = 'PAIEMENT ' . $modeLoc . ' - ' . $libelleF;
+                $montantLoc = number_format($partLocMontant, 2, ',', '');
+
+                // Ligne G: Banque / Caisse (Débit Col 6)
+                $ligneG = [
+                    $dateLocStr,
+                    'BQ',
+                    $compteG,
+                    $libellePcgG,
+                    $libelleG,
+                    $montantLoc,
+                    ''
+                ];
+                fputcsv($handle, $ligneG, ";");
+
+                // Ligne H: Locataire (Crédit Col 7)
+                $ligneH = [
+                    $dateLocStr,
+                    'BQ',
+                    $numComptable,
+                    $libelleClient,
+                    $libelleG,
+                    '',
+                    $montantLoc
+                ];
+                fputcsv($handle, $ligneH, ";");
+            }
+
+            // Lignes I et J: Part reçue de la CAF
+            $partCafMontant = $paiement->getPartRecueDeLaCAFMontant();
+            $dateCaf = $paiement->getPartRecueDeLaCAFDate();
+            if ($partCafMontant !== null && $partCafMontant > 0) {
+                $dateCafStr = $dateCaf ? $dateCaf->format('d/m/Y') : $dateStr;
+                $libelleCaf = 'RECEPTION CAF - LOYER ' . $nomLocataire;
+                $montantCaf = number_format($partCafMontant, 2, ',', '');
+
+                // Ligne I: Banque CAF (Débit Col 6)
+                $ligneI = [
+                    $dateCafStr,
+                    'BQ',
+                    '512000',
+                    $libellePcg512,
+                    $libelleCaf,
+                    $montantCaf,
+                    ''
+                ];
+                fputcsv($handle, $ligneI, ";");
+
+                // Ligne J: Locataire CAF (Crédit Col 7)
+                $ligneJ = [
+                    $dateCafStr,
+                    'BQ',
+                    $numComptable,
+                    $libelleClient,
+                    $libelleCaf,
+                    '',
+                    $montantCaf
+                ];
+                fputcsv($handle, $ligneJ, ";");
+            }
+
+            // Lignes K et L: Remboursement bailleur
+            $rbt = $repoRBT->findOneBy(['Paiements_mensuelID' => $paiement]);
+            if ($rbt && $rbt->getMontant() !== null && $rbt->getMontant() > 0) {
+                $dateRbtStr = $rbt->getDate() ? $rbt->getDate()->format('d/m/Y') : $dateStr;
+                $modeRbt = $rbt->getMode() ?: '';
+                $libelleK = trim('Remboursement Bailleur ' . $modeRbt . ' - ' . $nomLocataire);
+                $montantRbt = number_format($rbt->getMontant(), 2, ',', '');
+
+                // Ligne K: Banque (Crédit Col 7)
+                $ligneK = [
+                    $dateRbtStr,
+                    'BQ',
+                    '512000',
+                    $libellePcg512,
+                    $libelleK,
+                    '',
+                    $montantRbt
+                ];
+                fputcsv($handle, $ligneK, ";");
+
+                // Ligne L: Locataire (Débit Col 6)
+                $ligneL = [
+                    $dateRbtStr,
+                    'BQ',
+                    $numComptable,
+                    $libelleClient,
+                    $libelleK,
+                    $montantRbt,
+                    ''
+                ];
+                fputcsv($handle, $ligneL, ";");
+            }
 
             // Ligne vide
             fputcsv($handle, [], ";");

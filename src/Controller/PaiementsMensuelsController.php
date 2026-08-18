@@ -465,6 +465,9 @@ final class PaiementsMensuelsController extends AbstractController
         $pcg708 = $pcgRepo->findOneBy(['compte' => '708000']);
         $libellePcg708 = $pcg708 ? $pcg708->getLibelle() : '';
 
+        $pcg790 = $pcgRepo->findOneBy(['compte' => '790002']);
+        $libellePcg790 = $pcg790 ? $pcg790->getLibelle() : '';
+
         $response = new Response();
         $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
         $filename = 'export_compta_' . ($annee ?: 'all') . '.csv';
@@ -505,6 +508,7 @@ final class PaiementsMensuelsController extends AbstractController
                 $pcgCompte,
                 $pcgLibelle,
                 $libelleA,
+                '',
                 $montantLoyer
             ];
             fputcsv($handle, $ligneA, ";");
@@ -512,7 +516,7 @@ final class PaiementsMensuelsController extends AbstractController
             // B5: A5 en remplaçant « - LOYER HC » par «- Prov. Charges »
             $libelleB = str_replace('- LOYER HC', '- Prov. Charges', $libelleA);
 
-            // B6: [Charges]
+            // B7: [Charges]
             $charges = $repoPaiements->findProvisionPourCharges($paiement);
             if ($locataire && $date && $charges !== null) {
                 $charges = $this->calculerProrataMontant($locataire, (int)$date->format('m'), (int)$date->format('Y'), $charges);
@@ -526,9 +530,88 @@ final class PaiementsMensuelsController extends AbstractController
                 '708000',
                 $libellePcg708,
                 $libelleB,
+                '',
                 $montantCharges
             ];
             fputcsv($handle, $ligneB, ";");
+
+            // Ligne REGUL Charges (si différent de 0 ou non null)
+            $regulCharges = $paiement->getRegulProvisionsPourCharges();
+            if ($regulCharges !== null && $regulCharges != 0) {
+                $libelleRegulCharges = str_replace('- LOYER HC', '- REGUL. Charges', $libelleA);
+                $col6Regul = $regulCharges < 0 ? number_format(abs($regulCharges), 2, ',', '') : '';
+                $col7Regul = $regulCharges > 0 ? number_format($regulCharges, 2, ',', '') : '';
+
+                $ligneRegulCharges = [
+                    $dateStr,
+                    $journal,
+                    '708000',
+                    $libellePcg708,
+                    $libelleRegulCharges,
+                    $col6Regul,
+                    $col7Regul
+                ];
+                fputcsv($handle, $ligneRegulCharges, ";");
+            }
+
+            // Ligne D: Pack Services
+            $PS = $repoPaiements->findPackService($paiement);
+            if ($locataire && $date && $PS !== null) {
+                $PS = $this->calculerProrataMontant($locataire, (int)$date->format('m'), (int)$date->format('Y'), $PS);
+            }
+            $montantPS = $PS !== null ? number_format($PS, 2, ',', '') : '0,00';
+            $libelleD = str_replace('- LOYER HC', '- Pack Services', $libelleA);
+
+            $ligneD = [
+                $dateStr,
+                $journal,
+                '790002',
+                $libellePcg790,
+                $libelleD,
+                '',
+                $montantPS
+            ];
+            fputcsv($handle, $ligneD, ";");
+
+            // Ligne E: REGUL Pack Services (si différent de 0 ou non null)
+            $regulPS = $paiement->getRegulPacksServices();
+            if ($regulPS !== null && $regulPS != 0) {
+                $libelleRegulPS = str_replace('- LOYER HC', '- REGUL. Pack Services', $libelleA);
+                $col6RegulPS = $regulPS < 0 ? number_format(abs($regulPS), 2, ',', '') : '';
+                $col7RegulPS = $regulPS > 0 ? number_format($regulPS, 2, ',', '') : '';
+
+                $ligneRegulPS = [
+                    $dateStr,
+                    $journal,
+                    '790002',
+                    $libellePcg790,
+                    $libelleRegulPS,
+                    $col6RegulPS,
+                    $col7RegulPS
+                ];
+                fputcsv($handle, $ligneRegulPS, ";");
+            }
+
+            // Ligne F: Compte Locataire
+            $numComptable = $locataire && $locataire->getNumComptable() !== null ? (string)$locataire->getNumComptable() : '';
+            $pcgLocataire = $numComptable !== '' ? $pcgRepo->findOneBy(['compte' => $numComptable]) : null;
+            $libellePcgLocataire = $pcgLocataire ? $pcgLocataire->getLibelle() : '';
+            $libelleF = trim(str_replace('- LOYER HC', '', $libelleA));
+
+            $totalLignes = ($loyerHC ?? 0) + ($charges ?? 0) + ($regulCharges ?? 0) + ($PS ?? 0) + ($regulPS ?? 0);
+            $col6F = $totalLignes > 0 ? number_format($totalLignes, 2, ',', '') : '';
+            $col7F = $totalLignes < 0 ? number_format(abs($totalLignes), 2, ',', '') : ($totalLignes == 0 ? '0,00' : '');
+
+            $ligneF = [
+                $dateStr,
+                $journal,
+                $numComptable,
+                $libellePcgLocataire,
+                $libelleF,
+                $col6F,
+                $col7F
+            ];
+            fputcsv($handle, $ligneF, ";");
 
             // Ligne vide
             fputcsv($handle, [], ";");

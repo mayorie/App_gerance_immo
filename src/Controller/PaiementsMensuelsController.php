@@ -463,6 +463,9 @@ final class PaiementsMensuelsController extends AbstractController
             });
         }
 
+        $firstPaiements = $repoPaiements->findFirstPaiementsIds();
+        $firstPaiementsIds = array_column($firstPaiements, 'id');
+
         $pcg708 = $pcgRepo->findOneBy(['compte' => '708000']);
         $libellePcg708 = $pcg708 ? $pcg708->getLibelle() : '';
 
@@ -474,6 +477,9 @@ final class PaiementsMensuelsController extends AbstractController
 
         $pcg108 = $pcgRepo->findOneBy(['compte' => '108000']);
         $libellePcg108 = $pcg108 ? $pcg108->getLibelle() : '';
+
+        $pcg165 = $pcgRepo->findOneBy(['compte' => '165000']);
+        $libellePcg165 = $pcg165 ? $pcg165->getLibelle() : '';
 
         $response = new Response();
         $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
@@ -720,6 +726,37 @@ final class PaiementsMensuelsController extends AbstractController
                     ''
                 ];
                 fputcsv($handle, $ligneL, ";");
+            }
+
+            // Lignes M et N: Caution
+            $caution = (in_array($paiement->getId(), $firstPaiementsIds) && $locataire) ? $locataire->getMontantCaution() : null;
+            if ($caution !== null && $caution > 0) {
+                $libelleM = 'CAUTION - ' . $nomLocataire;
+                $montantCaution = number_format($caution, 2, ',', '');
+
+                // Ligne M: Caution (Crédit Col 7)
+                $ligneM = [
+                    $dateStr,
+                    'VE',
+                    '165000',
+                    $libellePcg165,
+                    $libelleM,
+                    '',
+                    $montantCaution
+                ];
+                fputcsv($handle, $ligneM, ";");
+
+                // Ligne N: Locataire (Débit Col 6)
+                $ligneN = [
+                    $dateStr,
+                    'VE',
+                    $numComptable,
+                    $libelleClient,
+                    $libelleM,
+                    $montantCaution,
+                    ''
+                ];
+                fputcsv($handle, $ligneN, ";");
             }
 
             // Ligne vide

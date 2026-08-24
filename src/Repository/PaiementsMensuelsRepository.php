@@ -53,6 +53,34 @@ class PaiementsMensuelsRepository extends ServiceEntityRepository
             ->getScalarResult();
     }
 
+    public function findFirstPaiementsOfMonthIds(): array
+    {
+        $results = $this->createQueryBuilder('p')
+            ->select('p.id, IDENTITY(p.LocatairesID) as locataire_id, p.date')
+            ->orderBy('p.date', 'ASC')
+            ->addOrderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getScalarResult();
+
+        $firstIds = [];
+        $seen = [];
+
+        foreach ($results as $row) {
+            if (!empty($row['date']) && !empty($row['locataire_id'])) {
+                $dateStr = is_a($row['date'], \DateTimeInterface::class)
+                    ? $row['date']->format('Y-m')
+                    : substr((string)$row['date'], 0, 7);
+                $key = $row['locataire_id'] . '_' . $dateStr;
+                if (!isset($seen[$key])) {
+                    $seen[$key] = true;
+                    $firstIds[] = (int)$row['id'];
+                }
+            }
+        }
+
+        return $firstIds;
+    }
+
     public function findLoyerHC(PaiementsMensuels $paiement): ?float
     {
         $loyer = $this->getEntityManager()

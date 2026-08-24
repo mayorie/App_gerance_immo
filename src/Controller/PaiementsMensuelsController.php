@@ -64,17 +64,18 @@ final class PaiementsMensuelsController extends AbstractController
         }
 
         $firstPaiements = $repoPaiements->findFirstPaiementsIds();
-        $locataires = $locataireRepo->findAll();
-
         $firstPaiementsIds = array_column($firstPaiements, 'id');
+        $firstPaiementsOfMonthIds = $repoPaiements->findFirstPaiementsOfMonthIds();
+        $locataires = $locataireRepo->findAll();
 
         $result = [];
 
         foreach ($paiements as $paiement) {
+            $isFirstOfMonth = in_array($paiement->getId(), $firstPaiementsOfMonthIds, true);
 
-            $loyer = $repoPaiements->findLoyerHC($paiement);
-            $charge = $repoPaiements->findProvisionPourCharges($paiement);
-            $PS = $repoPaiements->findPackService($paiement);
+            $loyer = $isFirstOfMonth ? $repoPaiements->findLoyerHC($paiement) : 0;
+            $charge = $isFirstOfMonth ? $repoPaiements->findProvisionPourCharges($paiement) : 0;
+            $PS = $isFirstOfMonth ? $repoPaiements->findPackService($paiement) : 0;
             $RBT = $repoRBT->findByPaiement($paiement);
 
             $result[] = [
@@ -345,6 +346,7 @@ final class PaiementsMensuelsController extends AbstractController
 
         $firstPaiements = $repoPaiements->findFirstPaiementsIds();
         $firstPaiementsIds = array_column($firstPaiements, 'id');
+        $firstPaiementsOfMonthIds = $repoPaiements->findFirstPaiementsOfMonthIds();
 
         $response = new Response();
         $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
@@ -380,9 +382,10 @@ final class PaiementsMensuelsController extends AbstractController
         fputcsv($handle, $headers, ";");
 
         foreach ($paiements as $paiement) {
-            $loyer = $repoPaiements->findLoyerHC($paiement);
-            $charge = $repoPaiements->findProvisionPourCharges($paiement);
-            $PS = $repoPaiements->findPackService($paiement);
+            $isFirstOfMonth = in_array($paiement->getId(), $firstPaiementsOfMonthIds, true);
+            $loyer = $isFirstOfMonth ? $repoPaiements->findLoyerHC($paiement) : 0;
+            $charge = $isFirstOfMonth ? $repoPaiements->findProvisionPourCharges($paiement) : 0;
+            $PS = $isFirstOfMonth ? $repoPaiements->findPackService($paiement) : 0;
             $RBT = $repoRBT->findByPaiement($paiement);
             $locataire = $paiement->getLocatairesID();
 
@@ -465,6 +468,7 @@ final class PaiementsMensuelsController extends AbstractController
 
         $firstPaiements = $repoPaiements->findFirstPaiementsIds();
         $firstPaiementsIds = array_column($firstPaiements, 'id');
+        $firstPaiementsOfMonthIds = $repoPaiements->findFirstPaiementsOfMonthIds();
 
         $pcg708 = $pcgRepo->findOneBy(['compte' => '708000']);
         $libellePcg708 = $pcg708 ? $pcg708->getLibelle() : '';
@@ -490,6 +494,7 @@ final class PaiementsMensuelsController extends AbstractController
         fwrite($handle, "\xEF\xBB\xBF");
 
         foreach ($paiements as $paiement) {
+            $isFirstOfMonth = in_array($paiement->getId(), $firstPaiementsOfMonthIds, true);
             $date = $paiement->getDate();
             $dateStr = $date ? $date->format('d/m/Y') : '';
             $journal = 'VE';
@@ -508,8 +513,8 @@ final class PaiementsMensuelsController extends AbstractController
             $libelleA = 'LOYER ' . $nomLocataire . ' ' . $moisStr . ' ' . $anneeStr . ' - LOYER HC';
 
             // A6: [Loyer HC]
-            $loyerHC = $repoPaiements->findLoyerHC($paiement);
-            if ($locataire && $date && $loyerHC !== null) {
+            $loyerHC = $isFirstOfMonth ? $repoPaiements->findLoyerHC($paiement) : 0;
+            if ($locataire && $date && $loyerHC !== null && $loyerHC > 0) {
                 $loyerHC = $this->calculerProrataMontant($locataire, (int)$date->format('m'), (int)$date->format('Y'), $loyerHC);
             }
             $montantLoyer = $loyerHC !== null ? number_format($loyerHC, 2, ',', '') : '0,00';
@@ -530,8 +535,8 @@ final class PaiementsMensuelsController extends AbstractController
             $libelleB = str_replace('- LOYER HC', '- Prov. Charges', $libelleA);
 
             // B7: [Charges]
-            $charges = $repoPaiements->findProvisionPourCharges($paiement);
-            if ($locataire && $date && $charges !== null) {
+            $charges = $isFirstOfMonth ? $repoPaiements->findProvisionPourCharges($paiement) : 0;
+            if ($locataire && $date && $charges !== null && $charges > 0) {
                 $charges = $this->calculerProrataMontant($locataire, (int)$date->format('m'), (int)$date->format('Y'), $charges);
             }
             $montantCharges = $charges !== null ? number_format($charges, 2, ',', '') : '0,00';
@@ -568,8 +573,8 @@ final class PaiementsMensuelsController extends AbstractController
             }
 
             // Ligne D: Pack Services
-            $PS = $repoPaiements->findPackService($paiement);
-            if ($locataire && $date && $PS !== null) {
+            $PS = $isFirstOfMonth ? $repoPaiements->findPackService($paiement) : 0;
+            if ($locataire && $date && $PS !== null && $PS > 0) {
                 $PS = $this->calculerProrataMontant($locataire, (int)$date->format('m'), (int)$date->format('Y'), $PS);
             }
             $montantPS = $PS !== null ? number_format($PS, 2, ',', '') : '0,00';

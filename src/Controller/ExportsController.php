@@ -279,8 +279,10 @@ final class ExportsController extends AbstractController
                 } else {
                     if ($hasPaiementLocataire) {
                         $sent = $mailerService->sendQuittance($pdfContent, $locataire, $mois, $annee, $restantDuTropPercu);
-                    } else {
+                    } elseif ($restantDuTropPercu >0) {
                         $sent = $mailerService->sendRelanceImpaye($pdfContent, $locataire, $mois, $annee, $restantDuTropPercu);
+                    } else {
+                        $sent = false;
                     }
                     if ($sent) {
                         $emailsSent++;

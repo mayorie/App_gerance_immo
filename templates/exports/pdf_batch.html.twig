@@ -51,12 +51,7 @@
 
     </select>
 
-    <label style="margin-left: 40px;">
-        <input type="checkbox" id="sendEmail" name="send_email">
-        Envoyer par email aux locataires
-    </label>
-
-    <a href="#" id="downloadZip" style="margin-left: 20px;" class="btn-export">📦 Télécharger tout en ZIP
+    <a href="#" id="downloadZip" style="margin-left: 20px;" class="btn-export">📦 Télécharger tout en ZIP / Envoi des emails
     </a>&nbsp;(Si un fichier existe déjà, il sera supprimé.)
 
 </form>
@@ -70,6 +65,10 @@
             <th>Appartement</th>
             <th>Aperçu</th>
             <th>PDF</th>
+            <th style="text-align: center;">
+                <input type="checkbox" id="selectAllEmails" title="Tout sélectionner / désélectionner">
+                <label for="selectAllEmails" style="cursor: pointer;">Emails</label>
+            </th>
         </tr>
     </thead>
 
@@ -111,6 +110,10 @@
                     📄
                 </a>
             </td>
+
+            <td style="text-align: center;">
+                <input type="checkbox" class="email-checkbox" value="{{ locataire.id }}">
+            </td>
         </tr>
     {% endfor %}
 
@@ -122,7 +125,8 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const sendEmailCheckbox = document.getElementById('sendEmail');
+    const selectAllEmails = document.getElementById('selectAllEmails');
+    const emailCheckboxes = document.querySelectorAll('.email-checkbox');
     const downloadZipButton = document.getElementById('downloadZip');
     const mois = {{ mois }};
     const annee = {{ annee }};
@@ -130,14 +134,38 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateDownloadUrl() {
         let url = '/exports/pdf/batch/zip?mois=' + mois + '&annee=' + annee;
         
-        if (sendEmailCheckbox.checked) {
-            url += '&send_email=1';
+        const selectedIds = Array.from(emailCheckboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+
+        if (selectedIds.length > 0) {
+            url += '&locataire_emails=' + selectedIds.join(',');
         }
         
         downloadZipButton.href = url;
     }
 
-    sendEmailCheckbox.addEventListener('change', updateDownloadUrl);
+    if (selectAllEmails) {
+        selectAllEmails.addEventListener('change', function() {
+            emailCheckboxes.forEach(cb => {
+                cb.checked = selectAllEmails.checked;
+            });
+            updateDownloadUrl();
+        });
+    }
+
+    emailCheckboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            if (!cb.checked && selectAllEmails) {
+                selectAllEmails.checked = false;
+            } else if (selectAllEmails) {
+                const allChecked = Array.from(emailCheckboxes).every(c => c.checked);
+                selectAllEmails.checked = allChecked;
+            }
+            updateDownloadUrl();
+        });
+    });
+
     updateDownloadUrl();
 });
 </script>

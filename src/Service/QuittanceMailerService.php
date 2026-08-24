@@ -72,14 +72,26 @@ class QuittanceMailerService
             
             $filename = $locataire->getNom() . '_' . $locataire->getPrenom() . '_' . $annee . '_' . sprintf("%02d", $mois) . '.pdf';
 
+            $subject = sprintf('Quittance de loyer - %s %d', $nomMois, $annee);
+            if ($restantDuTropPercu !== null && $restantDuTropPercu != 0) {
+                if ($restantDuTropPercu > 0) {
+                    $montantStr = ($restantDuTropPercu == (int)$restantDuTropPercu)
+                        ? (string)(int)$restantDuTropPercu
+                        : number_format($restantDuTropPercu, 2, ',', ' ');
+                    $subject .= sprintf(' - RESTANT DU DE %s €', $montantStr);
+                } else {
+                    $absMontant = abs($restantDuTropPercu);
+                    $montantStr = ($absMontant == (int)$absMontant)
+                        ? (string)(int)$absMontant
+                        : number_format($absMontant, 2, ',', ' ');
+                    $subject .= sprintf(' - TROP PERCU DE %s €', $montantStr);
+                }
+            }
+
             $email = (new Email())
                 ->from($this->fromEmail)
                 ->to($email)
-                ->subject(sprintf(
-                    'Quittance de loyer - %s %d',
-                    $nomMois,
-                    $annee,
-                ))
+                ->subject($subject)
                 ->html($this->twig->render('email/quittance.html.twig', [
                     'locataire' => $locataire,
                     'mois' => $mois,

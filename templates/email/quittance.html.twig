@@ -63,7 +63,7 @@
             <ul>
                 <li>Locataire : {{ locataire.nom }} {{ locataire.prenom }}</li>
                 {% if restantDuTropPercu is not null %}
-                <li>Solde : <b>{{ restantDuTropPercu <= 0 ? 'TROP PERCU de' : 'RESTANT DU de' }} {{ restantDuTropPercu|number_format(2, '.', '.') }} €</b></li>
+                <li>Solde : <b>{{ restantDuTropPercu <= 0 ? 'TROP PERCU de' : 'RESTANT DU de' }} {{ (restantDuTropPercu|abs)|number_format(2, '.', '.') }} €</b></li>
                 {% endif %}
             </ul>
         </div>

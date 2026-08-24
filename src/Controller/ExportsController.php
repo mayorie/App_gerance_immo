@@ -204,7 +204,9 @@ final class ExportsController extends AbstractController
     {
         $mois = $request->query->getInt('mois');
         $annee = $request->query->getInt('annee');
-        $sendByEmail = $request->query->getBoolean('send_email', false);
+        $selectedLocatairesStr = $request->query->get('locataire_emails', '');
+        $selectedLocatairesIds = array_filter(explode(',', $selectedLocatairesStr));
+        $hasEmailSelection = !empty($selectedLocatairesIds);
 
         $locataires = $locatairesRepo->findAyantPaiementMoisEtAnnee($mois, $annee);
 
@@ -271,8 +273,9 @@ final class ExportsController extends AbstractController
             }
             $restantDuTropPercu = $totalDu - $totalRecu + ($data['lastPaiementPreviousMonth']?->getRestantDuTropPercuFinDeMois() ?? 0);
 
-            // Envoi par email si demandé
-            if ($sendByEmail) {
+            // Envoi par email si demandé pour ce locataire
+            $shouldSendEmail = in_array((string)$locataire->getId(), $selectedLocatairesIds, true) || in_array($locataire->getId(), $selectedLocatairesIds);
+            if ($shouldSendEmail) {
                 $email = $locataire->getMail();
                 if (empty($email)) {
                     $emailsFailed++;
@@ -296,9 +299,9 @@ final class ExportsController extends AbstractController
         $zip->close();
 
         // Flash message pour le résumé des envois
-        if ($sendByEmail) {
+        if ($hasEmailSelection) {
             $message = sprintf(
-                '%d quittances envoyées par email, %d échecs.',
+                '%d quittance(s) envoyée(s) par email, %d échec(s).',
                 $emailsSent,
                 $emailsFailed
             );

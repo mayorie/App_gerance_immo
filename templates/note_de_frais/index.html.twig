@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notes de Frais{% endblock %}
+
+{% block body %}
+
+<div class="div-titre">
+    <a href="{{ path('app_home') }}" class="btn-retour">Retour</a>
+    <h1>Liste des notes de frais</h1>
+    <a href="{{ path('note_de_frais_new') }}" class="btn-create">➕ Nouvelle note de frais</a>
+    {% if anneeSelectionnee %}
+        <a href="{{ path('note_de_frais_export_csv', {'annee': anneeSelectionnee}) }}" class="btn-export">📥 Export CSV Compta {{ anneeSelectionnee }}</a>
+    {% endif %}
+</div>
+
+<hr>
+
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 20px;">
+    <div>
+        <form method="get" style="display: inline;">
+            <label for="annee">Filtrer par année :</label>
+            <select name="annee" id="annee" onchange="this.form.submit()">
+                <option value="">Toutes les années</option>
+                {% for anneeData in annees %}
+                    <option value="{{ anneeData.annee }}" {% if anneeSelectionnee == anneeData.annee %}selected{% endif %}>
+                        {{ anneeData.annee }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+        <br>
+        <i style="font-size: 9px;">⚠️ L'export CSV Compta est accessible après sélection d'une année.</i>
+    </div>
+
+    {% if recapPcg is not empty %}
+    <div>
+        <table style="border-collapse: collapse; font-size: 11px; background-color: #fff; border: 1px solid #bbb;">
+            <thead>
+                <tr style="border-bottom: 1px solid #bbb; background: transparent !important;">
+                    <th style="background: transparent !important; color: #000 !important; padding: 4px 8px; text-align: left; font-weight: bold; border-right: 1px solid #ddd; white-space: nowrap; text-transform: none; letter-spacing: normal; border-radius: 0;">Compte PCG 6</th>
+                    <th style="background: transparent !important; color: #000 !important; padding: 4px 8px; text-align: right; font-weight: bold; white-space: nowrap; text-transform: none; letter-spacing: normal; border-radius: 0;">Frais total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in recapPcg %}
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 3px 8px; border-right: 1px solid #eee; white-space: nowrap;">
+                            {{ item.compte }}{% if item.libelle %} - {{ item.libelle }}{% endif %}
+                        </td>
+                        <td style="padding: 3px 8px; text-align: right; font-weight: bold; white-space: nowrap;">
+                            {{ item.total|number_format(2, ',', ' ') }} €
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+<hr>
+
+{% if notesDeFrais is empty %}
+    <p>Aucune note de frais trouvée.</p>
+{% else %}
+
+<table style="border-collapse: separate; border-spacing: 8px 5px; width: 100%;">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>PCG 6</th>
+            <th>Motif</th>
+            <th>Distance (km)</th>
+            <th>Péage (€)</th>
+            <th>Parking (€)</th>
+            <th>Frais total (€)</th>
+            <th>MODIF</th>
+            <th>SUPPR</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for note in notesDeFrais %}
+            <tr>
+                <td>{{ note.date ? note.date|date('d/m/Y') : '-' }}</td>
+                <td>
+                    {% if note.pcg %}
+                        {{ note.pcg.compte }} - {{ note.pcg.libelle }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>{{ note.motif }}</td>
+                <td>{{ note.distance is not null ? note.distance ~ ' km' : '-' }}</td>
+                <td>{{ note.peage is not null ? (note.peage|number_format(2, ',', ' ')) ~ ' €' : '-' }}</td>
+                <td>{{ note.parking is not null ? (note.parking|number_format(2, ',', ' ')) ~ ' €' : '-' }}</td>
+                <td style="font-weight: bold;">{{ note.fraisTotal is not null ? (note.fraisTotal|number_format(2, ',', ' ')) ~ ' €' : '-' }}</td>
+                <td>
+                    <a href="{{ path('note_de_frais_edit', {'id': note.id}) }}">
+                        ✏️
+                    </a>
+                </td>
+                <td>
+                    <form method="post" action="{{ path('note_de_frais_delete', {'id': note.id}) }}" onsubmit="return confirm('Supprimer cette note de frais ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ note.id) }}">
+                        <button type="submit">🗑️</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr style="font-weight: bold; background-color: #dbe7f6;">
+            <td colspan="3" style="text-align: right; padding-right: 15px;">TOTAL :</td>
+            <td>{{ totalDistance|number_format(1, ',', ' ') }} km</td>
+            <td>{{ totalPeage|number_format(2, ',', ' ') }} €</td>
+            <td>{{ totalParking|number_format(2, ',', ' ') }} €</td>
+            <td style="font-weight: bold; color: #0d47a1;">{{ totalFrais|number_format(2, ',', ' ') }} €</td>
+            <td colspan="2"></td>
+        </tr>
+    </tfoot>
+</table>
+
+{% endif %}
+
+<link rel="stylesheet" href="{{ asset('css/style_tableau.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+{% endblock %}

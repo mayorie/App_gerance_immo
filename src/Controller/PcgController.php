@@ -139,8 +139,8 @@ final class PcgController extends AbstractController
             return $this->redirectToRoute('app_pcg');
         }
 
-        if (!$pcg->getFactureFourns()->isEmpty() || !$pcg->getFactureFourns2()->isEmpty()) {
-            $this->addFlash('error', 'Impossible de supprimer ce compte PCG car il est utilisé par une ou plusieurs factures.');
+        if (!$pcg->getFactureFourns()->isEmpty() || !$pcg->getFactureFourns2()->isEmpty() || !$pcg->getNotesDeFrais()->isEmpty()) {
+            $this->addFlash('error', 'Impossible de supprimer ce compte PCG car il est utilisé par des factures ou des notes de frais.');
             return $this->redirectToRoute('app_pcg');
         }
 

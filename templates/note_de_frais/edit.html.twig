@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Note de Frais{% endblock %}
+
+{% block body %}
+
+<div class="div-titre">
+    <a href="{{ path('note_de_frais_index') }}" class="btn-retour">Retour</a>
+    <h1>Modifier note de frais</h1>
+</div>
+
+<form method="post">
+
+    <div>
+        <label>Date</label>
+        <input type="date" name="date" required value="{{ note.date ? note.date|date('Y-m-d') : '' }}">
+    </div>
+
+    <div>
+        <label>Compte PCG 6</label>
+        <select name="pcg_id">
+            <option value="">-- Sélectionner un compte PCG --</option>
+            {% for pcg in pcgs %}
+                <option value="{{ pcg.id }}" {% if note.pcg and note.pcg.id == pcg.id %}selected{% endif %}>
+                    {{ pcg.compte }} - {{ pcg.libelle }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Motif</label>
+        <input type="text" name="motif" required value="{{ note.motif }}">
+    </div>
+
+    <div>
+        <label>Distance (km)</label>
+        <input type="number" step="0.01" name="distance" id="distance" value="{{ note.distance }}">
+    </div>
+
+    <div>
+        <label>Péage (€)</label>
+        <input type="number" step="0.01" name="peage" id="peage" value="{{ note.peage }}">
+    </div>
+
+    <div>
+        <label>Parking (€)</label>
+        <input type="number" step="0.01" name="parking" id="parking" value="{{ note.parking }}">
+    </div>
+
+    <div>
+        <label>Frais total (€) <small style="color: #666; font-weight: normal;">(Calculé : Distance × 0.234 + Péage + Parking)</small></label>
+        <input type="number" step="0.01" name="frais_total" id="frais_total" required value="{{ note.fraisTotal }}">
+    </div>
+
+    <button type="submit">Enregistrer</button>
+
+</form>
+
+<link rel="stylesheet" href="{{ asset('css/style_form.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style_titre.css') }}">
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const distanceInput = document.getElementById('distance');
+        const peageInput = document.getElementById('peage');
+        const parkingInput = document.getElementById('parking');
+        const fraisTotalInput = document.getElementById('frais_total');
+        const COUT_KM = 0.234;
+
+        function updateFraisTotal() {
+            const distance = parseFloat(distanceInput.value) || 0;
+            const peage = parseFloat(peageInput.value) || 0;
+            const parking = parseFloat(parkingInput.value) || 0;
+
+            const total = Math.round((distance * COUT_KM + peage + parking) * 100) / 100;
+            fraisTotalInput.value = total.toFixed(2);
+        }
+
+        distanceInput.addEventListener('input', updateFraisTotal);
+        peageInput.addEventListener('input', updateFraisTotal);
+        parkingInput.addEventListener('input', updateFraisTotal);
+    });
+</script>
+
+{% endblock %}

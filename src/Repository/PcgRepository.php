@@ -33,4 +33,17 @@ class PcgRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    /**
+     * @return Pcg[]
+     */
+    public function findByPrefix(string $prefix): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.compte LIKE :prefix')
+            ->setParameter('prefix', $prefix . '%')
+            ->orderBy('p.compte', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

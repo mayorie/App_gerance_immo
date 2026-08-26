@@ -27,10 +27,14 @@ class Pcg
     #[ORM\OneToMany(mappedBy: 'pcg2', targetEntity: FactureFourn::class)]
     private Collection $factureFourns2;
 
+    #[ORM\OneToMany(mappedBy: 'pcg', targetEntity: NoteDeFrais::class)]
+    private Collection $notesDeFrais;
+
     public function __construct()
     {
         $this->factureFourns = new ArrayCollection();
         $this->factureFourns2 = new ArrayCollection();
+        $this->notesDeFrais = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -116,6 +120,36 @@ class Pcg
             // set the owning side to null (unless already changed)
             if ($factureFourn->getPcg2() === $this) {
                 $factureFourn->setPcg2(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, NoteDeFrais>
+     */
+    public function getNotesDeFrais(): Collection
+    {
+        return $this->notesDeFrais;
+    }
+
+    public function addNoteDeFrais(NoteDeFrais $noteDeFrais): static
+    {
+        if (!$this->notesDeFrais->contains($noteDeFrais)) {
+            $this->notesDeFrais->add($noteDeFrais);
+            $noteDeFrais->setPcg($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNoteDeFrais(NoteDeFrais $noteDeFrais): static
+    {
+        if ($this->notesDeFrais->removeElement($noteDeFrais)) {
+            // set the owning side to null (unless already changed)
+            if ($noteDeFrais->getPcg() === $this) {
+                $noteDeFrais->setPcg(null);
             }
         }
 

@@ -22,6 +22,7 @@
         <tr>
             <th>Compte</th>
             <th>Libellé</th>
+            <th>SUPPR</th>
         </tr>
     </thead>
     <tbody>
@@ -29,6 +30,16 @@
             <tr>
                 <td>{{ pcg.compte }}</td>
                 <td>{{ pcg.libelle }}</td>
+                <td>
+                    {% if pcg.factureFourns is empty and pcg.factureFourns2 is empty %}
+                        <form method="post" action="{{ path('pcg_delete', {'id': pcg.id}) }}" onsubmit="return confirm('Supprimer ce compte PCG ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pcg.id) }}">
+                            <button type="submit">🗑️</button>
+                        </form>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
     </tbody>

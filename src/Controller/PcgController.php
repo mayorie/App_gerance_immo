@@ -135,6 +135,12 @@ final class PcgController extends AbstractController
     public function delete(Request $request, Pcg $pcg, EntityManagerInterface $em): Response
     {
         if (!$this->isCsrfTokenValid('delete'.$pcg->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+            return $this->redirectToRoute('app_pcg');
+        }
+
+        if (!$pcg->getFactureFourns()->isEmpty() || !$pcg->getFactureFourns2()->isEmpty()) {
+            $this->addFlash('error', 'Impossible de supprimer ce compte PCG car il est utilisé par une ou plusieurs factures.');
             return $this->redirectToRoute('app_pcg');
         }
 

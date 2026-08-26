@@ -17,11 +17,11 @@
     <p>Aucun compte PCG trouvé.</p>
 {% else %}
 
-<table style="border-collapse: separate; border-spacing: 8px 5px; width: 50%;">
+<table style="border-collapse: separate; border-spacing: 8px 5px;">
     <thead>
         <tr>
             <th>Compte</th>
-            <th>Libellé</th>
+            <th style="width: 330px;">Libellé</th>
             <th>SUPPR</th>
         </tr>
     </thead>
@@ -29,7 +29,7 @@
         {% for pcg in pcgs %}
             <tr>
                 <td>{{ pcg.compte }}</td>
-                <td>{{ pcg.libelle }}</td>
+                <td style="width: 330px; text-align: left;">{{ pcg.libelle }}</td>
                 <td>
                     {% if pcg.factureFourns is empty and pcg.factureFourns2 is empty %}
                         <form method="post" action="{{ path('pcg_delete', {'id': pcg.id}) }}" onsubmit="return confirm('Supprimer ce compte PCG ?');">
